@@ -3,7 +3,7 @@ import DefaultNavbar from '../components/NavBars/DefaultNavbar';
 import SidePanel from '../components/SidePanel';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
-const { Header, Footer, Sider, Content } = Layout;
+const { Footer, Content } = Layout;
 
 function MainLayout(props) {
   console.log(props.account);

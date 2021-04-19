@@ -1,10 +1,12 @@
 import { Form, Input, Button } from 'antd';
 import { Row, Col } from 'antd';
 import { connect } from 'react-redux';
-
-function Login() {
-  const onFinish = (values) => {
-    console.log('Success:', values);
+import { login } from '../actions/index';
+function Login(props) {
+  console.log(props);
+  const onFinish = (accountInfo) => {
+    props.logIn(accountInfo);
+    console.log('Success:', accountInfo);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -22,9 +24,6 @@ function Login() {
             span: 16,
           }}
           name="basic"
-          initialValues={{
-            remember: true,
-          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
@@ -73,7 +72,7 @@ const mapStateToProps = (state) => {
   return { ...state };
 };
 const mapDispatchToProps = (dispatch) => {
-  return { logIn: () => dispatch('') };
+  return { logIn: (accountInfo) => dispatch(login(accountInfo)) };
 };
 
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

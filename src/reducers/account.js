@@ -1,9 +1,14 @@
 const initialState = {
   username: false,
 };
-export default (state = initialState, action) => {
+export default function account(state = initialState, action) {
   switch (action.type) {
+    case 'LOGIN':
+      return {
+        ...state,
+        ...action.accountInfo,
+      };
     default:
       return { ...state };
   }
-};
+}

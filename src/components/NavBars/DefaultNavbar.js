@@ -1,7 +1,5 @@
-import { Layout, Menu, Breadcrumb } from 'antd';
-import { connect } from 'react-redux';
+import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
-import { login } from '../../actions/index';
 
 // const { SubMenu } = Menu;
 export default function DefaultNavbar(props) {
