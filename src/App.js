@@ -1,24 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+// import './styles/App.css';
+import 'antd/dist/antd.css';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import NavBar from './components/NavBar';
+import HomePage from './pages/Home';
+import SidePanel from './components/SidePanel';
+import { Layout } from 'antd';
+
+const { Header, Footer, Sider, Content } = Layout;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to hi reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      {/* <div> */}
+      <Layout style={{ minHeight: '100vh' }}>
+        <Header>
+          <NavBar />
+        </Header>
+        <Layout className="site-layout">
+          <SidePanel />
+          <Layout className="site-layout">
+            <Content style={{ margin: '0 16px' }}>
+              <div
+                className="site-layout-background"
+                style={{ padding: 24, minHeight: 360 }}
+              >
+                Bill is a cat.
+              </div>
+            </Content>
+            <Footer style={{ textAlign: 'center' }}>
+              Ant Design ©2018 Created by Ant UED
+            </Footer>
+          </Layout>
+        </Layout>
+      </Layout>
+      {/* </div> */}
+    </Router>
   );
 }
 
