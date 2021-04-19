@@ -3,10 +3,8 @@ import { Row, Col } from 'antd';
 import { connect } from 'react-redux';
 import { login } from '../actions/index';
 function Login(props) {
-  console.log(props);
   const onFinish = (accountInfo) => {
     props.logIn(accountInfo);
-    console.log('Success:', accountInfo);
   };
 
   const onFinishFailed = (errorInfo) => {
