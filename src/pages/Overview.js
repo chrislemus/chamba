@@ -7,7 +7,7 @@ export default function Overview() {
       className="site-layout-background"
       style={{ padding: 24, minHeight: 360 }}
     >
-      Bill is a cat.
+      OVERVIEW
     </div>
   );
 }

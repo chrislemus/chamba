@@ -1,12 +1,17 @@
 const initialState = {
-  username: false,
+  authenticatedUser: null,
 };
 export default function account(state = initialState, action) {
   switch (action.type) {
     case 'LOGIN':
       return {
         ...state,
-        ...action.accountInfo,
+        authenticatedUser: action.accountInfo,
+      };
+    case 'LOGOUT':
+      return {
+        ...state,
+        authenticatedUser: null,
       };
     default:
       return { ...state };

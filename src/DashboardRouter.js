@@ -7,7 +7,7 @@ import SidePanel from './components/SidePanel';
 import { Layout } from 'antd';
 
 const { Header, Footer, Sider, Content } = Layout;
-import Main from './Dashboard/Overview';
+import Main from './pages/Overview';
 
 function App() {
   return (

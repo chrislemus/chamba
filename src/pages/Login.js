@@ -1,10 +1,18 @@
+import { useLayoutEffect } from 'react';
 import { Form, Input, Button } from 'antd';
 import { Row, Col } from 'antd';
 import { connect } from 'react-redux';
 import { login } from '../actions/index';
-function Login(props) {
+import { useHistory } from 'react-router-dom';
+function Login({ authenticatedUser, logIn }) {
+  const history = useHistory();
+
+  useLayoutEffect(() => {
+    if (!!authenticatedUser) history.push('/');
+  }, [authenticatedUser]);
+
   const onFinish = (accountInfo) => {
-    props.logIn(accountInfo);
+    logIn(accountInfo);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -66,8 +74,8 @@ function Login(props) {
     </Row>
   );
 }
-const mapStateToProps = (state) => {
-  return { ...state };
+const mapStateToProps = ({ account }) => {
+  return { ...account };
 };
 const mapDispatchToProps = (dispatch) => {
   return { logIn: (accountInfo) => dispatch(login(accountInfo)) };
