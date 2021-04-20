@@ -1,14 +1,26 @@
-import { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 
-function PrivateRoute({ authenticatedUser, children }) {
-  const history = useHistory();
-  useEffect(() => {
-    if (!authenticatedUser) history.push('./login');
-  }, [authenticatedUser]);
-
-  return <>{children}</>;
+function PrivateRoute({ authenticatedUser, component: Component, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        !!authenticatedUser ? (
+          <Component {...rest} {...props} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: '/login',
+              state: {
+                from: props.location,
+              },
+            }}
+          />
+        )
+      }
+    />
+  );
 }
 
-export default connect((state) => state)(PrivateRoute);
+export default connect((state) => ({ ...state.account }))(PrivateRoute);

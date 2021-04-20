@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Form, Input, Button } from 'antd';
 import { Row, Col } from 'antd';
 import { connect } from 'react-redux';
@@ -7,8 +7,8 @@ import { useHistory } from 'react-router-dom';
 function Login({ authenticatedUser, logIn }) {
   const history = useHistory();
 
-  useLayoutEffect(() => {
-    if (!!authenticatedUser) history.push('/');
+  useEffect(() => {
+    if (!!authenticatedUser) history.push('/overview');
   }, [authenticatedUser]);
 
   const onFinish = (accountInfo) => {

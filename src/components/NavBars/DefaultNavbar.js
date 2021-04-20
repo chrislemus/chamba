@@ -12,7 +12,7 @@ export default function DefaultNavbar(props) {
           <Link to="/">Home</Link>
         </Menu.Item>
         <Menu.Item key="2">
-          <Link to="/login">Log in</Link>
+          <Link to="/login">Log In</Link>
         </Menu.Item>
       </Menu>
     </nav>

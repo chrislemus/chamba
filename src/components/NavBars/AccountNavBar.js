@@ -1,25 +1,195 @@
-import { Layout, Menu, Breadcrumb } from 'antd';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
+import Badge from '@material-ui/core/Badge';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import MenuIcon from '@material-ui/icons/Menu';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import MoreIcon from '@material-ui/icons/MoreVert';
+import Drawer from '@material-ui/core/Drawer';
 
-// const { SubMenu } = Menu;
-function AccountNavbar(props) {
-  const onLogout = () => {
-    props.dispatch({ type: 'LOGOUT' });
+import { useTheme } from '@material-ui/core/styles';
+import { withTheme } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+
+const useStyles = makeStyles((theme) => ({
+  grow: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+
+  sectionDesktop: {
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+    },
+  },
+  sectionMobile: {
+    display: 'flex',
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
+  },
+  appBar: {
+    background: '#fff',
+  },
+}));
+
+function AccountNavBar(props) {
+  console.log(props);
+  const classes = useStyles();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [drawerOpened, setDrawerOpened] = useState(false);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+
+  const isMenuOpen = Boolean(anchorEl);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
   };
+
+  const handleMobileMenuClose = () => {
+    setMobileMoreAnchorEl(null);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    handleMobileMenuClose();
+  };
+
+  const handleMobileMenuOpen = (event) => {
+    setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const menuId = 'primary-search-account-menu';
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={props.logout}>Log Out</MenuItem>
+    </Menu>
+  );
+
+  const mobileMenuId = 'primary-search-account-menu-mobile';
+  const renderMobileMenu = (
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMobileMenuOpen}
+      onClose={handleMobileMenuClose}
+    >
+      <MenuItem>
+        <IconButton aria-label="show 11 new notifications" color="primary">
+          <Badge badgeContent={11} color="error">
+            <NotificationsIcon />
+          </Badge>
+        </IconButton>
+        <p>Notifications</p>
+      </MenuItem>
+      <MenuItem onClick={handleProfileMenuOpen}>
+        <IconButton
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="primary"
+        >
+          <AccountCircle />
+        </IconButton>
+        <p>Profile</p>
+      </MenuItem>
+    </Menu>
+  );
+
   return (
-    <nav className="main-navbar">
-      <p className="navbar-logo">Service Field CRM</p>
-      <Menu theme="light" mode="horizontal" defaultSelectedKeys={['2']}>
-        <Menu.Item key="1" onClick={onLogout}>
-          Log Out
-        </Menu.Item>
-      </Menu>
-    </nav>
+    <div className={classes.grow}>
+      <AppBar position="static" className={classes.appBar}>
+        <Drawer
+          anchor={'left'}
+          open={drawerOpened}
+          onClose={() => setDrawerOpened(false)}
+        >
+          <ul style={{ width: '200px' }}>
+            <li>hi</li>
+          </ul>
+        </Drawer>
+        <Toolbar>
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="primary"
+            aria-label="open drawer"
+            onClick={() => setDrawerOpened(!drawerOpened)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            className={classes.title}
+            variant="h6"
+            color="primary"
+            noWrap
+          >
+            Service Field CRM
+          </Typography>
+          <div className={classes.grow} />
+          <div className={classes.sectionDesktop}>
+            <IconButton aria-label="show 17 new notifications" color="primary">
+              <Badge badgeContent={17} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="primary"
+            >
+              <AccountCircle />
+            </IconButton>
+          </div>
+          <div className={classes.sectionMobile}>
+            <IconButton
+              aria-label="show more"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={handleMobileMenuOpen}
+              color="primary"
+            >
+              <MoreIcon />
+            </IconButton>
+          </div>
+        </Toolbar>
+      </AppBar>
+      {renderMobileMenu}
+      {renderMenu}
+    </div>
   );
 }
 
 const mapStateToProps = (state) => {
   return { ...state };
 };
-export default connect(mapStateToProps)(AccountNavbar);
+const mapDispatchToProps = (dispatch) => {
+  return { logout: () => dispatch({ type: 'LOGOUT' }) };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(AccountNavBar);
