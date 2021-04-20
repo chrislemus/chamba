@@ -19,11 +19,10 @@ const theme = createMuiTheme({
 
 function MainLayout({ authenticatedUser, children }) {
   return (
-    // <Layout style={{ minHeight: '100vh' }}>
     <div style={{ background: 'rgb(248, 248, 248)', minHeight: '100vh' }}>
       <ThemeProvider theme={theme}>
         {!!authenticatedUser ? <AccountNavBar /> : <DefaultNavbar />}
-        {children}
+        <Container>{children}</Container>
       </ThemeProvider>
     </div>
     //{' '}

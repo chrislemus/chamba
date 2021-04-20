@@ -1,5 +1,4 @@
 import './styles/App.css';
-import 'antd/dist/antd.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import PrivateRoute from './components/PrivateRoute';
 import HomePage from './pages/Home';
