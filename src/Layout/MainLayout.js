@@ -3,6 +3,7 @@ import DefaultNavbar from '../components/NavBars/DefaultNavbar';
 import AccountNavBar from '../components/NavBars/AccountNavBar';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
+import Container from '@material-ui/core/Container';
 
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
@@ -18,19 +19,14 @@ const theme = createMuiTheme({
 
 function MainLayout({ authenticatedUser, children }) {
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    // <Layout style={{ minHeight: '100vh' }}>
+    <div style={{ background: 'rgb(248, 248, 248)', minHeight: '100vh' }}>
       <ThemeProvider theme={theme}>
         {!!authenticatedUser ? <AccountNavBar /> : <DefaultNavbar />}
-        <Layout className="site-layout">
-          <Layout className="site-layout">
-            <Content style={{ margin: '0 16px' }}>{children}</Content>
-            <Footer style={{ textAlign: 'center' }}>
-              Service Field CRM ©2021 Created by Chris Lemus
-            </Footer>
-          </Layout>
-        </Layout>
+        {children}
       </ThemeProvider>
-    </Layout>
+    </div>
+    //{' '}
   );
 }
 

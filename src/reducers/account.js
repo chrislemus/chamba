@@ -1,5 +1,6 @@
+const tempUser = { username: 'me', password: '123' };
 const initialState = {
-  authenticatedUser: { username: 'me' },
+  authenticatedUser: null,
 };
 export default function account(state = initialState, action) {
   switch (action.type) {
