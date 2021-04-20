@@ -3,6 +3,7 @@ import {
   KeyboardDateTimePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
+import { withStyles } from '@material-ui/core/styles';
 import { AppointmentForm } from '@devexpress/dx-react-scheduler-material-ui';
 import { IconButton, TextField, Button } from '@material-ui/core';
 import MomentUtils from '@date-io/moment';
@@ -11,10 +12,12 @@ import Notes from '@material-ui/icons/Notes';
 import Close from '@material-ui/icons/Close';
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import Create from '@material-ui/icons/Create';
+import { useTheme } from '@material-ui/core/styles';
 
-export default function AppointmentFormContainerBasic(props) {
+function AppointmentFormContainer(props) {
+  const theme = useTheme();
+  console.log(theme);
   const [appointmentChanges, setAppointmentChanges] = useState({});
-
   const getAppointmentData = () => {
     const { appointmentData } = props;
     return appointmentData;
@@ -167,3 +170,52 @@ export default function AppointmentFormContainerBasic(props) {
     </AppointmentForm.Overlay>
   );
 }
+const containerStyles = (theme) => ({
+  container: {
+    width: theme.spacing(68),
+    padding: 0,
+    paddingBottom: theme.spacing(2),
+  },
+  content: {
+    padding: theme.spacing(2),
+    paddingTop: 0,
+  },
+  header: {
+    overflow: 'hidden',
+    paddingTop: theme.spacing(0.5),
+  },
+  closeButton: {
+    float: 'right',
+  },
+  buttonGroup: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 2),
+  },
+  button: {
+    marginLeft: theme.spacing(2),
+  },
+  picker: {
+    marginRight: theme.spacing(2),
+    '&:last-child': {
+      marginRight: 0,
+    },
+    width: '50%',
+  },
+  wrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: theme.spacing(1, 0),
+  },
+  icon: {
+    margin: theme.spacing(2, 0),
+    marginRight: theme.spacing(2),
+  },
+  textField: {
+    width: '100%',
+  },
+});
+
+export default withStyles(containerStyles, {
+  name: 'AppointmentFormContainer',
+})(AppointmentFormContainer);
