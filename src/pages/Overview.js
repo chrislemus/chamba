@@ -1,7 +1,7 @@
 import React from 'react';
 
-import CalendarScheduler from '../components//CalendarScheduler/Index';
-
+import CalendarScheduler from '../components/CalendarScheduler/basic/Index';
+import Recurring from '../components/CalendarScheduler/featured/Index';
 const Overview = () => {
   return (
     <div style={{ marginBottom: '200px' }}>
@@ -12,6 +12,7 @@ const Overview = () => {
         </div>
         <div className="info-box-content">
           <CalendarScheduler />
+          <Recurring />
         </div>
       </div>
     </div>

@@ -19,7 +19,7 @@ import { connectProps } from '@devexpress/dx-react-core';
 import { Button } from '@material-ui/core';
 import AppointmentFormContainer from './AppointmentFormContainer';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
-import { appointments } from '../../demo-data/appointments';
+import { appointments } from '../../../demo-data/appointments';
 
 /* eslint-disable-next-line react/no-multi-comp */
 const CalendarScheduler = (props) => {
