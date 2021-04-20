@@ -13,7 +13,6 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import AppDrawer from './AppDrawer';
 
-import { useTheme } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({

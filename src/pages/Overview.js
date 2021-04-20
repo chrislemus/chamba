@@ -1,18 +1,17 @@
 import React from 'react';
 
+import CalendarScheduler from '../components//CalendarScheduler/Index';
+
 const Overview = () => {
   return (
-    <div>
+    <div style={{ marginBottom: '200px' }}>
       <h1>Overview</h1>
       <div className="info-box">
         <div className="info-box-header">
           <span>Title</span>
         </div>
         <div className="info-box-content">
-          <ul>
-            <li>Hello</li>
-            <li>There</li>
-          </ul>
+          <CalendarScheduler />
         </div>
       </div>
     </div>
