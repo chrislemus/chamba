@@ -11,10 +11,9 @@ import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import Drawer from '@material-ui/core/Drawer';
+import AppDrawer from './AppDrawer';
 
 import { useTheme } from '@material-ui/core/styles';
-import { withTheme } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
@@ -46,7 +45,7 @@ function AccountNavBar(props) {
   console.log(props);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [drawerOpened, setDrawerOpened] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
@@ -70,7 +69,7 @@ function AccountNavBar(props) {
   };
 
   const menuId = 'primary-search-account-menu';
-  const renderMenu = (
+  const profileMenu = (
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -122,22 +121,18 @@ function AccountNavBar(props) {
   return (
     <div className={classes.grow}>
       <AppBar position="static" className={classes.appBar}>
-        <Drawer
-          anchor={'left'}
-          open={drawerOpened}
-          onClose={() => setDrawerOpened(false)}
-        >
-          <ul style={{ width: '200px' }}>
-            <li>hi</li>
-          </ul>
-        </Drawer>
+        <AppDrawer
+          isDrawerOpen={isDrawerOpen}
+          setIsDrawerOpen={setIsDrawerOpen}
+        />
+
         <Toolbar>
           <IconButton
             edge="start"
             className={classes.menuButton}
             color="primary"
             aria-label="open drawer"
-            onClick={() => setDrawerOpened(!drawerOpened)}
+            onClick={() => setIsDrawerOpen(!isDrawerOpen)}
           >
             <MenuIcon />
           </IconButton>
@@ -181,7 +176,7 @@ function AccountNavBar(props) {
         </Toolbar>
       </AppBar>
       {renderMobileMenu}
-      {renderMenu}
+      {profileMenu}
     </div>
   );
 }
