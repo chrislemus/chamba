@@ -27,10 +27,9 @@ export const login = (user) => {
 export const getUserData = () => {
   return (dispatch) => {
     const header = apiAuthHeader();
-    console.log('getUserData action triggered');
-    console.log('header:', header);
+
     axios
-      .get(apiUrl + '/profile', { headers: { ...header } })
+      .get(apiUrl + '/profile', { headerss: { ...header } })
       .then(({ data }) => {
         dispatch({ type: 'AUTH_USER_SUCCESS' });
         dispatch({ type: 'USER_ADD_USER', payload: { user: data.user } });
@@ -38,7 +37,10 @@ export const getUserData = () => {
       .catch((error) => {
         console.log(error);
         const errors = error?.response?.data?.errors;
-        if (errors) dispatch({ type: 'ALERT_DANGER', payload: { errors } });
+        if (errors) {
+          const message = errors.join(', ');
+          dispatch({ type: 'ALERT_DANGER', payload: { message } });
+        }
       });
   };
 };

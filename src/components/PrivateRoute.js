@@ -7,8 +7,9 @@ import Cookies from 'js-cookie';
 function PrivateRoute({ getUserData, user, component: Component, ...rest }) {
   const authToken = Cookies.get('authToken');
   const noUserData = Object.keys(user).length === 0;
+
   useEffect(() => {
-    if (noUserData) {
+    if (!!authToken && noUserData) {
       console.log('noUserData');
       getUserData();
     }
