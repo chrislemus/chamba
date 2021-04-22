@@ -12,11 +12,8 @@ import Notes from '@material-ui/icons/Notes';
 import Close from '@material-ui/icons/Close';
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import Create from '@material-ui/icons/Create';
-import { useTheme } from '@material-ui/core/styles';
 
 function AppointmentFormContainer(props) {
-  const theme = useTheme();
-  console.log(theme);
   const [appointmentChanges, setAppointmentChanges] = useState({});
   const getAppointmentData = () => {
     const { appointmentData } = props;
@@ -114,6 +111,10 @@ function AppointmentFormContainer(props) {
           </IconButton>
         </div>
         <div className={classes.content}>
+          <div className={classes.wrapper}>
+            <Create className={classes.icon} color="action" />
+            <TextField {...textEditorProps('client')} />
+          </div>
           <div className={classes.wrapper}>
             <Create className={classes.icon} color="action" />
             <TextField {...textEditorProps('title')} />

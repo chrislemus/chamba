@@ -12,7 +12,7 @@ const Overview = () => {
         </div>
         <div className="info-box-content">
           <CalendarScheduler />
-          <Recurring />
+          {/* <Recurring /> */}
         </div>
       </div>
     </div>

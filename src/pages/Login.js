@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 
-import { Button, Container, TextField, Box } from '@material-ui/core';
+import {
+  Button,
+  Container,
+  TextField,
+  Box,
+  CircularProgress,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import { login } from '../actions/index';
+import { login } from '../actions/userActions';
 import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -18,18 +24,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Login({ authenticatedUser, logIn }) {
-  const [username, setUsername] = useState('');
+function Login({ user, authUser, logIn }) {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const history = useHistory();
   const classes = useStyles();
+
   useEffect(() => {
-    if (!!authenticatedUser) history.push('/overview');
-  }, [authenticatedUser]);
+    if (!!user.user) history.push('/overview');
+  }, [user]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    logIn({ username, password });
+    logIn({ email, password });
+  };
+
+  const displayAuthErrors = () => {
+    const errorItems = authUser.errors.map((error, idx) => (
+      <li key={`auth-error-${idx}`}>{error}</li>
+    ));
+    return <ul style={{ color: 'red' }}>{errorItems}</ul>;
   };
 
   return (
@@ -43,31 +57,41 @@ function Login({ authenticatedUser, logIn }) {
       >
         <form className={classes.root} noValidate onSubmit={handleSubmit}>
           <h1>Log In</h1>
+          {displayAuthErrors()}
           <TextField
             id="standard-basic"
-            label="Username"
-            onChange={({ target }) => setUsername(target.value)}
+            label="Email"
+            onChange={({ target }) => setEmail(target.value)}
             className={classes.inputField}
           />
           <TextField
             id="standard-basic"
             label="Password"
+            type="password"
             onChange={({ target }) => setPassword(target.value)}
             className={classes.inputField}
           />
-          <Button variant="contained" type="submit" color="primary">
-            Log In
+          <Button
+            disabled={authUser.fetching}
+            variant="contained"
+            type="submit"
+            color="primary"
+          >
+            {authUser.fetching ? <CircularProgress /> : 'Log In'}
           </Button>
         </form>
       </Box>
     </Container>
   );
 }
-const mapStateToProps = ({ account }) => {
-  return { ...account };
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+    authUser: state.authUser,
+  };
 };
 const mapDispatchToProps = (dispatch) => {
-  return { logIn: (accountInfo) => dispatch(login(accountInfo)) };
+  return { logIn: (user) => dispatch(login(user)) };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

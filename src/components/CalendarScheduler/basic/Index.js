@@ -8,10 +8,12 @@ import {
   MonthView,
   WeekView,
   ViewSwitcher,
+  Resources,
   Appointments,
   AppointmentTooltip,
   AppointmentForm,
   DragDropProvider,
+  DateNavigator,
   EditRecurrenceMenu,
   AllDayPanel,
 } from '@devexpress/dx-react-scheduler-material-ui';
@@ -20,6 +22,20 @@ import { Button } from '@material-ui/core';
 import AppointmentFormContainer from './AppointmentFormContainer';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 import { appointments } from '../../../demo-data/appointments';
+import { clients, priorities } from '../../../demo-data/task';
+
+const resources = [
+  {
+    fieldName: 'clientId',
+    title: 'Clients',
+    instances: clients,
+  },
+  {
+    fieldName: 'priority',
+    title: 'Priority',
+    instances: priorities,
+  },
+];
 
 /* eslint-disable-next-line react/no-multi-comp */
 const CalendarScheduler = (props) => {
@@ -117,23 +133,33 @@ const CalendarScheduler = (props) => {
     appointmentForm.update();
   });
 
+  const FlexibleSpace = ({ ...restProps }) => (
+    <Toolbar.FlexibleSpace {...restProps} style={{ flex: 'none' }}>
+      {console.log({ ...restProps })}
+      <div
+        style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}
+      >
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => {
+            setEditingFormVisible(true);
+            onEditingAppointmentChange(undefined);
+            onAddedAppointmentChange({
+              startDate: new Date(currentDate).setHours(startDayHour),
+              endDate: new Date(currentDate).setHours(startDayHour + 1),
+            });
+          }}
+        >
+          New Event
+        </Button>
+      </div>
+    </Toolbar.FlexibleSpace>
+  );
+
   return (
     <Scheduler data={data} height={660}>
-      <Button
-        color="primary"
-        variant="contained"
-        onClick={() => {
-          setEditingFormVisible(true);
-          onEditingAppointmentChange(undefined);
-          onAddedAppointmentChange({
-            startDate: new Date(currentDate).setHours(startDayHour),
-            endDate: new Date(currentDate).setHours(startDayHour + 1),
-          });
-        }}
-      >
-        New Event
-      </Button>
-      <ViewState currentDate={currentDate} />
+      <ViewState defaultCurrentViewName="Month" currentDate={currentDate} />
       <EditingState
         onCommitChanges={commitChanges}
         onEditingAppointmentChange={onEditingAppointmentChange}
@@ -145,14 +171,16 @@ const CalendarScheduler = (props) => {
       <EditRecurrenceMenu />
       <Appointments />
       <AppointmentTooltip showOpenButton showCloseButton showDeleteButton />
-      <Toolbar />
+      <Toolbar flexibleSpaceComponent={FlexibleSpace} />
+      <DateNavigator />
       <ViewSwitcher />
       <AppointmentForm
-        overlayComponent={appointmentForm}
+        // overlayComponent={appointmentForm} *can update view later
         visible={editingFormVisible}
         onVisibilityChange={toggleEditingFormVisibility}
       />
       <DragDropProvider />
+      <Resources data={resources} palette="indigo" />
       <ConfirmDeleteModal
         confirmDeleteModalIsOpen={confirmDeleteModalIsOpen}
         toggleConfirmDeleteModal={toggleConfirmDeleteModal}

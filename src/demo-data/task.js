@@ -215,36 +215,36 @@ export const priorities = [
   { id: 3, text: 'High Priority', color: deepOrange },
 ];
 
-export const owners = [
+export const clients = [
   {
     text: 'Andrew Glover',
     id: 1,
-    color: '#7E57C2',
+    // color: '#7E57C2',
   },
   {
     text: 'Arnie Schwartz',
     id: 2,
-    color: '#FF7043',
+    // color: '#FF7043',
   },
   {
     text: 'John Heart',
     id: 3,
-    color: '#E91E63',
+    // color: '#E91E63',
   },
   {
     text: 'Taylor Riley',
     id: 4,
-    color: '#E91E63',
+    // color: '#E91E63',
   },
   {
     text: 'Brad Farkus',
     id: 5,
-    color: '#AB47BC',
+    // color: '#AB47BC',
   },
   {
     text: 'Arthur Miller',
     id: 6,
-    color: '#FFA726',
+    // color: '#FFA726',
   },
 ];
 

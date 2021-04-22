@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
+import { Paper, Button } from '@material-ui/core';
 import { ViewState, EditingState } from '@devexpress/dx-react-scheduler';
 import TimeTableCell from './TimeTableCell';
 import Appointments from './Appointments';
@@ -16,15 +15,13 @@ import {
   DragDropProvider,
 } from '@devexpress/dx-react-scheduler-material-ui';
 
-import ColorLens from '@material-ui/icons/ColorLens';
-import { withStyles } from '@material-ui/core/styles';
-import { owners, appointments } from '../../../demo-data/task';
+import { clients, appointments } from '../../../demo-data/task';
 
 const resources = [
   {
-    fieldName: 'ownerId',
-    title: 'Owners',
-    instances: owners,
+    fieldName: 'clientId',
+    title: 'Clients',
+    instances: clients,
   },
 ];
 
@@ -35,76 +32,11 @@ const DayScaleCell = (props) => (
   />
 );
 
-const styles = (theme) => ({
-  flexibleSpace: {
-    flex: 'none',
-  },
-  flexContainer: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  tooltipContent: {
-    padding: theme.spacing(3, 1),
-    paddingTop: 0,
-    backgroundColor: theme.palette.background.paper,
-    boxSizing: 'border-box',
-    width: '400px',
-  },
-  tooltipText: {
-    ...theme.typography.body2,
-    display: 'inline-block',
-  },
-  title: {
-    ...theme.typography.h6,
-    color: theme.palette.text.secondary,
-    fontWeight: theme.typography.fontWeightBold,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
-  icon: {
-    color: theme.palette.action.active,
-    verticalAlign: 'middle',
-  },
-  circle: {
-    width: theme.spacing(4.5),
-    height: theme.spacing(4.5),
-    verticalAlign: 'super',
-  },
-  textCenter: {
-    textAlign: 'center',
-  },
-  dateAndTitle: {
-    lineHeight: 1.1,
-  },
-  titleContainer: {
-    paddingBottom: theme.spacing(2),
-  },
-  container: {
-    paddingBottom: theme.spacing(1.5),
-  },
-});
-
-// #FOLD_BLOCK
-
-// const TimeTableCell =
-
-const FlexibleSpace = withStyles(styles, { name: 'ToolbarRoot' })(
-  ({ classes, ...restProps }) => (
-    <Toolbar.FlexibleSpace {...restProps} className={classes.flexibleSpace}>
-      <div className={classes.flexContainer}>
-        <ColorLens fontSize="large" htmlColor="#FF7043" />
-        <Typography variant="h5" style={{ marginLeft: '10px' }}>
-          Art School
-        </Typography>
-      </div>
-    </Toolbar.FlexibleSpace>
-  )
-);
-
 export default function Demo(props) {
   // #FOLD_BLOCK
   const [data, setData] = useState(appointments);
+  const [eventFormIsOpen, setEventFormIsOpen] = useState(false);
+  // const [editingAppointment, setEditingAppointment] = useState(undefined);
 
   // #FOLD_BLOCK
   const commitChanges = ({ added, changed, deleted }) => {
@@ -129,6 +61,22 @@ export default function Demo(props) {
     setData(currentData);
   };
 
+  const toggleEventForm = () => {
+    setEventFormIsOpen(!eventFormIsOpen);
+  };
+
+  const FlexibleSpace = ({ ...restProps }) => (
+    <Toolbar.FlexibleSpace {...restProps} style={{ flex: 'none' }}>
+      {console.log({ ...restProps })}
+      <div
+        style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}
+      >
+        <Button variant="contained" color="primary" onClick={toggleEventForm}>
+          New Event
+        </Button>
+      </div>
+    </Toolbar.FlexibleSpace>
+  );
   return (
     <Paper>
       <Scheduler data={data}>
@@ -143,12 +91,20 @@ export default function Demo(props) {
         <Appointments />
         <Resources data={resources} />
 
-        <Toolbar flexibleSpaceComponent={FlexibleSpace} />
+        <Toolbar
+          toggleEventForm={toggleEventForm}
+          flexibleSpaceComponent={FlexibleSpace}
+        />
         <DateNavigator />
 
         <EditRecurrenceMenu />
         <AppointmentTooltip showCloseButton showDeleteButton showOpenButton />
-        <AppointmentForm />
+        <AppointmentForm
+        // overlayComponent={appointmentForm}
+        // appointmentData={editingAppointment}
+        // visible={eventFormIsOpen}
+        // onVisibilityChange={toggleEditingFormVisibility}
+        />
         <DragDropProvider />
       </Scheduler>
     </Paper>
