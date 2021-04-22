@@ -1,12 +1,23 @@
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { getUserData } from '../actions/userActions';
 import { Route, Redirect } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
-function PrivateRoute({ authenticatedUser, component: Component, ...rest }) {
+function PrivateRoute({ getUserData, user, component: Component, ...rest }) {
+  const authToken = Cookies.get('authToken');
+  const noUserData = Object.keys(user).length === 0;
+  useEffect(() => {
+    if (noUserData) {
+      console.log('noUserData');
+      getUserData();
+    }
+  }, []);
   return (
     <Route
       {...rest}
       render={(props) =>
-        !!authenticatedUser ? (
+        !!authToken ? (
           <Component {...rest} {...props} />
         ) : (
           <Redirect
@@ -23,4 +34,13 @@ function PrivateRoute({ authenticatedUser, component: Component, ...rest }) {
   );
 }
 
-export default connect((state) => ({ ...state.account }))(PrivateRoute);
+const mapStateToProps = ({ user }) => {
+  return { user };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getUserData: () => dispatch(getUserData()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PrivateRoute);

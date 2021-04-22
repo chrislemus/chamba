@@ -12,6 +12,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import AppDrawer from './AppDrawer';
+import { logout } from '../../actions/userActions';
 
 import { connect } from 'react-redux';
 
@@ -41,7 +42,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function AccountNavBar(props) {
-  console.log(props);
+  // console.log(props);
+  const noUserData = Object.keys(props.user).length === 0;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -141,7 +143,7 @@ function AccountNavBar(props) {
             color="primary"
             noWrap
           >
-            Service Field CRM
+            Service Field CRM {noUserData && '!!!LOADER UI FOR NO USER DATA!!!'}
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
@@ -184,6 +186,6 @@ const mapStateToProps = (state) => {
   return { ...state };
 };
 const mapDispatchToProps = (dispatch) => {
-  return { logout: () => dispatch({ type: 'LOGOUT' }) };
+  return { logout: () => dispatch(logout()) };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(AccountNavBar);

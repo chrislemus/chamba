@@ -6,7 +6,7 @@ import Login from './pages/Login';
 import Overview from './pages/Overview';
 import MainLayout from './Layout/MainLayout';
 
-function App() {
+export default function App() {
   return (
     <Router>
       <MainLayout>
@@ -17,5 +17,3 @@ function App() {
     </Router>
   );
 }
-
-export default App;

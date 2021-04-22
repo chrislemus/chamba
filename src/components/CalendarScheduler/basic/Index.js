@@ -135,7 +135,6 @@ const CalendarScheduler = (props) => {
 
   const FlexibleSpace = ({ ...restProps }) => (
     <Toolbar.FlexibleSpace {...restProps} style={{ flex: 'none' }}>
-      {console.log({ ...restProps })}
       <div
         style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}
       >

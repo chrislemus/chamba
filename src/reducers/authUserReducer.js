@@ -3,7 +3,7 @@ const initialState = {
   fetching: false,
   errors: [],
 };
-export default function userReducer(state = initialState, action) {
+export default function authUserReducer(state = initialState, action) {
   switch (action.type) {
     case 'AUTH_USER_REQUEST':
       return {

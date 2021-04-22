@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -31,7 +31,12 @@ function Login({ user, authUser, logIn }) {
   const classes = useStyles();
 
   useEffect(() => {
-    if (!!user.user) history.push('/overview');
+    if (!!user) {
+      console.log('LOGGED IN');
+    } else {
+      console.log('NO USER');
+    }
+    // if (!!user) history.push('/overview');
   }, [user]);
 
   const handleSubmit = (e) => {
