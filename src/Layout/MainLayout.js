@@ -17,10 +17,6 @@ const theme = createMuiTheme({
 });
 
 function MainLayout(props) {
-  // console.log(props);
-  // useEffect(() => {
-  //   console.log('main layout use ffect');
-  // });
   const navigationBar = !!authUserToken() ? (
     <AccountNavBar />
   ) : (

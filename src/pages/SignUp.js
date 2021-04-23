@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { login } from '../actions/userActions';
 import { authUserToken } from '../actions/userActions';
 
-function Login({ authUser, logIn, history }) {
+function SignUp({ user, authUser, logIn, history }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   function authUserRedirect() {
@@ -25,7 +25,7 @@ function Login({ authUser, logIn, history }) {
         noValidate
         onSubmit={handleSubmit}
       >
-        <h1 className="title">Log In</h1>
+        <h1 className="title">Sign Up</h1>
         <ul className="has-text-danger mb-5">
           {authUser.errors.map((error, idx) => (
             <li key={`auth-error-${idx}`}>{error}</li>
@@ -75,4 +75,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

@@ -1,0 +1,6 @@
+// Set your brand colors
+$purple: #3f51b5;
+
+// Update Bulma's global variables
+$primary: $purple;
+@import '../../../node_modules/bulma/bulma.sass';
