@@ -13,6 +13,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import AppDrawer from './AppDrawer';
 import { logout } from '../../actions/userActions';
+import { useHistory } from 'react-router-dom';
 
 import { connect } from 'react-redux';
 
@@ -42,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function AccountNavBar(props) {
-  // console.log(props);
   const noUserData = Object.keys(props.user).length === 0;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -51,6 +51,12 @@ function AccountNavBar(props) {
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const history = useHistory();
+
+  const handleLogout = () => {
+    props.logout();
+    history.go('/login');
+  };
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -82,7 +88,7 @@ function AccountNavBar(props) {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      <MenuItem onClick={props.logout}>Log Out</MenuItem>
+      <MenuItem onClick={handleLogout}>Log Out</MenuItem>
     </Menu>
   );
 

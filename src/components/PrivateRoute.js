@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getUserData } from '../actions/userActions';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Redirect } from 'react-router';
 import Cookies from 'js-cookie';
 
 function PrivateRoute({ getUserData, user, component: Component, ...rest }) {

@@ -2,7 +2,10 @@ import axios from 'axios';
 import { apiUrl, apiAuthHeader } from '../helpers/api';
 import Cookies from 'js-cookie';
 
-export const login = (user) => {
+export const authUserToken = () => Cookies.get('authToken');
+
+export const login = (user, authUserRedirect) => {
+  console.log(authUserRedirect);
   return (dispatch) => {
     dispatch({ type: 'AUTH_USER_REQUEST' });
     axios
@@ -15,6 +18,8 @@ export const login = (user) => {
           secure: true,
         };
         Cookies.set('authToken', JSON.stringify(data.token), cookieOptions);
+
+        authUserRedirect();
       })
       .catch((error) => {
         console.log(error);
@@ -29,7 +34,7 @@ export const getUserData = () => {
     const header = apiAuthHeader();
 
     axios
-      .get(apiUrl + '/profile', { headerss: { ...header } })
+      .get(apiUrl + '/profile', { headers: { ...header } })
       .then(({ data }) => {
         dispatch({ type: 'AUTH_USER_SUCCESS' });
         dispatch({ type: 'USER_ADD_USER', payload: { user: data.user } });

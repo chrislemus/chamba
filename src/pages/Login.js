@@ -10,7 +10,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { login } from '../actions/userActions';
-import { useHistory } from 'react-router-dom';
+import { authUserToken } from '../actions/userActions';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,24 +24,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Login({ user, authUser, logIn }) {
+function Login({ user, authUser, logIn, history }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const history = useHistory();
   const classes = useStyles();
-
-  useEffect(() => {
-    if (!!user) {
-      console.log('LOGGED IN');
-    } else {
-      console.log('NO USER');
-    }
-    // if (!!user) history.push('/overview');
-  }, [user]);
+  // console.log(history);
+  function authUserRedirect() {
+    history.push('/overview');
+  }
+  if (!!authUserToken()) authUserRedirect();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    logIn({ email, password });
+    const user = { email, password };
+    logIn(user, authUserRedirect);
   };
 
   const displayAuthErrors = () => {
@@ -96,7 +92,9 @@ const mapStateToProps = (state) => {
   };
 };
 const mapDispatchToProps = (dispatch) => {
-  return { logIn: (user) => dispatch(login(user)) };
+  return {
+    logIn: (user, authUserRedirect) => dispatch(login(user, authUserRedirect)),
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
