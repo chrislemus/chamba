@@ -6,7 +6,7 @@ import Recurring from '../components/CalendarScheduler/featured/Index';
 const Overview = () => {
   return (
     <div style={{ marginBottom: '200px' }}>
-      <h1>Overview</h1>
+      <h1 className="title">Overview</h1>
       <div className="info-box">
         <div className="info-box-header">
           <span>Title</span>

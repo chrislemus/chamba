@@ -7,7 +7,8 @@ import { apiFetchErrors } from '../helpers/api';
 export const authUserToken = () => Cookies.get('authToken');
 //Shared functions
 
-//converts object keys from camelCase to snake_case
+// converts object keys from camelCase to snake_case
+// API will soon accept camelCase, Rails API will be substituted using JS
 function toSnakeCase(o) {
   var newO, origKey, newKey, value;
   if (o instanceof Array) {

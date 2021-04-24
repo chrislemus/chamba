@@ -37,9 +37,6 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
-  appBar: {
-    background: '#fff',
-  },
 }));
 
 function AccountNavBar(props) {
@@ -127,7 +124,7 @@ function AccountNavBar(props) {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="static" className={classes.appBar}>
+      <AppBar position="static" className="mb-6" style={{ background: '#fff' }}>
         <AppDrawer
           isDrawerOpen={isDrawerOpen}
           setIsDrawerOpen={setIsDrawerOpen}

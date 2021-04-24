@@ -4,6 +4,9 @@ $purple: #3f51b5;
 // Update Bulma's global variables
 $primary: $purple;
 
+@import '../../../node_modules/bulma/bulma.sass';
+// @import './quickview.sass';
+
 input:invalid {
   border-color: $danger !important;
   & + .invalid-help-text {
@@ -15,4 +18,68 @@ input {
     display: none;
   }
 }
-@import '../../../node_modules/bulma/bulma.sass';
+
+//quickview
+
+// .quickview {
+//   display: flex;
+//   flex-direction: column;
+//   background-color: $white;
+//   max-width: calc(100% - 50px);
+//   &.is-marginless {
+//     max-width: 100%;
+//   }
+//   position: fixed;
+//   top: 0;
+//   bottom: 0;
+//   z-index: $quickview-z;
+//   transform: translateZ(0);
+//   transition: 0.3s ease;
+//   backface-visibility: hidden;
+//   perspective: 1000;
+//   will-change: transform;
+//   + mobile {
+//     width: 100%;
+//     right: -100%;
+//   }
+//   + table {
+//     width: 50%;
+//     right: -50%;
+//   }
+//   + desktop {
+//     width: 35%;
+//     right: -35%;
+//   }
+//   + widescreen {
+//     width: 30%;
+//     right: -30%;
+//   }
+//   + fullhd {
+//     width: 25%;
+//     right: -25%;
+//   }
+//   &.is-left {
+//     + mobile {
+//       left: -100%;
+//     }
+//     + tablet {
+//       left: -50%;
+//     }
+//     + desktop {
+//       left: -35%;
+//     }
+//     + widescreen {
+//       left: -30%;
+//     }
+//     + fullhd {
+//       left: -25%;
+//     }
+//   }
+//   &.is-active {
+//     right: 0;
+//     box-shadow: $quickview-shadow;
+//     &.is-left {
+//       left: 0;
+//     }
+//   }
+// }

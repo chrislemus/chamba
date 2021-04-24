@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getUserData } from '../actions/userActions';
 import { Route, Redirect } from 'react-router';
