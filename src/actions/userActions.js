@@ -5,7 +5,6 @@ import Cookies from 'js-cookie';
 export const authUserToken = () => Cookies.get('authToken');
 
 export const login = (user, authUserRedirect) => {
-  console.log(authUserRedirect);
   return (dispatch) => {
     dispatch({ type: 'AUTH_USER_REQUEST' });
     axios
@@ -22,10 +21,42 @@ export const login = (user, authUserRedirect) => {
         authUserRedirect();
       })
       .catch((error) => {
-        console.log(error);
-        const errors = error?.response?.data?.errors;
-        if (errors)
-          dispatch({ type: 'AUTH_USER_FAILURE', payload: { errors } });
+        let errors = error?.response?.data?.errors;
+        if (!errors)
+          errors = [
+            'There were some issues login in, please try again at a later time',
+          ];
+        dispatch({ type: 'AUTH_USER_FAILURE', payload: { errors } });
+      });
+  };
+};
+export const signUp = (user, authUserRedirect) => {
+  console.log('action triggered');
+  return (dispatch) => {
+    console.log('action return before request');
+    dispatch({ type: 'AUTH_USER_REQUEST' });
+    axios
+      .post(apiUrl + '/users', { user })
+      .then(({ data }) => {
+        console.log('action success');
+        dispatch({ type: 'AUTH_USER_SUCCESS' });
+        dispatch({ type: 'USER_ADD_USER', payload: { user: data.user } });
+        const cookieOptions = {
+          expires: 1,
+          secure: true,
+        };
+        Cookies.set('authToken', JSON.stringify(data.token), cookieOptions);
+
+        authUserRedirect();
+      })
+      .catch((error) => {
+        console.log('action fail');
+        let errors = error?.response?.data?.errors;
+        if (!errors)
+          errors = [
+            'There were some issues login in, please try again at a later time',
+          ];
+        dispatch({ type: 'AUTH_USER_FAILURE', payload: { errors } });
       });
   };
 };

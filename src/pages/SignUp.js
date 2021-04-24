@@ -1,21 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { connect } from 'react-redux';
-import { login } from '../actions/userActions';
+import { signUp } from '../actions/userActions';
 import { authUserToken } from '../actions/userActions';
 
-function SignUp({ user, authUser, logIn, history }) {
+function SignUpPage({ user, authUser, signUp, history }) {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   function authUserRedirect() {
     history.push('/overview');
   }
 
   if (!!authUserToken()) authUserRedirect();
+  const validate = (input) => {
+    const validates = input.checkValidity();
+    if (validates) {
+      input.classList.remove('is-danger');
+    } else {
+      input.classList.add('is-danger');
+    }
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    const user = { email, password };
-    logIn(user, authUserRedirect);
+    // e.preventDefault();
+    // console.log(userData);
+    // signUp(user, authUserRedirect);
   };
 
   return (
@@ -26,11 +38,41 @@ function SignUp({ user, authUser, logIn, history }) {
         onSubmit={handleSubmit}
       >
         <h1 className="title">Sign Up</h1>
-        <ul className="has-text-danger mb-5">
-          {authUser.errors.map((error, idx) => (
-            <li key={`auth-error-${idx}`}>{error}</li>
-          ))}
-        </ul>
+        <div className="content">
+          <ul className="has-text-danger mb-5">
+            {authUser.errors.map((error, idx) => (
+              <li key={`auth-error-${idx}`}>{error}</li>
+            ))}
+          </ul>
+        </div>
+        <div class="field-body mb-3">
+          <div class="field">
+            <label class="label">First Name</label>
+            <div class="control">
+              <input
+                class="input invalid-style"
+                pattern="[a-zA-Z]{2,}"
+                name="firstName"
+                required
+                onChange={({ target }) => validate(target)}
+                onInvalid={() => console.log('INVALID_FIRST_NAME')}
+                type="text"
+              />
+            </div>
+            <p class="help is-danger">First name needed</p>
+          </div>
+          <div class="field">
+            <label class="label">Last Name</label>
+            <div class="control">
+              <input
+                class="input"
+                type="text"
+                name="lastName"
+                // onChange={({ target }) => setEmail(target.value)}
+              />
+            </div>
+          </div>
+        </div>
         <div class="field">
           <label class="label">Email</label>
           <div class="control">
@@ -52,12 +94,26 @@ function SignUp({ user, authUser, logIn, history }) {
             />
           </div>
         </div>
+        <div class="field">
+          <label class="label">Confirm Password</label>
+          <div class="control">
+            <input
+              class="input"
+              // onInvalid={() => console.log('INVALID_FIRST_NAME')}
+              // onChange={({ target }) => setPassword(target.value)}
+              type="password"
+            />
+          </div>
+        </div>
+        <a className="mb-3 is-block" href="/login">
+          already have an account? Log In
+        </a>
         <button
           className={`button is-primary ${authUser.fetching && 'is-loading'}`}
           disabled={authUser.fetching}
           type="submit"
         >
-          Log In
+          Sign Up
         </button>
       </form>
     </div>
@@ -71,8 +127,9 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    logIn: (user, authUserRedirect) => dispatch(login(user, authUserRedirect)),
+    signUp: (user, authUserRedirect) =>
+      dispatch(signUp(user, authUserRedirect)),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpPage);

@@ -26,11 +26,13 @@ function Login({ authUser, logIn, history }) {
         onSubmit={handleSubmit}
       >
         <h1 className="title">Log In</h1>
-        <ul className="has-text-danger mb-5">
-          {authUser.errors.map((error, idx) => (
-            <li key={`auth-error-${idx}`}>{error}</li>
-          ))}
-        </ul>
+        <div className="content">
+          <ul className="has-text-danger mb-5">
+            {authUser.errors.map((error, idx) => (
+              <li key={`auth-error-${idx}`}>{error}</li>
+            ))}
+          </ul>
+        </div>
         <div class="field">
           <label class="label">Email</label>
           <div class="control">
@@ -52,6 +54,9 @@ function Login({ authUser, logIn, history }) {
             />
           </div>
         </div>
+        <a className="mb-3 is-block" href="/signup">
+          Don't have an account? Sign Up
+        </a>
         <button
           className={`button is-primary ${authUser.fetching && 'is-loading'}`}
           disabled={authUser.fetching}

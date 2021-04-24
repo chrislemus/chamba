@@ -8,13 +8,13 @@ import { ThemeProvider } from '@material-ui/styles';
 import { indigo } from '@material-ui/core/colors';
 import { authUserToken } from '../actions/userActions';
 import { connect } from 'react-redux';
-const theme = createMuiTheme({
-  palette: {
-    primary: indigo,
-    secondary: indigo,
-    primaryBackground: '#fff',
-  },
-});
+// const theme = createMuiTheme({
+//   palette: {
+//     primary: indigo,
+//     secondary: indigo,
+//     primaryBackground: '#fff',
+//   },
+// });
 
 function MainLayout(props) {
   const navigationBar = !!authUserToken() ? (
@@ -24,12 +24,12 @@ function MainLayout(props) {
   );
   return (
     <div style={{ background: 'rgb(248, 248, 248)', minHeight: '100vh' }}>
-      <ThemeProvider theme={theme}>
-        <Alert />
-        {navigationBar}
+      {/* <ThemeProvider theme={theme}> */}
+      <Alert />
+      {navigationBar}
 
-        <Container>{props.children}</Container>
-      </ThemeProvider>
+      <Container>{props.children}</Container>
+      {/* </ThemeProvider> */}
     </div>
     //{' '}
   );
