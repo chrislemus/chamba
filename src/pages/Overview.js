@@ -1,4 +1,5 @@
-import React from 'react';
+// import React from 'react';
+import Cookies from 'js-cookie';
 
 import CalendarScheduler from '../components/CalendarScheduler/basic/Index';
 import Recurring from '../components/CalendarScheduler/featured/Index';

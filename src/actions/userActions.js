@@ -1,13 +1,12 @@
 import axios from 'axios';
 import { apiUrl, apiAuthHeader } from '../helpers/api';
 import Cookies from 'js-cookie';
+import { apiFetchErrors } from '../helpers/api';
 
 //Shared variables
 export const authUserToken = () => Cookies.get('authToken');
 //Shared functions
-const defaultFaultFetchError = [
-  'There were some issues login in, please try again at a later time',
-];
+
 //converts object keys from camelCase to snake_case
 function toSnakeCase(o) {
   var newO, origKey, newKey, value;
@@ -46,7 +45,10 @@ export const login = (user, authUserRedirect) => {
     axios
       .post(apiUrl + '/login', { user })
       .then(({ data }) => {
-        dispatch({ type: 'AUTH_USER_SUCCESS' });
+        dispatch({
+          type: 'AUTH_USER_SUCCESS',
+          token: JSON.stringify(data.token),
+        });
         dispatch({ type: 'USER_ADD_USER', payload: { user: data.user } });
         const cookieOptions = {
           expires: 1,
@@ -57,7 +59,7 @@ export const login = (user, authUserRedirect) => {
         authUserRedirect();
       })
       .catch((error) => {
-        const errors = error?.response?.data?.errors || defaultFaultFetchError;
+        const errors = apiFetchErrors(error);
         dispatch({ type: 'AUTH_USER_FAILURE', payload: { errors } });
       });
   };
@@ -73,7 +75,6 @@ export const signUp = (user, authUserRedirect) => {
         dispatch({ type: 'AUTH_USER_SUCCESS' });
         dispatch({ type: 'USER_ADD_USER', payload: { user: data.user } });
         const cookieOptions = {
-          expires: 1,
           secure: true,
         };
         Cookies.set('authToken', JSON.stringify(data.token), cookieOptions);
@@ -81,7 +82,7 @@ export const signUp = (user, authUserRedirect) => {
         authUserRedirect();
       })
       .catch((error) => {
-        const errors = error?.response?.data?.errors || defaultFaultFetchError;
+        const errors = apiFetchErrors(error);
         dispatch({ type: 'AUTH_USER_FAILURE', payload: { errors } });
       });
   };
@@ -96,19 +97,14 @@ export const getUserData = () => {
         dispatch({ type: 'USER_ADD_USER', payload: { user: data.user } });
       })
       .catch((error) => {
-        console.log(error);
-        const errors = error?.response?.data?.errors;
-        if (errors) {
-          const message = errors.join(', ');
-          dispatch({ type: 'ALERT_DANGER', payload: { message } });
-        }
+        const errors = apiFetchErrors(error);
+        dispatch({ type: 'AUTH_USER_FAILURE', payload: { errors } });
       });
   };
 };
 
 export const logout = () => {
   return (dispatch) => {
-    console.log('logout triggered!');
     Cookies.remove('authToken');
     dispatch({ type: 'USER_LOGOUT' });
   };

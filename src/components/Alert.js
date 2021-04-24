@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { clearAlerts } from '../actions/alertActions';
 
 function Alert({ alert, clearAlerts }) {
-  console.log(alert, clearAlerts);
   const message = alert?.message;
   if (message) {
     return (

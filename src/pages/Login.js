@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { login } from '../actions/userActions';
 import { authUserToken } from '../actions/userActions';
-
 function Login({ authUser, logIn, history }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
