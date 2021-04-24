@@ -1,33 +1,44 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { signUp } from '../actions/userActions';
 import { authUserToken } from '../actions/userActions';
 
-function SignUpPage({ user, authUser, signUp, history }) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [confirmEmail, setConfirmEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+function SignUpPage({ authUser, signUp, history }) {
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const firstName = useRef(null);
+  const lastName = useRef(null);
+  const email = useRef(null);
+  const emailConfirmation = useRef(null);
+  const password = useRef(null);
+  const passwordConfirmation = useRef(null);
+
   function authUserRedirect() {
     history.push('/overview');
   }
 
   if (!!authUserToken()) authUserRedirect();
-  const validate = (input) => {
-    const validates = input.checkValidity();
-    if (validates) {
-      input.classList.remove('is-danger');
-    } else {
-      input.classList.add('is-danger');
-    }
+
+  const updateConfirmInputPattern = (event, reference) => {
+    const valueToMatch = event.target.value;
+    reference.current.pattern = `^${valueToMatch}$`;
   };
 
+  function refValue(ref) {
+    return ref.current.value;
+  }
+
   const handleSubmit = (e) => {
-    // e.preventDefault();
-    // console.log(userData);
-    // signUp(user, authUserRedirect);
+    e.preventDefault();
+    const user = {
+      firstName: refValue(firstName),
+      lastName: refValue(lastName),
+      email: refValue(email),
+      emailConfirmation: refValue(emailConfirmation),
+      password: refValue(password),
+      passwordConfirmation: refValue(passwordConfirmation),
+    };
+    setFormSubmitted(true);
+    signUp(user, authUserRedirect);
   };
 
   return (
@@ -45,65 +56,73 @@ function SignUpPage({ user, authUser, signUp, history }) {
             ))}
           </ul>
         </div>
-        <div class="field-body mb-3">
-          <div class="field">
-            <label class="label">First Name</label>
-            <div class="control">
-              <input
-                class="input invalid-style"
-                pattern="[a-zA-Z]{2,}"
-                name="firstName"
-                required
-                onChange={({ target }) => validate(target)}
-                onInvalid={() => console.log('INVALID_FIRST_NAME')}
-                type="text"
-              />
-            </div>
-            <p class="help is-danger">First name needed</p>
+        <div className="field-body mb-3">
+          <div className="field">
+            <label className="label">First Name</label>
+            <input className="input" required={formSubmitted} ref={firstName} />
           </div>
-          <div class="field">
-            <label class="label">Last Name</label>
-            <div class="control">
-              <input
-                class="input"
-                type="text"
-                name="lastName"
-                // onChange={({ target }) => setEmail(target.value)}
-              />
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">Email</label>
-          <div class="control">
+          <div className="field">
+            <label className="label">Last Name</label>
             <input
-              class="input"
-              type="email"
-              onChange={({ target }) => setEmail(target.value)}
-              placeholder="e.g. alexsmith@gmail.com"
+              required={formSubmitted}
+              className="input"
+              type="text"
+              name="lastName"
+              ref={lastName}
             />
           </div>
         </div>
-        <div class="field">
-          <label class="label">Password</label>
-          <div class="control">
-            <input
-              class="input"
-              onChange={({ target }) => setPassword(target.value)}
-              type="password"
-            />
-          </div>
+        <div className="field">
+          <label className="label">Email</label>
+          <input
+            className="input"
+            type="email"
+            required={formSubmitted}
+            ref={email}
+            onChange={(event) =>
+              updateConfirmInputPattern(event, emailConfirmation)
+            }
+            placeholder="e.g. alexsmith@gmail.com"
+          />
+          <p className="help is-danger invalid-help-text">
+            please enter valid email
+          </p>
         </div>
-        <div class="field">
-          <label class="label">Confirm Password</label>
-          <div class="control">
-            <input
-              class="input"
-              // onInvalid={() => console.log('INVALID_FIRST_NAME')}
-              // onChange={({ target }) => setPassword(target.value)}
-              type="password"
-            />
-          </div>
+        <div className="field">
+          <label className="label">Confirm Email</label>
+          <input
+            className="input"
+            required={formSubmitted}
+            ref={emailConfirmation}
+          />
+          <p className="help is-danger invalid-help-text">email mismatch</p>
+        </div>
+        <div className="field">
+          <label className="label">Password</label>
+          <input
+            className="input"
+            ref={password}
+            required={formSubmitted}
+            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$"
+            type="password"
+            onChange={(event) =>
+              updateConfirmInputPattern(event, passwordConfirmation)
+            }
+          />
+          <p className="help is-danger invalid-help-text">
+            password must contain minimum eight characters, at least one
+            uppercase letter, one lowercase letter and one number
+          </p>
+        </div>
+        <div className="field">
+          <label className="label">Confirm Password</label>
+          <input
+            className="input"
+            required={formSubmitted}
+            ref={passwordConfirmation}
+            type="password"
+          />
+          <p className="help is-danger invalid-help-text">password mismatch</p>
         </div>
         <a className="mb-3 is-block" href="/login">
           already have an account? Log In
@@ -121,7 +140,6 @@ function SignUpPage({ user, authUser, signUp, history }) {
 }
 const mapStateToProps = (state) => {
   return {
-    user: state.user,
     authUser: state.authUser,
   };
 };

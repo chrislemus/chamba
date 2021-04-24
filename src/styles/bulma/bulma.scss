@@ -4,8 +4,15 @@ $purple: #3f51b5;
 // Update Bulma's global variables
 $primary: $purple;
 
-//custom
-// .invalid-style input:invalid {
-//   background-color: red' !important;
-// }
+input:invalid {
+  border-color: $danger !important;
+  & + .invalid-help-text {
+    display: block;
+  }
+}
+input {
+  & + .invalid-help-text {
+    display: none;
+  }
+}
 @import '../../../node_modules/bulma/bulma.sass';

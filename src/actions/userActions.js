@@ -2,7 +2,43 @@ import axios from 'axios';
 import { apiUrl, apiAuthHeader } from '../helpers/api';
 import Cookies from 'js-cookie';
 
+//Shared variables
 export const authUserToken = () => Cookies.get('authToken');
+//Shared functions
+const defaultFaultFetchError = [
+  'There were some issues login in, please try again at a later time',
+];
+//converts object keys from camelCase to snake_case
+function toSnakeCase(o) {
+  var newO, origKey, newKey, value;
+  if (o instanceof Array) {
+    return o.map(function (value) {
+      if (typeof value === 'object') {
+        value = toSnakeCase(value);
+      }
+      return value;
+    });
+  } else {
+    newO = {};
+    for (origKey in o) {
+      if (o.hasOwnProperty(origKey)) {
+        newKey = origKey.replace(
+          /[A-Z]/g,
+          (letter) => `_${letter.toLowerCase()}`
+        );
+        value = o[origKey];
+        if (
+          value instanceof Array ||
+          (value !== null && value.constructor === Object)
+        ) {
+          value = toSnakeCase(value);
+        }
+        newO[newKey] = value;
+      }
+    }
+  }
+  return newO;
+}
 
 export const login = (user, authUserRedirect) => {
   return (dispatch) => {
@@ -21,11 +57,7 @@ export const login = (user, authUserRedirect) => {
         authUserRedirect();
       })
       .catch((error) => {
-        let errors = error?.response?.data?.errors;
-        if (!errors)
-          errors = [
-            'There were some issues login in, please try again at a later time',
-          ];
+        const errors = error?.response?.data?.errors || defaultFaultFetchError;
         dispatch({ type: 'AUTH_USER_FAILURE', payload: { errors } });
       });
   };
@@ -33,10 +65,9 @@ export const login = (user, authUserRedirect) => {
 export const signUp = (user, authUserRedirect) => {
   console.log('action triggered');
   return (dispatch) => {
-    console.log('action return before request');
     dispatch({ type: 'AUTH_USER_REQUEST' });
     axios
-      .post(apiUrl + '/users', { user })
+      .post(apiUrl + '/users', { user: toSnakeCase(user) })
       .then(({ data }) => {
         console.log('action success');
         dispatch({ type: 'AUTH_USER_SUCCESS' });
@@ -50,12 +81,7 @@ export const signUp = (user, authUserRedirect) => {
         authUserRedirect();
       })
       .catch((error) => {
-        console.log('action fail');
-        let errors = error?.response?.data?.errors;
-        if (!errors)
-          errors = [
-            'There were some issues login in, please try again at a later time',
-          ];
+        const errors = error?.response?.data?.errors || defaultFaultFetchError;
         dispatch({ type: 'AUTH_USER_FAILURE', payload: { errors } });
       });
   };
@@ -63,7 +89,6 @@ export const signUp = (user, authUserRedirect) => {
 export const getUserData = () => {
   return (dispatch) => {
     const header = apiAuthHeader();
-
     axios
       .get(apiUrl + '/profile', { headers: { ...header } })
       .then(({ data }) => {
