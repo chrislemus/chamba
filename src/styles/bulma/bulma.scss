@@ -4,8 +4,20 @@ $purple: #3f51b5;
 // Update Bulma's global variables
 $primary: $purple;
 
-@import '../../../node_modules/bulma/bulma.sass';
-// @import './quickview.sass';
+@import '../../../node_modules/bulma/sass/utilities/_all.sass';
+$button-ghost-hover-decoration: none;
+$button-ghost-color: $primary;
+$button-ghost-hover-color: $primary;
+.button.is-ghost:hover {
+  background: $primary-light;
+}
+@import '../../../node_modules/bulma/sass/base/_all.sass';
+@import '../../../node_modules/bulma/sass/layout/_all.sass';
+@import '../../../node_modules/bulma/sass/helpers/_all.sass';
+@import '../../../node_modules/bulma/sass/grid/_all.sass';
+@import '../../../node_modules/bulma/sass/form/';
+@import '../../../node_modules/bulma/sass/elements/_all.sass';
+@import '../../../node_modules/bulma/sass/components/_all.sass';
 
 input:invalid {
   border-color: $danger !important;
@@ -18,6 +30,14 @@ input {
     display: none;
   }
 }
+
+// .button.is-ghost:hover,
+// .button.is-ghost.is-hovered {
+//   text-decoration: none;
+// }
+// .ghost-hover-bg:hover {
+//   background: $primary-light;
+// }
 
 //quickview
 

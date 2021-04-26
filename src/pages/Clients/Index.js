@@ -1,74 +1,106 @@
+import { Link } from 'react-router-dom';
+
 export default function Clients(params) {
   return (
     <div>
       <h1 className="title is-4">Clients</h1>
-      <div className="card">
-        <header class="card-header is-shadowless	">
-          <p class="card-header-title">Card header</p>
-          <button class="card-header-icon" aria-label="more options">
-            <span class="icon">
-              <i class="fas fa-angle-down" aria-hidden="true"></i>
-            </span>
-          </button>
+
+      <div className="card is-fullwidth">
+        <header className="card-header-block is-shadowless	pt-4 px-5">
+          <div className="field">
+            <p className="control has-icons-left has-icons-right is-loading">
+              <input
+                className="input"
+                type="text"
+                placeholder="Search clients"
+              />
+              <span className="icon is-small is-left">
+                <i className="fas fa-search"></i>
+              </span>
+            </p>
+          </div>
         </header>
-        <div class="card-content">
-          <div class="table-container">
-            <table class="table">
-              {/* <thead> */}
-              <tr>
-                <th>
-                  <span class="icon-text has-text-grey	">
-                    <span class="icon">
-                      <i class="far fa-square"></i>
+        <div className="card-content  ">
+          <div className="table-container is-fullwidth">
+            <table className="table is-hoverable is-fullwidth">
+              <thead>
+                <tr>
+                  <th>
+                    <span className="icon has-text-grey">
+                      <i className="far fa-square"></i>
                     </span>
-                  </span>
-                </th>
-                <th className="has-text-grey">Name</th>
-                <th className="has-text-grey">Qualification or relegation</th>
-              </tr>
-              {/* </thead> */}
+                  </th>
+                  <th>Name</th>
+                  <th className="is-hidden-mobile">Email</th>
+                  <th className="is-hidden-mobile">Phone</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
 
               <tbody>
                 <tr>
-                  <th>1</th>
                   <td>
-                    <a
-                      href="https://en.wikipedia.org/wiki/Leicester_City_F.C."
-                      title="Leicester City F.C."
-                    >
-                      Leicester City
-                    </a>{' '}
-                    <strong>(C)</strong>
+                    <span className="icon has-text-grey">
+                      <i className="far fa-square"></i>
+                    </span>
                   </td>
                   <td>
-                    Qualification for the{' '}
-                    <a
-                      href="https://en.wikipedia.org/wiki/2016%E2%80%9317_UEFA_Champions_League#Group_stage"
-                      title="2016–17 UEFA Champions League"
-                    >
-                      Champions League group stage
-                    </a>
+                    <div className="columns level">
+                      <div className="column is-narrow">
+                        <p className="image is-32x32">
+                          <img
+                            className="is-rounded"
+                            src="https://bulma.io/images/placeholders/128x128.png"
+                          />
+                        </p>
+                      </div>
+                      <div className="column">
+                        <Link href="/clients/1">Mike Tyson</Link>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="is-hidden-mobile">
+                    <Link href="mailto:mike@me.com">mike@me.com</Link>
+                  </td>
+                  <td className="is-hidden-mobile">(919)995-9906</td>
+                  <td>
+                    <Link to="/clients/1/edit" className="button is-ghost  ">
+                      <span className="icon ">
+                        <i className="fas fa-edit"></i>
+                      </span>
+                    </Link>
+                    <Link to="/clients/1" className="button is-ghost ">
+                      <span className="icon">
+                        <i className="fas fa-arrow-right"></i>
+                      </span>
+                    </Link>
                   </td>
                 </tr>
                 <tr>
-                  <th>2</th>
                   <td>
-                    <a
-                      href="https://en.wikipedia.org/wiki/Arsenal_F.C."
-                      title="Arsenal F.C."
-                    >
-                      Arsenal
-                    </a>
+                    <span className="icon has-text-grey">
+                      <i className="far fa-square"></i>
+                    </span>
+                  </td>
+                  <td>
+                    <Link href="/clients/1">Rob Dyrdek</Link>
                   </td>
 
+                  <td className="is-hidden-mobile">
+                    <Link href="mailto:robdyrdek@me.com">mike@me.com</Link>
+                  </td>
+                  <td className="is-hidden-mobile">(919)995-9906</td>
                   <td>
-                    Qualification for the{' '}
-                    <a
-                      href="https://en.wikipedia.org/wiki/2016%E2%80%9317_UEFA_Champions_League#Group_stage"
-                      title="2016–17 UEFA Champions League"
-                    >
-                      Champions League group stage
-                    </a>
+                    <Link to="/clients/1/edit" className="button is-ghost  ">
+                      <span className="icon ">
+                        <i className="fas fa-edit"></i>
+                      </span>
+                    </Link>
+                    <Link to="/clients/1" className="button is-ghost ">
+                      <span className="icon">
+                        <i className="fas fa-arrow-right"></i>
+                      </span>
+                    </Link>
                   </td>
                 </tr>
               </tbody>
