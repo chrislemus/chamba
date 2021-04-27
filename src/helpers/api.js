@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import { version } from 'react-dom';
 import store from '../store';
 
 export const apiAuthHeader = () => {
@@ -12,7 +13,7 @@ export const apiAuthHeader = () => {
 
 export const apiFetchErrors = (error) => {
   const defaultFaultFetchError = [
-    'There were some issues login in, please try again at a later time',
+    "We've encountered some issues,  please try again at a later time",
   ];
   const errors = error?.response?.data?.errors || defaultFaultFetchError;
 

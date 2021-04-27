@@ -6,7 +6,7 @@ export default function Clients(params) {
       <h1 className="title is-4">Clients</h1>
 
       <div className="card is-fullwidth">
-        <header className="card-header-block is-shadowless	pt-4 px-5">
+        <header className="card-header is-shadowless	pt-4 px-5">
           <div className="field">
             <p className="control has-icons-left has-icons-right is-loading">
               <input

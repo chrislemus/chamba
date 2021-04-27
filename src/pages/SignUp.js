@@ -7,6 +7,7 @@ function SignUpPage({ authUser, signUp, history }) {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const firstName = useRef(null);
   const lastName = useRef(null);
+  const businessName = useRef(null);
   const email = useRef(null);
   const emailConfirmation = useRef(null);
   const password = useRef(null);
@@ -37,8 +38,12 @@ function SignUpPage({ authUser, signUp, history }) {
       password: refValue(password),
       passwordConfirmation: refValue(passwordConfirmation),
     };
+    user.businessName = refValue(businessName);
+    const userData = { user };
+    // if (refValue(businessName).length > 0)
+    console.log(userData);
     setFormSubmitted(true);
-    signUp(user, authUserRedirect);
+    signUp(userData, authUserRedirect);
   };
 
   return (
@@ -71,6 +76,16 @@ function SignUpPage({ authUser, signUp, history }) {
               ref={lastName}
             />
           </div>
+        </div>
+        <div className="field">
+          <label className="label">Business Name</label>
+          <input
+            required={formSubmitted}
+            className="input"
+            type="text"
+            name="businessName"
+            ref={businessName}
+          />
         </div>
         <div className="field">
           <label className="label">Email</label>

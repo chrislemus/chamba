@@ -65,20 +65,28 @@ export const login = (user, authUserRedirect) => {
       });
   };
 };
-export const signUp = (user, authUserRedirect) => {
+export const signUp = (userData, authUserRedirect) => {
   console.log('action triggered');
   return (dispatch) => {
     dispatch({ type: 'AUTH_USER_REQUEST' });
+    // const userData = { user: toSnakeCase(user) };
+    // if (businessName) {
+    //   userData.business = { name: businessName };
+    // }
+    // console.log(userData, );
+    userData = toSnakeCase(userData);
     axios
-      .post(apiUrl + '/users', { user: toSnakeCase(user) })
+      .post(apiUrl + '/users', { ...userData })
       .then(({ data }) => {
-        console.log('action success');
+        const user = data?.user;
+        const token = data?.token;
+        if (!user || !token) throw 'failed auth';
         dispatch({ type: 'AUTH_USER_SUCCESS' });
-        dispatch({ type: 'USER_ADD_USER', payload: { user: data.user } });
+        dispatch({ type: 'USER_ADD_USER', payload: { user } });
         const cookieOptions = {
           secure: true,
         };
-        Cookies.set('authToken', JSON.stringify(data.token), cookieOptions);
+        Cookies.set('authToken', JSON.stringify(token), cookieOptions);
 
         authUserRedirect();
       })
