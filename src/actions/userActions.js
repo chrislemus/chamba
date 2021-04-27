@@ -65,18 +65,13 @@ export const login = (user, authUserRedirect) => {
       });
   };
 };
-export const signUp = (userData, authUserRedirect) => {
+export const signUp = (user, authUserRedirect) => {
   console.log('action triggered');
   return (dispatch) => {
     dispatch({ type: 'AUTH_USER_REQUEST' });
-    // const userData = { user: toSnakeCase(user) };
-    // if (businessName) {
-    //   userData.business = { name: businessName };
-    // }
-    // console.log(userData, );
-    userData = toSnakeCase(userData);
+
     axios
-      .post(apiUrl + '/users', { ...userData })
+      .post(apiUrl + '/users', { user: toSnakeCase(user) })
       .then(({ data }) => {
         const user = data?.user;
         const token = data?.token;

@@ -33,17 +33,15 @@ function SignUpPage({ authUser, signUp, history }) {
     const user = {
       firstName: refValue(firstName),
       lastName: refValue(lastName),
+      businessName: refValue(businessName),
       email: refValue(email),
       emailConfirmation: refValue(emailConfirmation),
       password: refValue(password),
       passwordConfirmation: refValue(passwordConfirmation),
     };
-    user.businessName = refValue(businessName);
-    const userData = { user };
-    // if (refValue(businessName).length > 0)
-    console.log(userData);
+
     setFormSubmitted(true);
-    signUp(userData, authUserRedirect);
+    signUp(user, authUserRedirect);
   };
 
   return (
