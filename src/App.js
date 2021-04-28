@@ -12,6 +12,7 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Overview from './pages/Overview';
 import Clients from './pages/Clients/Index';
+import CreateClient from './pages/Clients/CreateClient';
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Route exact path="/" component={HomePage} />
           <PrivateRoute exact path="/overview" component={Overview} />
           <PrivateRoute exact path="/clients" component={Clients} />
+          <PrivateRoute exact path="/clients/new" component={CreateClient} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/signup" component={SignUp} />
         </Switch>

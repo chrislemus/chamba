@@ -46,11 +46,7 @@ function SignUpPage({ authUser, signUp, history }) {
 
   return (
     <div className="columns mt-6 mx-1">
-      <form
-        className="column box is-6 is-offset-3 p-5"
-        noValidate
-        onSubmit={handleSubmit}
-      >
+      <form className="column box is-6 is-offset-3 p-5" onSubmit={handleSubmit}>
         <h1 className="title">Sign Up</h1>
         <div className="content">
           <ul className="has-text-danger mb-5">
@@ -137,16 +133,18 @@ function SignUpPage({ authUser, signUp, history }) {
           />
           <p className="help is-danger invalid-help-text">password mismatch</p>
         </div>
-        <a className="mb-3 is-block" href="/login">
-          already have an account? Log In
-        </a>
         <button
-          className={`button is-primary ${authUser.fetching && 'is-loading'}`}
+          className={`button is-primary my-5 ${
+            authUser.fetching && 'is-loading'
+          }`}
           disabled={authUser.fetching}
           type="submit"
         >
           Sign Up
         </button>
+        <a className="mt-3 is-block" href="/login">
+          already have an account? Log In
+        </a>
       </form>
     </div>
   );

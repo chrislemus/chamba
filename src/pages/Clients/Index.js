@@ -2,8 +2,17 @@ import { Link } from 'react-router-dom';
 
 export default function Clients(params) {
   return (
-    <div>
-      <h1 className="title is-4">Clients</h1>
+    <>
+      <div className="columns is-mobile">
+        <div className="column">
+          <h1 className="title is-4">Clients</h1>
+        </div>
+        <div className="column is-narrow">
+          <Link to="/clients/new" className="button is-primary">
+            Add Client
+          </Link>
+        </div>
+      </div>
 
       <div className="card is-fullwidth">
         <header className="card-header is-shadowless	pt-4 px-5">
@@ -108,6 +117,6 @@ export default function Clients(params) {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

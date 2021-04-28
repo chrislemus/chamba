@@ -28,7 +28,7 @@ function MainLayout(props) {
       <Alert />
       {navigationBar}
 
-      <div className="container">{props.children}</div>
+      <div className="container px-3">{props.children}</div>
       {/* </ThemeProvider> */}
     </div>
     //{' '}

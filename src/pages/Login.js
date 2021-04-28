@@ -19,11 +19,7 @@ function Login({ authUser, logIn, history }) {
 
   return (
     <div className="columns mt-6 mx-1">
-      <form
-        className="column box is-6 is-offset-3 p-5"
-        noValidate
-        onSubmit={handleSubmit}
-      >
+      <form className="column box is-6 is-offset-3 p-5" onSubmit={handleSubmit}>
         <h1 className="title">Log In</h1>
         <div className="content">
           <ul className="has-text-danger mb-5">
@@ -53,16 +49,18 @@ function Login({ authUser, logIn, history }) {
             />
           </div>
         </div>
-        <a className="mb-3 is-block" href="/signup">
-          Don't have an account? Sign Up
-        </a>
         <button
-          className={`button is-primary ${authUser.fetching && 'is-loading'}`}
+          className={`button is-primary my-5 ${
+            authUser.fetching && 'is-loading'
+          }`}
           disabled={authUser.fetching}
           type="submit"
         >
           Log In
         </button>
+        <a className="mt-3 is-block" href="/signup">
+          Don't have an account? Sign Up
+        </a>
       </form>
     </div>
   );
