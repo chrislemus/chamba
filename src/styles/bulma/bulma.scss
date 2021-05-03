@@ -15,7 +15,7 @@ $button-ghost-hover-color: $primary;
 @import '../../../node_modules/bulma/sass/layout/_all.sass';
 @import '../../../node_modules/bulma/sass/helpers/_all.sass';
 @import '../../../node_modules/bulma/sass/grid/_all.sass';
-@import '../../../node_modules/bulma/sass/form/';
+@import '../../../node_modules/bulma/sass/form/_all.sass';
 @import '../../../node_modules/bulma/sass/elements/_all.sass';
 @import '../../../node_modules/bulma/sass/components/_all.sass';
 
@@ -28,6 +28,20 @@ input:invalid {
 input {
   & + .invalid-help-text {
     display: none;
+  }
+}
+
+.app-header {
+  @extend .columns;
+  &-left {
+    @extend .column;
+    & h1 {
+      @extend .title;
+    }
+  }
+  &-right {
+    @extend .column;
+    flex-grow: 0;
   }
 }
 

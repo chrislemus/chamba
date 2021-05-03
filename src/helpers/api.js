@@ -1,5 +1,4 @@
 import Cookies from 'js-cookie';
-import { version } from 'react-dom';
 import store from '../store';
 
 export const apiAuthHeader = () => {
@@ -21,7 +20,6 @@ export const apiFetchErrors = (error) => {
   if (errors.includes(loginRequired)) {
     Cookies.remove('authToken');
     store.dispatch({ type: 'USER_LOGOUT' });
-    console.log(store);
     // store.state.history.push('/login');
   }
   return errors;

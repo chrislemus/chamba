@@ -11,8 +11,8 @@ import HomePage from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Overview from './pages/Overview';
-import Clients from './pages/Clients/Index';
-import CreateClient from './pages/Clients/CreateClient';
+import Customers from './pages/Customers/Index';
+import NewCustomer from './pages/Customers/New';
 
 export default function App() {
   return (
@@ -21,8 +21,8 @@ export default function App() {
         <Switch>
           <Route exact path="/" component={HomePage} />
           <PrivateRoute exact path="/overview" component={Overview} />
-          <PrivateRoute exact path="/clients" component={Clients} />
-          <PrivateRoute exact path="/clients/new" component={CreateClient} />
+          <PrivateRoute exact path="/customers" component={Customers} />
+          <PrivateRoute exact path="/customers/new" component={NewCustomer} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/signup" component={SignUp} />
         </Switch>

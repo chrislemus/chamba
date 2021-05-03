@@ -30,12 +30,12 @@ export default function AppDrawer({ isDrawerOpen, setIsDrawerOpen }) {
         <p class="menu-label">Management</p>
         <ul class="menu-list">
           <li>
-            <Link to="/clients">
+            <Link to="/customers">
               <span class="icon-text has-text-grey	">
                 <span class="icon">
                   <i class="fas fa-user-friends"></i>
                 </span>
-                <span>Clients</span>
+                <span>Customers</span>
               </span>
             </Link>
           </li>

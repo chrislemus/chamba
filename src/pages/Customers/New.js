@@ -1,38 +1,105 @@
-export default function CreateClient(params) {
+import { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { apiAuthHeader, apiUrl } from '../../helpers/api';
+// import Form from './Form';
+
+export default function NewCustomer(params) {
+  const firstName = useRef('');
+  const lastName = useRef('');
+  const email = useRef('');
+  const phoneMobile = useRef('');
+  const phoneHome = useRef('');
+  const address1 = useRef('');
+  const address2 = useRef('');
+  const state = useRef('');
+  const zipCode = useRef('');
+  const country = useRef('');
+  const [fetching, setFetching] = useState(false);
+  const [formErrors, setFormErrors] = useState([]);
+
+  const refInputValue = (ref) => {
+    return ref?.current?.value;
+  };
+  const getFormData = () => ({
+    firstName: refInputValue(firstName),
+    lastName: refInputValue(lastName),
+    email: refInputValue(email),
+    phoneMobile: refInputValue(phoneMobile),
+    phoneHome: refInputValue(phoneHome),
+    address1: refInputValue(address1),
+    address2: refInputValue(address2),
+    state: refInputValue(state),
+    zipCode: refInputValue(zipCode),
+    country: refInputValue(country),
+  });
+  // console.log(apiAuthHeader());
   const handleSubmit = (event) => {
     event.preventDefault();
+    const customer = getFormData();
+    setFetching(true);
+    const header = apiAuthHeader();
+
+    axios
+      .post(apiUrl + '/customers', { customer }, { headers: { ...header } })
+      .then(({ data }) => {
+        console.log(customer);
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1 className="title is-4">New Client</h1>
-
-      <div className="box p-5">
+    <>
+      <div className="app-header">
+        <div className="app-header-left">
+          <h1>New Customer</h1>
+        </div>
+        <div className="app-header-right">
+          <Link
+            to="/customers"
+            className="button is-primary is-outlined is-rounded"
+          >
+            Cancel
+          </Link>
+        </div>
+      </div>
+      <form className="box p-5" onSubmit={handleSubmit}>
         <div className="content">
           <ul className="has-text-danger mb-5">
-            {/* {authUser.errors.map((error, idx) => (
-                    <li key={`auth-error-${idx}`}>{error}</li>
-                  ))} */}
+            {formErrors.map((error, idx) => (
+              <li key={`auth-error-${idx}`}>{error}</li>
+            ))}
           </ul>
         </div>
         <div className="field-body mb-3">
           <div class="field">
             <label class="label">First Name</label>
             <div class="control">
-              <input class="input" type="text" placeholder="John" />
+              <input
+                ref={firstName}
+                class="input"
+                type="text"
+                placeholder="John"
+                required
+              />
             </div>
           </div>
           <div class="field">
             <label class="label">Last Name</label>
             <div class="control">
-              <input class="input" type="text" placeholder="Doe" />
+              <input
+                ref={lastName}
+                class="input"
+                type="text"
+                placeholder="Doe"
+              />
             </div>
           </div>
         </div>
         <div class="field">
           <label class="label">Email</label>
           <div class="control">
-            <input class="input" type="text" />
+            <input ref={email} class="input" type="text" />
           </div>
         </div>
 
@@ -40,26 +107,26 @@ export default function CreateClient(params) {
           <div class="field">
             <label class="label">Phone Mobile</label>
             <div class="control">
-              <input class="input" type="text" />
+              <input ref={phoneMobile} class="input" type="text" />
             </div>
           </div>
           <div class="field">
             <label class="label">Phone Home</label>
             <div class="control">
-              <input class="input" type="text" />
+              <input ref={phoneHome} class="input" type="text" />
             </div>
           </div>
         </div>
         <div class="field">
           <label class="label">Address 1</label>
           <div class="control">
-            <input class="input" type="text" />
+            <input ref={address1} class="input" type="text" />
           </div>
         </div>
         <div class="field">
           <label class="label">Address 2</label>
           <div class="control">
-            <input class="input" type="text" />
+            <input ref={address2} class="input" type="text" />
           </div>
         </div>
         <div className="columns mb-3">
@@ -67,7 +134,8 @@ export default function CreateClient(params) {
             <label class="label">State/Region</label>
             <div class="control ">
               <div class="select">
-                <select>
+                <select ref={state}>
+                  <option value="none">Select dropdown</option>
                   {USStates.map(([state, abbr]) => (
                     <option key={`us-state-${abbr}`} value={abbr}>
                       {state}
@@ -80,13 +148,14 @@ export default function CreateClient(params) {
           <div class="field column is-narrow">
             <label class="label">Zip Code</label>
             <div class="control">
-              <input class="input" type="text" />
+              <input ref={zipCode} class="input" type="text" />
             </div>
           </div>
           <div class="field column is-narrow">
             <label class="label">Country</label>
             <div class="control">
               <input
+                ref={country}
                 class="input"
                 type="text"
                 value="USA"
@@ -98,14 +167,14 @@ export default function CreateClient(params) {
         </div>
 
         <button
-          className={`button is-primary`}
-          // disabled={authUser.fetching}
+          className={`button is-primary ${fetching && 'is-loading'}`}
+          disabled={fetching}
           type="submit"
         >
-          Create Client
+          Create ustomer
         </button>
-      </div>
-    </form>
+      </form>
+    </>
   );
 }
 

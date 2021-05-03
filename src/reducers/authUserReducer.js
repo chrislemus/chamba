@@ -1,4 +1,3 @@
-// const tempUser = { username: 'me', password: '123' };
 const initialState = {
   fetching: false,
   errors: [],
@@ -27,3 +26,30 @@ export default function authUserReducer(state = initialState, action) {
       return { ...state };
   }
 }
+// const tempUser = { username: 'me', password: '123' };
+//import { createAction, createReducer } from '@reduxjs/toolkit';
+
+// const initialState = {
+//   fetching: false,
+//   errors: [],
+// };
+
+// const request = createAction('counter/request');
+// const success = createAction('counter/success');
+// const failure = createAction('counter/failure');
+
+// export const authUserReducer = createReducer(initialState, (builder) => {
+//   builder
+//     .addCase(request, (state, action) => {
+//       state.fetching = true;
+//       state.errors = false;
+//     })
+//     .addCase(success, (state, action) => {
+//       state.fetching = false;
+//       state.errors = [];
+//     })
+//     .addCase(failure, (state, action) => {
+//       state.fetching = false;
+//       state.errors = action.payload.errors;
+//     });
+// });

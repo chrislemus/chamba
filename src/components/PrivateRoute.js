@@ -1,11 +1,12 @@
 import { connect } from 'react-redux';
+import { useEffect } from 'react';
 import { getUserData } from '../actions/userActions';
 import { Route, Redirect } from 'react-router';
 import { authUserToken } from '../actions/userActions';
 
 function PrivateRoute({ getUserData, user, component: Component, ...rest }) {
   const noUserData = Object.keys(user).length === 0;
-  if (authUserToken() && noUserData) {
+  if (noUserData) {
     getUserData();
   }
 

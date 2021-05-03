@@ -1,15 +1,17 @@
-const tempUser = { username: 'me', password: '123' };
-// const initialState = {
-//   user: null,
-//   authentication: {
-//     fetching: false,
-//     errors: [],
-//   },
-// };
-export default function userReducer(state = {}, action) {
+// const tempUser = { username: 'me', password: '123' };
+
+const initialState = {
+  user: null,
+  status: 'idle',
+  errors: null,
+};
+export default function userReducer(state = initialState, action) {
   switch (action.type) {
     case 'USER_ADD_USER':
-      return { ...action.payload.user };
+      return {
+        ...state,
+        user: action.payload,
+      };
     case 'USER_LOGOUT':
       return {};
     default:

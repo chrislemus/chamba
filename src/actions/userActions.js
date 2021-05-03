@@ -7,39 +7,6 @@ import { apiFetchErrors } from '../helpers/api';
 export const authUserToken = () => Cookies.get('authToken');
 //Shared functions
 
-// converts object keys from camelCase to snake_case
-// API will soon accept camelCase, Rails API will be substituted using JS
-function toSnakeCase(o) {
-  var newO, origKey, newKey, value;
-  if (o instanceof Array) {
-    return o.map(function (value) {
-      if (typeof value === 'object') {
-        value = toSnakeCase(value);
-      }
-      return value;
-    });
-  } else {
-    newO = {};
-    for (origKey in o) {
-      if (o.hasOwnProperty(origKey)) {
-        newKey = origKey.replace(
-          /[A-Z]/g,
-          (letter) => `_${letter.toLowerCase()}`
-        );
-        value = o[origKey];
-        if (
-          value instanceof Array ||
-          (value !== null && value.constructor === Object)
-        ) {
-          value = toSnakeCase(value);
-        }
-        newO[newKey] = value;
-      }
-    }
-  }
-  return newO;
-}
-
 export const login = (user, authUserRedirect) => {
   return (dispatch) => {
     dispatch({ type: 'AUTH_USER_REQUEST' });
@@ -50,7 +17,7 @@ export const login = (user, authUserRedirect) => {
           type: 'AUTH_USER_SUCCESS',
           token: JSON.stringify(data.token),
         });
-        dispatch({ type: 'USER_ADD_USER', payload: { user: data.user } });
+        dispatch({ type: 'USER_ADD_USER', payload: data.user });
         const cookieOptions = {
           expires: 1,
           secure: true,
@@ -66,18 +33,16 @@ export const login = (user, authUserRedirect) => {
   };
 };
 export const signUp = (user, authUserRedirect) => {
-  console.log('action triggered');
   return (dispatch) => {
     dispatch({ type: 'AUTH_USER_REQUEST' });
-
     axios
-      .post(apiUrl + '/users', { user: toSnakeCase(user) })
+      .post(apiUrl + '/users', { user })
       .then(({ data }) => {
         const user = data?.user;
         const token = data?.token;
         if (!user || !token) throw 'failed auth';
         dispatch({ type: 'AUTH_USER_SUCCESS' });
-        dispatch({ type: 'USER_ADD_USER', payload: { user } });
+        dispatch({ type: 'USER_ADD_USER', payload: user });
         const cookieOptions = {
           secure: true,
         };
@@ -98,7 +63,7 @@ export const getUserData = () => {
       .get(apiUrl + '/profile', { headers: { ...header } })
       .then(({ data }) => {
         dispatch({ type: 'AUTH_USER_SUCCESS' });
-        dispatch({ type: 'USER_ADD_USER', payload: { user: data.user } });
+        dispatch({ type: 'USER_ADD_USER', payload: data.user });
       })
       .catch((error) => {
         const errors = apiFetchErrors(error);
