@@ -3,6 +3,7 @@ $purple: #3f51b5;
 
 // Update Bulma's global variables
 $primary: $purple;
+$table-head-cell-border-width: 0 0 1px;
 
 @import '../../../node_modules/bulma/sass/utilities/_all.sass';
 $button-ghost-hover-decoration: none;
@@ -44,7 +45,25 @@ input {
     flex-grow: 0;
   }
 }
-
+.panel-block-custom {
+  @extend .panel-block;
+  display: flex;
+  flex-wrap: wrap;
+  & h6 {
+    display: block;
+    flex-grow: 1;
+    font-weight: 500;
+  }
+  & div {
+    display: block;
+    flex-grow: 1;
+    // width: 100%;
+  }
+  margin: 0;
+  // padding-top: 0;
+  // padding-bottom: 0;
+}
+// has-text-weight-medium column
 // .button.is-ghost:hover,
 // .button.is-ghost.is-hovered {
 //   text-decoration: none;

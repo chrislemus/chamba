@@ -11,8 +11,10 @@ import HomePage from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Overview from './pages/Overview';
-import Customers from './pages/Customers/Index';
-import NewCustomer from './pages/Customers/New';
+import Customers from './pages/customer/Customers';
+import NewCustomer from './pages/customer/NewCustomer';
+import CustomerDetails from './pages/customer/CustomerDetails';
+import EditCustomer from './pages/customer/EditCustomer.js';
 
 export default function App() {
   return (
@@ -23,6 +25,16 @@ export default function App() {
           <PrivateRoute exact path="/overview" component={Overview} />
           <PrivateRoute exact path="/customers" component={Customers} />
           <PrivateRoute exact path="/customers/new" component={NewCustomer} />
+          <PrivateRoute
+            exact
+            path="/customers/:id"
+            component={CustomerDetails}
+          />
+          <PrivateRoute
+            exact
+            path="/customers/:id/edit"
+            component={EditCustomer}
+          />
           <Route exact path="/login" component={Login} />
           <Route exact path="/signup" component={SignUp} />
         </Switch>

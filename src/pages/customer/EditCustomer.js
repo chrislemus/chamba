@@ -1,10 +1,13 @@
 import { useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { newCustomer } from '../../actions/customersActions';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { apiAuthHeader, apiUrl } from '../../helpers/api';
 // import Form from './Form';
 
-export default function NewCustomer(params) {
+export default function EditCustomer(params) {
+  const dispatch = useDispatch();
   const firstName = useRef('');
   const lastName = useRef('');
   const email = useRef('');
@@ -37,15 +40,7 @@ export default function NewCustomer(params) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const customer = getFormData();
-    setFetching(true);
-    const header = apiAuthHeader();
-
-    axios
-      .post(apiUrl + '/customers', { customer }, { headers: { ...header } })
-      .then(({ data }) => {
-        console.log(customer);
-      })
-      .catch((error) => console.log(error));
+    dispatch(newCustomer(customer));
   };
 
   return (

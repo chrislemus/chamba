@@ -20,7 +20,7 @@ export const apiFetchErrors = (error) => {
   if (errors.includes(loginRequired)) {
     Cookies.remove('authToken');
     store.dispatch({ type: 'USER_LOGOUT' });
-    // store.state.history.push('/login');
+    store.state.history.push('/login');
   }
   return errors;
 };
