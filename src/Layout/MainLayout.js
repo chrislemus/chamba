@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 import DefaultNavbar from '../components/NavBars/DefaultNavbar';
 import AccountNavBar from '../components/NavBars/AccountNavBar';
-import { Container } from '@material-ui/core';
+// import { Container } from '@material-ui/core';
 import Alert from '../components/Alert';
-import { createMuiTheme } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/styles';
-import { indigo } from '@material-ui/core/colors';
-import { authUserToken } from '../actions/userActions';
+// import { createMuiTheme } from '@material-ui/core/styles';
+// import { ThemeProvider } from '@material-ui/styles';
+// import { indigo } from '@material-ui/core/colors';
+import Cookies from 'js-cookie';
 import { connect } from 'react-redux';
 // const theme = createMuiTheme({
 //   palette: {
@@ -17,11 +17,8 @@ import { connect } from 'react-redux';
 // });
 
 function MainLayout(props) {
-  const navigationBar = !!authUserToken() ? (
-    <AccountNavBar />
-  ) : (
-    <DefaultNavbar />
-  );
+  const authUserToken = Cookies.get('authToken');
+  const navigationBar = !!authUserToken ? <AccountNavBar /> : <DefaultNavbar />;
   return (
     <div style={{ background: 'rgb(248, 248, 248)', minHeight: '100vh' }}>
       {/* <ThemeProvider theme={theme}> */}

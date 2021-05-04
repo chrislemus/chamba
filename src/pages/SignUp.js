@@ -1,9 +1,9 @@
 import { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { signUp } from '../actions/userActions';
-import { authUserToken } from '../actions/userActions';
-
+import Cookies from 'js-cookie';
 function SignUpPage({ authUser, signUp, history }) {
+  const authUserToken = Cookies.get('authToken');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const firstName = useRef(null);
   const lastName = useRef(null);
@@ -17,7 +17,7 @@ function SignUpPage({ authUser, signUp, history }) {
     history.push('/overview');
   }
 
-  if (!!authUserToken()) authUserRedirect();
+  if (!!authUserToken) authUserRedirect();
 
   const updateConfirmInputPattern = (event, reference) => {
     const valueToMatch = event.target.value;

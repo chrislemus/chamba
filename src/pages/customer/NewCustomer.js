@@ -1,9 +1,8 @@
 import { useState, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { newCustomer } from '../../actions/customersActions';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { apiAuthHeader, apiUrl } from '../../helpers/api';
+
 // import Form from './Form';
 
 export default function NewCustomer(params) {

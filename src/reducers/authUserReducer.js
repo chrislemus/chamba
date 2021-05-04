@@ -20,7 +20,6 @@ export default function authUserReducer(state = initialState, action) {
       return {
         ...state,
         fetching: false,
-        errors: action.payload.errors,
       };
     default:
       return { ...state };

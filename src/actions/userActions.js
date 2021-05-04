@@ -1,17 +1,12 @@
 import axios from 'axios';
-import { apiUrl, apiAuthHeader } from '../helpers/api';
+import { axiosApi } from '../helpers/api';
 import Cookies from 'js-cookie';
-import { apiFetchErrors } from '../helpers/api';
-
-//Shared variables
-export const authUserToken = () => Cookies.get('authToken');
-//Shared functions
 
 export const login = (user, authUserRedirect) => {
   return (dispatch) => {
     dispatch({ type: 'AUTH_USER_REQUEST' });
-    axios
-      .post(apiUrl + '/login', { user })
+    axiosApi
+      .post('/login', { user })
       .then(({ data }) => {
         dispatch({
           type: 'AUTH_USER_SUCCESS',
@@ -26,17 +21,20 @@ export const login = (user, authUserRedirect) => {
 
         authUserRedirect();
       })
-      .catch((error) => {
-        const errors = apiFetchErrors(error);
-        dispatch({ type: 'AUTH_USER_FAILURE', payload: { errors } });
+      .catch(({ errorMessages }) => {
+        // const errors = apiFetchErrors(error);
+        dispatch({
+          type: 'AUTH_USER_FAILURE',
+          payload: { errors: errorMessages },
+        });
       });
   };
 };
 export const signUp = (user, authUserRedirect) => {
   return (dispatch) => {
     dispatch({ type: 'AUTH_USER_REQUEST' });
-    axios
-      .post(apiUrl + '/users', { user })
+    axiosApi
+      .post('/users', { user })
       .then(({ data }) => {
         const user = data?.user;
         const token = data?.token;
@@ -50,24 +48,25 @@ export const signUp = (user, authUserRedirect) => {
 
         authUserRedirect();
       })
-      .catch((error) => {
-        const errors = apiFetchErrors(error);
-        dispatch({ type: 'AUTH_USER_FAILURE', payload: { errors } });
+      .catch(({ errorMessages }) => {
+        dispatch({
+          type: 'AUTH_USER_FAILURE',
+          payload: { errors: errorMessages },
+        });
       });
   };
 };
 export const getUserData = () => {
   return (dispatch) => {
-    const header = apiAuthHeader();
-    axios
-      .get(apiUrl + '/profile', { headers: { ...header } })
+    axiosApi
+      .get('/profile')
       .then(({ data }) => {
         dispatch({ type: 'AUTH_USER_SUCCESS' });
         dispatch({ type: 'USER_ADD_USER', payload: data.user });
       })
       .catch((error) => {
-        const errors = apiFetchErrors(error);
-        dispatch({ type: 'AUTH_USER_FAILURE', payload: { errors } });
+        console.log(error);
+        dispatch({ type: 'AUTH_USER_FAILURE' });
       });
   };
 };

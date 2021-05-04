@@ -2,9 +2,10 @@ import { connect } from 'react-redux';
 import { useEffect } from 'react';
 import { getUserData } from '../actions/userActions';
 import { Route, Redirect } from 'react-router';
-import { authUserToken } from '../actions/userActions';
+import Cookies from 'js-cookie';
 
 function PrivateRoute({ getUserData, user, component: Component, ...rest }) {
+  const authUserToken = Cookies.get('authToken');
   const noUserData = Object.keys(user).length === 0;
   if (noUserData) {
     getUserData();
@@ -14,7 +15,7 @@ function PrivateRoute({ getUserData, user, component: Component, ...rest }) {
     <Route
       {...rest}
       render={(props) =>
-        authUserToken() ? (
+        authUserToken ? (
           <Component {...rest} {...props} />
         ) : (
           <Redirect

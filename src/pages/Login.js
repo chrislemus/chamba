@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { login } from '../actions/userActions';
-import { authUserToken } from '../actions/userActions';
+import Cookies from 'js-cookie';
 
 function Login({ authUser, logIn, history }) {
+  const authUserToken = Cookies.get('authToken');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   function authUserRedirect() {
     history.push('/overview');
   }
 
-  if (!!authUserToken()) authUserRedirect();
+  if (!!authUserToken) authUserRedirect();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,9 +25,9 @@ function Login({ authUser, logIn, history }) {
         <h1 className="title">Log In</h1>
         <div className="content">
           <ul className="has-text-danger mb-5">
-            {authUser.errors.map((error, idx) => (
+            {/* {authUser.errors.map((error, idx) => (
               <li key={`auth-error-${idx}`}>{error}</li>
-            ))}
+            ))} */}
           </ul>
         </div>
         <div class="field">

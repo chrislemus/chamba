@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import DataPanelBlocks from '../../iu/DataPanelBlocks';
 
-import { fetchCustomerById } from '../customer/../../actions/customersActions';
+import { fetchCustomerById } from '../../actions/customersActions';
 export default function CustomerDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const { customer, status } = useSelector((state) => state.customers);
-  console.log(customer);
 
   useEffect(() => {
     if (status !== 'fetching') {
@@ -26,50 +26,27 @@ export default function CustomerDetails() {
     );
   }
 
-  const dataPanelBlocks = (data) =>
-    data.map((dataInfo) => {
-      const [title, info] = dataInfo;
-
-      return (
-        <div class="panel-block columns m-0 py-0">
-          <div className="has-text-weight-medium column">{title}</div>
-          <div className="column">{info || '--'}</div>
-        </div>
-      );
-    });
-
-  const {
-    firstName,
-    lastName,
-    email,
-    phoneMobile,
-    phoneHome,
-    companyName,
-    address1,
-    address2,
-    city,
-    state,
-    zipCode,
-  } = customer;
-  const address = `${address1}${address2}${city}${state}${zipCode}`;
+  const { firstName, lastName } = customer;
   const customerId = customer.id;
 
-  const propsToGet = ['firstName', 'lastName'];
-
-  for (const key in customer) {
-    if (Object.hasOwnProperty.call(object, key)) {
-      const element = object[key];
-    }
-  }
-
-  const customerData = [
-    ['Email', email],
-    ['Mobile Phone', phoneMobile],
-    ['Home Phone', phoneHome],
-    ['Company Name', companyName],
-    ['Address', address],
-    ['Address 2', address2],
+  const customerContactInfo = [
+    { title: 'Email', value: customer.email },
+    { title: 'Mobile Phone', value: customer.phoneMobile },
+    { title: 'Home Phone', value: customer.phoneHome },
+    { title: 'Company Name', value: customer.companyName },
+    { title: 'Address 1', value: customer.address1 },
+    { title: 'Address 2', value: customer.address2 },
+    { title: 'City', value: customer.city },
+    { title: 'State', value: customer.state },
+    { title: 'Zip Code', value: customer.zipCode },
   ];
+
+  const customerBillingInfo = [
+    { title: 'Paid', value: '$500' },
+    { title: 'Draft', value: '$286' },
+    { title: 'Unpaid', value: '$41' },
+  ];
+
   return (
     <>
       <div className="app-header">
@@ -85,12 +62,20 @@ export default function CustomerDetails() {
           </Link>
         </div>
       </div>
+
       <div className="columns is-multiline">
         <div className="column is-6">
           <article class="panel  has-background-white">
             <p class="panel-heading has-background-white">Client Details</p>
-
-            {dataPanelBlocks(customerData)}
+            <DataPanelBlocks data={customerContactInfo} />
+          </article>
+        </div>
+        <div className="column is-6">
+          <article class="panel  has-background-white">
+            <p class="panel-heading has-background-white">
+              Invoices/CheckoutBilling
+            </p>
+            <DataPanelBlocks data={customerBillingInfo} />
           </article>
         </div>
       </div>

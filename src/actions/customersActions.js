@@ -1,17 +1,13 @@
-import axios from 'axios';
-import { apiAuthHeader, apiFetchErrors } from '../helpers/api';
+import { axiosApi } from '../helpers/api';
 import { history } from '../store';
-import { useSelector } from 'react-redux';
-
-const apiUrl = 'http://localhost:3005/api';
-const authHeader = apiAuthHeader();
+// import { useSelector } from 'react-redux';
 
 export const fetchAllCustomers = () => {
   return (dispatch) => {
     dispatch({ type: 'CUSTOMERS_FETCH' });
 
-    axios
-      .get(`${apiUrl}/customers`, { headers: { ...authHeader } })
+    axiosApi
+      .get(`/customers`)
       .then(({ data }) => {
         const { customers } = data;
         console.log(customers);
@@ -21,8 +17,7 @@ export const fetchAllCustomers = () => {
         });
       })
       .catch((error) => {
-        const errors = apiFetchErrors(error);
-        dispatch({ type: 'CUSTOMERS_FETCH_FAILED', payload: errors });
+        dispatch({ type: 'CUSTOMERS_FETCH_FAILED' });
       });
   };
 };
@@ -30,16 +25,16 @@ export const fetchAllCustomers = () => {
 export const newCustomer = (customer) => {
   return (dispatch) => {
     dispatch({ type: 'CUSTOMERS_FETCH' });
-    axios
-      .post(apiUrl + '/customers', { customer }, { headers: { ...authHeader } })
+    axiosApi
+      .post('/customers', { customer })
       .then(({ data }) => {
         const customerId = data?.customer?.id;
         dispatch({ type: 'CUSTOMERS_CUSTOMER_ADDED' });
         history.push(`/customers/${customerId}`);
       })
       .catch((error) => {
-        const errors = apiFetchErrors(error);
-        dispatch({ type: 'CUSTOMERS_FETCH_FAILED', payload: errors });
+        // const errors = apiFetchErrors(error);
+        dispatch({ type: 'CUSTOMERS_FETCH_FAILED', payload: error });
       });
   };
 };
@@ -47,15 +42,15 @@ export const newCustomer = (customer) => {
 export const fetchCustomerById = (customerId) => {
   return (dispatch) => {
     dispatch({ type: 'CUSTOMERS_FETCH' });
-    axios
-      .get(`${apiUrl}/customers/${customerId}`, { headers: { ...authHeader } })
+    axiosApi
+      .get(`/customers/${customerId}`)
       .then(({ data }) => {
         const customer = data?.customer;
         dispatch({ type: 'CUSTOMERS_FETCH_BY_ID_SUCCESS', payload: customer });
       })
       .catch((error) => {
-        const errors = apiFetchErrors(error);
-        dispatch({ type: 'CUSTOMERS_FETCH_FAILED', payload: errors });
+        // const errors = apiFetchErrors(error);
+        dispatch({ type: 'CUSTOMERS_FETCH_FAILED', payload: error });
       });
   };
 };

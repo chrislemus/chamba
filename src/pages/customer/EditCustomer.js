@@ -3,10 +3,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { newCustomer } from '../../actions/customersActions';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
+
 import { apiAuthHeader, apiUrl } from '../../helpers/api';
 // import Form from './Form';
 
 export default function EditCustomer(params) {
+  const customerId = useParams().id;
+  const [status, setStatus] = useState('idle');
+
   const dispatch = useDispatch();
   const firstName = useRef('');
   const lastName = useRef('');

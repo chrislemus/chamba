@@ -1,28 +1,42 @@
 import Cookies from 'js-cookie';
 import store from '../store';
+import axios from 'axios';
+export const apiUrl = 'http://localhost:3005/api';
 
-export const apiAuthHeader = () => {
+const requireLogin = () => {
+  Cookies.remove('authToken');
+  store.dispatch({ type: 'USER_LOGOUT' });
+  store.state.history.push('/login');
+};
+
+//=================
+//custom axios api instance
+//=================
+export const axiosApi = axios.create({
+  baseURL: apiUrl,
+});
+
+//auth Header
+
+axiosApi.interceptors.request.use(function (config) {
   const authToken = Cookies.get('authToken');
   if (authToken) {
-    return { Authorization: `Bearer ${JSON.parse(authToken)}` };
-  } else {
-    return {};
+    config.headers['Authorization'] = `Bearer ${JSON.parse(authToken)}`;
   }
-};
+  return config;
+});
 
-export const apiFetchErrors = (error) => {
-  const defaultFaultFetchError = [
-    "We've encountered some issues,  please try again at a later time",
-  ];
-  const errors = error?.response?.data?.errors || defaultFaultFetchError;
-
-  const loginRequired = 'Please log in';
-  if (errors.includes(loginRequired)) {
-    Cookies.remove('authToken');
-    store.dispatch({ type: 'USER_LOGOUT' });
-    store.state.history.push('/login');
+// Add a response interceptor
+axiosApi.interceptors.response.use(
+  function (response) {
+    // Do something with response data
+    return response;
+  },
+  function (error) {
+    const unauthorizedUser = error?.response?.status === 401;
+    error.errorMessages = error?.response?.data?.errors || [];
+    if (unauthorizedUser) requireLogin();
+    // Do something with response error
+    return Promise.reject(error);
   }
-  return errors;
-};
-
-export const apiUrl = 'http://localhost:3005/api';
+);
