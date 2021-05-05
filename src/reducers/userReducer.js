@@ -3,7 +3,7 @@
 const initialState = {
   user: null,
   status: 'idle',
-  errors: null,
+  validationErrors: null,
 };
 export default function userReducer(state = initialState, action) {
   switch (action.type) {

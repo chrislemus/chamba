@@ -1,6 +1,6 @@
 const initialState = {
   fetching: false,
-  errors: [],
+  validationErrors: [],
 };
 export default function authUserReducer(state = initialState, action) {
   switch (action.type) {
@@ -8,18 +8,19 @@ export default function authUserReducer(state = initialState, action) {
       return {
         ...state,
         fetching: true,
-        errors: [],
+        validationErrors: [],
       };
     case 'AUTH_USER_SUCCESS':
       return {
         ...state,
         fetching: false,
-        errors: [],
+        validationErrors: [],
       };
     case 'AUTH_USER_FAILURE':
       return {
         ...state,
         fetching: false,
+        validationErrors: action.payload,
       };
     default:
       return { ...state };

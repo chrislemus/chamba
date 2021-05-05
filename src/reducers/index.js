@@ -2,16 +2,18 @@ import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 import userReducer from './userReducer';
 import authUserReducer from './authUserReducer';
-import alertReducer from './alertReducer';
-import customersReducer from './customersReducer';
+import alertModalReducer from './alertModalReducer';
+import customerListReducer from './customerListReducer';
+import customerReducer from './customerReducer';
 
 const createRootReducer = (history) =>
   combineReducers({
     router: connectRouter(history),
     user: userReducer,
     authUser: authUserReducer,
-    alert: alertReducer,
-    customers: customersReducer,
+    alertModal: alertModalReducer,
+    customerList: customerListReducer,
+    customer: customerReducer,
   });
 
 export default createRootReducer;

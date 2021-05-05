@@ -1,8 +1,4 @@
-// import React from 'react';
-import Cookies from 'js-cookie';
-
 import CalendarScheduler from '../components/CalendarScheduler/basic/Index';
-import Recurring from '../components/CalendarScheduler/featured/Index';
 const Overview = () => {
   return (
     <div style={{ marginBottom: '200px' }}>
@@ -11,7 +7,7 @@ const Overview = () => {
         <div className="info-box-header">
           <span>Title</span>
         </div>
-        <div className="info-box-content">
+        <div className="info-box-section">
           <CalendarScheduler />
           {/* <Recurring /> */}
         </div>

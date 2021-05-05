@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 
 export default function DataPanelBlocks({ data }) {
-  return data.map(({ title, value, link }) => {
+  return data.map(({ title, value, link }, idx) => {
     return (
-      <PanelWrapper link={link}>
+      <PanelWrapper link={link} key={`panel-block-${title}-${idx}`}>
         <div className="has-text-weight-medium column has-text-grey-dark	">
           {title}
         </div>
@@ -16,10 +16,10 @@ export default function DataPanelBlocks({ data }) {
 function PanelWrapper({ link, children }) {
   const panelClass = 'panel-block columns m-0 py-0';
   return link ? (
-    <Link to={link} class={panelClass}>
+    <Link to={link} className={panelClass}>
       {children}
     </Link>
   ) : (
-    <div class={panelClass}>{children}</div>
+    <div className={panelClass}>{children}</div>
   );
 }

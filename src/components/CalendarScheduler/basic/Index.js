@@ -40,7 +40,7 @@ const resources = [
 /* eslint-disable-next-line react/no-multi-comp */
 const CalendarScheduler = (props) => {
   const [data, setData] = useState(appointments);
-  const [currentDate, setCurrentDate] = useState('2018-06-27');
+  const [currentDate] = useState('2018-06-27');
   const [confirmDeleteModalIsOpen, setConfirmDeleteModalIsOpen] = useState(
     false
   );
@@ -49,8 +49,8 @@ const CalendarScheduler = (props) => {
   const [editingAppointment, setEditingAppointment] = useState(undefined);
   const [previousAppointment, setPreviousAppointment] = useState(undefined);
   const [addedAppointment, setAddedAppointment] = useState({});
-  const [startDayHour, setStartDayHour] = useState(9);
-  const [endDayHour, setEndDayHour] = useState(19);
+  const [startDayHour] = useState(9);
+  const [endDayHour] = useState(19);
   const [isNewAppointment, setIsNewAppointment] = useState(false);
 
   const onEditingAppointmentChange = (editingAppointment) => {

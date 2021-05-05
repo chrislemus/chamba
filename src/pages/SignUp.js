@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { signUp } from '../actions/userActions';
 import Cookies from 'js-cookie';
+import ValidationErrors from '../iu/ValidationErrors';
 function SignUpPage({ authUser, signUp, history }) {
   const authUserToken = Cookies.get('authToken');
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -48,13 +49,8 @@ function SignUpPage({ authUser, signUp, history }) {
     <div className="columns mt-6 mx-1">
       <form className="column box is-6 is-offset-3 p-5" onSubmit={handleSubmit}>
         <h1 className="title">Sign Up</h1>
-        <div className="content">
-          <ul className="has-text-danger mb-5">
-            {authUser.errors.map((error, idx) => (
-              <li key={`auth-error-${idx}`}>{error}</li>
-            ))}
-          </ul>
-        </div>
+
+        <ValidationErrors errors={authUser.errors} />
         <div className="field-body mb-3">
           <div className="field">
             <label className="label">First Name</label>

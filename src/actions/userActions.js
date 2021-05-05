@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { axiosApi } from '../helpers/api';
 import Cookies from 'js-cookie';
 
@@ -21,15 +20,16 @@ export const login = (user, authUserRedirect) => {
 
         authUserRedirect();
       })
-      .catch(({ errorMessages }) => {
+      .catch(({ validationErrors }) => {
         // const errors = apiFetchErrors(error);
         dispatch({
           type: 'AUTH_USER_FAILURE',
-          payload: { errors: errorMessages },
+          payload: validationErrors,
         });
       });
   };
 };
+
 export const signUp = (user, authUserRedirect) => {
   return (dispatch) => {
     dispatch({ type: 'AUTH_USER_REQUEST' });
@@ -38,7 +38,7 @@ export const signUp = (user, authUserRedirect) => {
       .then(({ data }) => {
         const user = data?.user;
         const token = data?.token;
-        if (!user || !token) throw 'failed auth';
+        if (!user || !token) throw new Error('failed auth');
         dispatch({ type: 'AUTH_USER_SUCCESS' });
         dispatch({ type: 'USER_ADD_USER', payload: user });
         const cookieOptions = {
@@ -48,10 +48,10 @@ export const signUp = (user, authUserRedirect) => {
 
         authUserRedirect();
       })
-      .catch(({ errorMessages }) => {
+      .catch(({ validationErrors }) => {
         dispatch({
           type: 'AUTH_USER_FAILURE',
-          payload: { errors: errorMessages },
+          payload: validationErrors,
         });
       });
   };

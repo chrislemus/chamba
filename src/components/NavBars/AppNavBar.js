@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function AccountNavBar(props) {
+function AppNavBar(props) {
   const noUserData = Object.keys(props.user).length === 0;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -191,4 +191,4 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return { logout: () => dispatch(logout()) };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(AccountNavBar);
+export default connect(mapStateToProps, mapDispatchToProps)(AppNavBar);

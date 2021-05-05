@@ -1,45 +1,38 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
+import { useSelector } from 'react-redux';
+import SubmitButton from '../../iu/SubmitButton';
 import { useDispatch } from 'react-redux';
-import { newCustomer } from '../../actions/customersActions';
+import { addNewCustomer } from '../../actions/customerActions';
 import { Link } from 'react-router-dom';
-
-// import Form from './Form';
-
-export default function NewCustomer(params) {
+import { us_states } from '../../helpers/sharableConst';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import ValidationErrors from '../../iu/ValidationErrors';
+export default function NewCustomer() {
+  const customer = useSelector((state) => state.customer);
+  const formikRef = useRef();
   const dispatch = useDispatch();
-  const firstName = useRef('');
-  const lastName = useRef('');
-  const email = useRef('');
-  const phoneMobile = useRef('');
-  const phoneHome = useRef('');
-  const address1 = useRef('');
-  const address2 = useRef('');
-  const state = useRef('');
-  const zipCode = useRef('');
-  const country = useRef('');
-  const [fetching, setFetching] = useState(false);
-  const [formErrors, setFormErrors] = useState([]);
 
-  const refInputValue = (ref) => {
-    return ref?.current?.value;
-  };
-  const getFormData = () => ({
-    firstName: refInputValue(firstName),
-    lastName: refInputValue(lastName),
-    email: refInputValue(email),
-    phoneMobile: refInputValue(phoneMobile),
-    phoneHome: refInputValue(phoneHome),
-    address1: refInputValue(address1),
-    address2: refInputValue(address2),
-    state: refInputValue(state),
-    zipCode: refInputValue(zipCode),
-    country: refInputValue(country),
-  });
-  // console.log(apiAuthHeader());
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const customer = getFormData();
-    dispatch(newCustomer(customer));
+  const formFieldNames = [
+    'firstName',
+    'lastName',
+    'companyName',
+    'email',
+    'phoneMobile',
+    'phoneHome',
+    'address1',
+    'address2',
+    'city',
+    'state',
+    'zipCode',
+    'country',
+  ];
+  const InitialFormValues = Object.assign(
+    ...formFieldNames.map((key) => ({ [key]: '' }))
+  );
+
+  const handleSubmit = (values, actions) => {
+    const customer = values;
+    dispatch(addNewCustomer(customer));
   };
 
   return (
@@ -57,170 +50,107 @@ export default function NewCustomer(params) {
           </Link>
         </div>
       </div>
-      <form className="box p-5" onSubmit={handleSubmit}>
-        <div className="content">
-          <ul className="has-text-danger mb-5">
-            {formErrors.map((error, idx) => (
-              <li key={`auth-error-${idx}`}>{error}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="field-body mb-3">
-          <div class="field">
-            <label class="label">First Name</label>
-            <div class="control">
-              <input
-                ref={firstName}
-                class="input"
-                type="text"
-                placeholder="John"
-                required
-              />
-            </div>
-          </div>
-          <div class="field">
-            <label class="label">Last Name</label>
-            <div class="control">
-              <input
-                ref={lastName}
-                class="input"
-                type="text"
-                placeholder="Doe"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">Email</label>
-          <div class="control">
-            <input ref={email} class="input" type="text" />
-          </div>
-        </div>
-
-        <div className="field-body mb-3">
-          <div class="field">
-            <label class="label">Phone Mobile</label>
-            <div class="control">
-              <input ref={phoneMobile} class="input" type="text" />
-            </div>
-          </div>
-          <div class="field">
-            <label class="label">Phone Home</label>
-            <div class="control">
-              <input ref={phoneHome} class="input" type="text" />
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">Address 1</label>
-          <div class="control">
-            <input ref={address1} class="input" type="text" />
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">Address 2</label>
-          <div class="control">
-            <input ref={address2} class="input" type="text" />
-          </div>
-        </div>
-        <div className="columns mb-3">
-          <div class="field column is-narrow">
-            <label class="label">State/Region</label>
-            <div class="control ">
-              <div class="select">
-                <select ref={state}>
-                  <option value="none">Select dropdown</option>
-                  {USStates.map(([state, abbr]) => (
-                    <option key={`us-state-${abbr}`} value={abbr}>
-                      {state}
-                    </option>
-                  ))}
-                </select>
+      <Formik
+        innerRef={formikRef}
+        initialValues={InitialFormValues}
+        onSubmit={handleSubmit}
+        validate={(values) => {
+          const errors = {};
+          if (!values.firstName) {
+            errors.firstName = 'Required';
+          }
+          return errors;
+        }}
+      >
+        {({ isSubmitting, values }) => (
+          <Form className="box p-5">
+            <ValidationErrors errors={customer.validationErrors} />
+            <>
+              <div className="field-body mb-3">
+                <div className="field">
+                  <label className="label">First Name</label>
+                  <Field className="input" type="text" name="firstName" />
+                  <ErrorMessage
+                    className="help is-danger"
+                    name="firstName"
+                    component="p"
+                  />
+                </div>
+                <div className="field">
+                  <label className="label">Last Name</label>
+                  <Field className="input" type="text" name="lastName" />
+                </div>
               </div>
-            </div>
-          </div>
-          <div class="field column is-narrow">
-            <label class="label">Zip Code</label>
-            <div class="control">
-              <input ref={zipCode} class="input" type="text" />
-            </div>
-          </div>
-          <div class="field column is-narrow">
-            <label class="label">Country</label>
-            <div class="control">
-              <input
-                ref={country}
-                class="input"
-                type="text"
-                value="USA"
-                placeholder="USA"
-                disabled
-              />
-            </div>
-          </div>
-        </div>
+              <div className="field">
+                <label className="label">Company Name</label>
+                <Field className="input" type="text" name="companyName" />
+              </div>
 
-        <button
-          className={`button is-primary ${fetching && 'is-loading'}`}
-          disabled={fetching}
-          type="submit"
-        >
-          Create ustomer
-        </button>
-      </form>
+              <div className="field">
+                <label className="label">Email</label>
+                <Field className="input" type="text" name="email" />
+              </div>
+
+              <div className="field-body mb-3">
+                <div className="field">
+                  <label className="label">Phone Mobile</label>
+                  <Field className="input" type="tel" name="phoneMobile" />
+                </div>
+                <div className="field">
+                  <label className="label">Phone Home</label>
+                  <Field className="input" type="tel" name="phoneHome" />
+                </div>
+              </div>
+
+              <div className="field">
+                <label className="label">Address 1</label>
+                <Field className="input" type="text" name="address1" />
+              </div>
+              <div className="field">
+                <label className="label">Address 2</label>
+                <Field className="input" type="text" name="address2" />
+              </div>
+
+              <div className="columns mb-3">
+                <div className="field column is-narrow">
+                  <label className="label">City</label>
+                  <Field className="input" type="text" name="city" />
+                </div>
+                <div className="field column is-narrow">
+                  <label className="label">State/Region</label>
+                  <div className="select">
+                    <Field as="select" className="input" name="state">
+                      <option value="">Select state</option>
+                      {us_states.map(([state, abbr]) => (
+                        <option key={`us-state-${abbr}`} value={abbr}>
+                          {state}
+                        </option>
+                      ))}
+                    </Field>
+                  </div>
+                </div>
+
+                <div className="field column is-narrow">
+                  <label className="label">Zip Code</label>
+                  <Field className="input" type="text" name="zipCode" />
+                </div>
+                <div className="field column is-narrow">
+                  <label className="label">Country</label>
+                  <Field
+                    className="input"
+                    type="text"
+                    name="cpuntry"
+                    value="USA"
+                    disabled
+                  />
+                </div>
+              </div>
+
+              <SubmitButton status={customer.status}>Save Changes</SubmitButton>
+            </>
+          </Form>
+        )}
+      </Formik>
     </>
   );
 }
-
-const USStates = [
-  ['Alabama', 'AL'],
-  ['Alaska', 'AK'],
-  ['Arizona', 'AZ'],
-  ['Arkansas', 'AR'],
-  ['California', 'CA'],
-  ['Colorado', 'CO'],
-  ['Connecticut', 'CT'],
-  ['Delaware', 'DE'],
-  ['Florida', 'FL'],
-  ['Georgia', 'GA'],
-  ['Hawaii', 'HI'],
-  ['Idaho', 'ID'],
-  ['Illinois', 'IL'],
-  ['Indiana', 'IN'],
-  ['Iowa', 'IA'],
-  ['Kansas', 'KS'],
-  ['Kentucky', 'KY'],
-  ['Louisiana', 'LA'],
-  ['Maine', 'ME'],
-  ['Maryland', 'MD'],
-  ['Massachusetts', 'MA'],
-  ['Michigan', 'MI'],
-  ['Minnesota', 'MN'],
-  ['Mississippi', 'MS'],
-  ['Missouri', 'MO'],
-  ['Montana', 'MT'],
-  ['Nebraska', 'NE'],
-  ['Nevada', 'NV'],
-  ['New Hampshire', 'NH'],
-  ['New Jersey', 'NJ'],
-  ['New Mexico', 'NM'],
-  ['New York', 'NY'],
-  ['North Carolina', 'NC'],
-  ['North Dakota', 'ND'],
-  ['Ohio', 'OH'],
-  ['Oklahoma', 'OK'],
-  ['Oregon', 'OR'],
-  ['Pennsylvania', 'PA'],
-  ['Rhode Island', 'RI'],
-  ['South Carolina', 'SC'],
-  ['South Dakota', 'SD'],
-  ['Tennessee', 'TN'],
-  ['Texas', 'TX'],
-  ['Utah', 'UT'],
-  ['Vermont', 'VT'],
-  ['Virginia', 'VA'],
-  ['Washington', 'WA'],
-  ['West Virginia', 'WV'],
-  ['Wisconsin', 'WI'],
-  ['Wyoming', 'WY'],
-];

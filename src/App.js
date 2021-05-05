@@ -1,9 +1,10 @@
 import './styles/App.css';
 import './styles/bulma/bulma.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+// import { history } from './store';
 import { Route, Switch } from 'react-router';
+
 import { ConnectedRouter } from 'connected-react-router';
-import { history } from './store';
 import PrivateRoute from './components/PrivateRoute';
 import MainLayout from './Layout/MainLayout';
 
@@ -15,8 +16,8 @@ import Customers from './pages/customer/Customers';
 import NewCustomer from './pages/customer/NewCustomer';
 import CustomerDetails from './pages/customer/CustomerDetails';
 import EditCustomer from './pages/customer/EditCustomer.js';
-
-export default function App() {
+import React from 'react';
+export default function App({ history }) {
   return (
     <ConnectedRouter history={history}>
       <MainLayout>

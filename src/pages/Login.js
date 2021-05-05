@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { login } from '../actions/userActions';
 import Cookies from 'js-cookie';
-
-function Login({ authUser, logIn, history }) {
+import ValidationErrors from '../iu/ValidationErrors';
+function Login(props) {
+  const { authUser, logIn, history } = props;
+  console.log(props);
   const authUserToken = Cookies.get('authToken');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,29 +25,24 @@ function Login({ authUser, logIn, history }) {
     <div className="columns mt-6 mx-1">
       <form className="column box is-6 is-offset-3 p-5" onSubmit={handleSubmit}>
         <h1 className="title">Log In</h1>
-        <div className="content">
-          <ul className="has-text-danger mb-5">
-            {/* {authUser.errors.map((error, idx) => (
-              <li key={`auth-error-${idx}`}>{error}</li>
-            ))} */}
-          </ul>
-        </div>
-        <div class="field">
-          <label class="label">Email</label>
-          <div class="control">
+        <ValidationErrors errors={authUser.errors} />
+
+        <div className="field">
+          <label className="label">Email</label>
+          <div className="control">
             <input
-              class="input"
+              className="input"
               type="email"
               onChange={({ target }) => setEmail(target.value)}
               placeholder="e.g. alexsmith@gmail.com"
             />
           </div>
         </div>
-        <div class="field">
-          <label class="label">Password</label>
-          <div class="control">
+        <div className="field">
+          <label className="label">Password</label>
+          <div className="control">
             <input
-              class="input"
+              className="input"
               onChange={({ target }) => setPassword(target.value)}
               type="password"
             />

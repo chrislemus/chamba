@@ -63,6 +63,16 @@ input {
   // padding-top: 0;
   // padding-bottom: 0;
 }
+.alert-modal {
+  @extend .notification;
+  position: fixed;
+  width: 90%;
+  z-index: 1000;
+  left: 50%;
+  max-width: 800px;
+  top: 20px;
+  transform: translate(-50%, 0);
+}
 // has-text-weight-medium column
 // .button.is-ghost:hover,
 // .button.is-ghost.is-hovered {

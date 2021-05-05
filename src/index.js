@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import App from './App';
 import reportWebVitals from './test/reportWebVitals';
-import store from './store';
+import store, { history } from './store';
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <App history={history} />
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

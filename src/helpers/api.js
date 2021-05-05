@@ -34,7 +34,7 @@ axiosApi.interceptors.response.use(
   },
   function (error) {
     const unauthorizedUser = error?.response?.status === 401;
-    error.errorMessages = error?.response?.data?.errors || [];
+    error.validationErrors = error?.response?.data?.validationErrors || [];
     if (unauthorizedUser) requireLogin();
     // Do something with response error
     return Promise.reject(error);
