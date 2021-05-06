@@ -1,21 +1,32 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 import { useQuery } from 'react-query';
+import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { fetchCustomers } from '../../actions/customerListActions';
 import DataFetchWrapper from '../../components/DataFetchWrapper';
 import Pagination from '../../components/Pagination';
-import { fetchCustomers } from '../../services/api/customers';
 
-export default function Customers() {
+export default function Invoices() {
   const [query, setQuery] = useState('');
   const [pageLimit, setPageLimit] = useState(10);
   const [page, setPage] = useState(1);
-
-  const { status, data, error } = useQuery(
-    ['customerList', { query, pageLimit, page }],
-    () => fetchCustomers(query, pageLimit, page)
+  const dispatch = useDispatch();
+  const { customers, status, queryData } = useSelector(
+    (state) => state.customerList
   );
-  const customers = data?.data?.customers;
-  const queryData = data?.data?.queryData;
+
+  const fetchCustomerList = () => {
+    dispatch(fetchCustomers(query, pageLimit, page));
+  };
+
+  //component mount data fetching
+  useEffect(() => {
+    status === 'idle' && fetchCustomerList();
+  }, [status]);
+
+  //query data fetching
+  useEffect(() => fetchCustomerList(), [pageLimit, page, query]);
 
   const displayCustomers = () => {
     if (customers) {
@@ -35,7 +46,7 @@ export default function Customers() {
     <>
       <div className="app-header">
         <div className="app-header-left">
-          <h1>Customers</h1>
+          <h1>Invoices</h1>
         </div>
         <div className="app-header-right">
           <Link to="/customers/new" className="button is-primary is-rounded">

@@ -24,7 +24,8 @@ export default function customerListReducer(state = initialState, action) {
       return {
         ...state,
         status: 'success',
-        customers: action.payload,
+        customers: action.payload.customers,
+        queryData: action.payload.queryData,
         validationErrors: null,
       };
     default:

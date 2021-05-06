@@ -18,7 +18,7 @@ export default function PrivateRoute({ component: Component, ...rest }) {
   useLayoutEffect(() => {
     const unlistenHistory = history.listen((location, action) => {
       const { pathname } = location;
-      console.log(action);
+      // console.log(action);
       if (pathname.startsWith('/customers')) {
         dispatch({ type: 'CUSTOMER_RESET_STORE' });
         dispatch({ type: 'CUSTOMER_LIST_RESET_STORE' });

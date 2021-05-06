@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie';
 import store from '../store';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 export const apiUrl = 'http://localhost:3005/api';
 
 const requireLogin = () => {
@@ -33,8 +34,13 @@ axiosApi.interceptors.response.use(
     return response;
   },
   function (error) {
+    // const dispatch = useDispatch();
     const unauthorizedUser = error?.response?.status === 401;
     error.validationErrors = error?.response?.data?.validationErrors || [];
+    store.dispatch({
+      type: 'ALERT_MODAL_DANGER',
+      payload: error?.response?.status,
+    });
     if (unauthorizedUser) requireLogin();
     // Do something with response error
     return Promise.reject(error);

@@ -28,7 +28,7 @@ export default function CustomerDetails() {
     );
   }
 
-  const { firstName, lastName } = customerData;
+  const { fullName } = customerData;
   const customerId = customerData.id;
 
   const customerContactInfo = [
@@ -53,7 +53,7 @@ export default function CustomerDetails() {
     <>
       <div className="app-header">
         <div className="app-header-left">
-          <h1>{`${firstName} ${lastName}`}</h1>
+          <h1>{fullName}</h1>
         </div>
         <div className="app-header-right">
           <Link

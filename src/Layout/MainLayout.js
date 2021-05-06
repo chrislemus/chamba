@@ -10,7 +10,7 @@ export default function MainLayout({ children }) {
     <div style={{ background: 'rgb(248, 248, 248)', minHeight: '100vh' }}>
       <AlertModal />
       {navigationBar}
-      <div className="container px-3">{children}</div>
+      <div className="container px-3 pb-6">{children}</div>
     </div>
   );
 }
