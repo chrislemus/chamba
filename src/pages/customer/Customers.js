@@ -3,7 +3,13 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 import DataFetchWrapper from '../../components/DataFetchWrapper';
 import Pagination from '../../components/Pagination';
-import { fetchCustomers } from '../../services/api/customers';
+import { fetchCustomers } from '../../services/api';
+
+// const fetchCustomers = (query, pageLimit, page) => {
+//   return axiosApi.get(
+//     `/customers?query=${query}&limit=${pageLimit}&page=${page}`
+//   );
+// };
 
 export default function Customers() {
   const [query, setQuery] = useState('');
@@ -11,9 +17,10 @@ export default function Customers() {
   const [page, setPage] = useState(1);
 
   const { status, data, error } = useQuery(
-    ['customerList', { query, pageLimit, page }],
+    ['customers', { query, pageLimit, page }],
     () => fetchCustomers(query, pageLimit, page)
   );
+
   const customers = data?.data?.customers;
   const queryData = data?.data?.queryData;
 
@@ -64,7 +71,7 @@ export default function Customers() {
         <DataFetchWrapper
           status={status}
           dataName={'Customers'}
-          queryData={queryData}
+          hasData={customers?.length > 0}
         >
           <>
             <table className="table is-hoverable mt-5 is-fullwidth">

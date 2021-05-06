@@ -5,10 +5,10 @@ import Spinner from '../iu/Spinner';
 export default function DataFetchWrapper({
   status,
   dataName = '',
-  queryData,
+  hasData,
   children,
 }) {
-  const zeroResults = status === 'success' && queryData?.results === 0;
+  const zeroResults = status === 'success' && !hasData;
   if (status === 'error' || zeroResults) {
     return (
       <div className="columns is-centered p-5">
