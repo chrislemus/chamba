@@ -34,13 +34,11 @@ axiosApi.interceptors.response.use(
   },
   function (error) {
     // const dispatch = useDispatch();
-    const unauthorizedUser = error?.response?.status === 401;
     error.validationErrors = error?.response?.data?.validationErrors || [];
     store.dispatch({
       type: 'ALERT_MODAL_DANGER',
       payload: error?.response?.status,
     });
-    if (unauthorizedUser) requireLogin();
     // Do something with response error
     return Promise.reject(error);
   }

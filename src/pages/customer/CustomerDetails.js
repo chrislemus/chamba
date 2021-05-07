@@ -7,13 +7,12 @@ import DataFetchWrapper from '../../components/DataFetchWrapper';
 import { fetchCustomerById } from '../../services/api/customers';
 
 export default function CustomerDetails() {
-  const customerId = useParams().id;
+  const customerId = useParams()?.id;
 
-  const { status, data } = useQuery(['customers', customerId], () =>
+  const { status, data } = useQuery(['customerDetails', {customerId}], () =>
     fetchCustomerById(customerId)
   );
-
-  const customer = data?.data?.customer;
+  const customer = data?.customer
 
   const getCustomerData = () => {
     if (!customer) return [];

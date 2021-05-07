@@ -6,7 +6,7 @@ export default function DataFetchWrapper({
   status,
   dataName = '',
   hasData,
-  children,
+  children
 }) {
   const zeroResults = status === 'success' && !hasData;
   if (status === 'error' || zeroResults) {
@@ -28,7 +28,7 @@ export default function DataFetchWrapper({
     );
   } else if (status === 'loading') {
     return (
-      <div className="p-5">
+      <div className="p-5 ">
         <Spinner />
       </div>
     );

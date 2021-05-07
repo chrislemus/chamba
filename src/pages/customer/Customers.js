@@ -5,12 +5,6 @@ import DataFetchWrapper from '../../components/DataFetchWrapper';
 import Pagination from '../../components/Pagination';
 import { fetchCustomers } from '../../services/api';
 
-// const fetchCustomers = (query, pageLimit, page) => {
-//   return axiosApi.get(
-//     `/customers?query=${query}&limit=${pageLimit}&page=${page}`
-//   );
-// };
-
 export default function Customers() {
   const [query, setQuery] = useState('');
   const [pageLimit, setPageLimit] = useState(10);
@@ -21,8 +15,8 @@ export default function Customers() {
     () => fetchCustomers(query, pageLimit, page)
   );
 
-  const customers = data?.data?.customers;
-  const queryData = data?.data?.queryData;
+  const customers = data?.customers;
+  const queryData = data?.queryData;
 
   const displayCustomers = () => {
     if (customers) {

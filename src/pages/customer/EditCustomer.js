@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { history } from '../../store';
 import { us_states } from '../../helpers/sharableConst';
@@ -6,59 +6,91 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import SubmitButton from '../../iu/SubmitButton';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { editCustomer, fetchCustomerById } from '../../actions/customerActions';
+import {TextField, SelectField} from '../../components/formik-ui'
+import {
+  alertModalSuccess,
+  alertModalDanger,
+} from '../../actions/alertModalActions';
 import ValidationErrors from '../../iu/ValidationErrors';
+import { editCustomer, fetchCustomerById } from '../../services/api';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import DataFetchWrapper from '../../components/DataFetchWrapper';
+import {updateObjValues} from '../../helpers/dataManipulation/objects'
+const formSelectStateOptions = us_states.map(([stateName, stateAbbr]) => ({name: stateName, value:stateAbbr}))
+
+const formFieldNames = [
+  'firstName',
+  'lastName',
+  'companyName',
+  'email',
+  'phoneMobile',
+  'phoneHome',
+  'address1',
+  'address2',
+  'city',
+  'state',
+  'zipCode',
+  'country',
+]; 
+
+const initialFormValues = Object.assign(
+  ...formFieldNames.map((key) => ({ [key]: '' }))
+)
 
 export default function EditCustomer() {
   const formikRef = useRef();
-  const customer = useSelector((state) => state.customer);
-  const { status, validationErrors } = customer;
-  const customerData = customer.data;
   const dispatch = useDispatch();
-  const customerId = useParams().id;
+  const [formSyncedOnMount, setFormSyncedOnMount] = useState(false)
+  
+  const customerId = useParams()?.id;
 
-  const formFieldNames = [
-    'firstName',
-    'lastName',
-    'companyName',
-    'email',
-    'phoneMobile',
-    'phoneHome',
-    'address1',
-    'address2',
-    'city',
-    'state',
-    'zipCode',
-    'country',
-  ];
-  const InitialFormValues = Object.assign(
-    ...formFieldNames.map((key) => ({ [key]: '' }))
+  const queryClient = useQueryClient()
+  const { status, data, error } = useQuery(
+    ['customerDetails', {customerId}],
+    () => fetchCustomerById(customerId)
   );
+  const [validationErrors, setValidationErrors] = useState([])
+  const customer = data?.customer
+
 
   useEffect(() => {
-    status === 'idle' && dispatch(fetchCustomerById(customerId));
-  }, [status]);
-
-  useEffect(() => {
-    if (status === 'success' && customerData) {
-      const setFieldValue = formikRef.current?.setFieldValue;
-      if (setFieldValue) {
-        formFieldNames.forEach((fieldName) => {
-          const fieldValue = customerData[fieldName] || '';
-          setFieldValue(fieldName, fieldValue);
-        });
-      }
+    const resetForm = formikRef.current?.resetForm;
+    if (customer && resetForm && !formSyncedOnMount) {
+      const updatedIntialData = updateObjValues(initialFormValues, customer)
+      resetForm({values: updatedIntialData})
+      setFormSyncedOnMount(true)
     }
-  }, [status]);
+  }, [customer]);
 
-  const handleSubmit = (values, actions) => {
-    const customer = values;
-    dispatch(editCustomer(customerId, customer));
-  };
 
-  const isLoading =
-    (status === 'fetching' && !customerData) ||
-    (status === 'idle' && !customerData);
+  const {mutate:handleSubmit, status:formStatus} = useMutation(
+  newCustomerDetails => editCustomer(customerId, newCustomerDetails),
+  {
+    onMutate: async newCustomerDetails => {
+      await queryClient.cancelQueries(['customerDetails', {customerId}])
+      const previousData= queryClient.getQueryData(['customerDetails', {customerId}])
+
+      queryClient.setQueryData(['customerDetails', {customerId}], oldData => ({
+        ...oldData, 
+        customer: newCustomerDetails
+      }))
+
+      return previousData
+    },
+    onError: (error, newCustomerDetails, previousData) => {
+      setValidationErrors(error.validationErrors)
+      // dispatch(alertModalDanger('unable to save changes'))
+      return queryClient.setQueryData(['customerDetails', {customerId}], previousData)
+    },
+    onSuccess: () => {
+      setValidationErrors([])
+      // dispatch(alertModalSuccess('customer updated'))
+    },
+    onSettled: () => queryClient.invalidateQueries(['customerDetails', {customerId}]),
+  }
+)
+
+  
 
   return (
     <>
@@ -67,24 +99,19 @@ export default function EditCustomer() {
           <h1>Customer Edit</h1>
         </div>
         <div className="app-header-right">
-          <Link
+          <button
             onClick={() => history.goBack()}
             className="button is-primary is-outlined is-rounded"
           >
             Cancel
-          </Link>
+          </button>
         </div>
       </div>
-      {isLoading ? (
-        <div className="columns is-centered my-3 ">
-          <span className="icon  is-size-3 has-text-primary ">
-            <i className="fas fa-spinner fa-pulse" />
-          </span>
-        </div>
-      ) : (
+
+      <DataFetchWrapper status={status} dataName="Customer" hasData={customer} className='mt-6'>
         <Formik
           innerRef={formikRef}
-          initialValues={InitialFormValues}
+          initialValues={initialFormValues}
           onSubmit={handleSubmit}
           validate={(values) => {
             const errors = {};
@@ -94,96 +121,42 @@ export default function EditCustomer() {
             return errors;
           }}
         >
-          {({ isSubmitting, values }) => (
-            <Form className="box p-5">
-              <ValidationErrors errors={validationErrors} />
-              <>
-                <div className="field-body mb-3">
-                  <div className="field">
-                    <label className="label">First Name</label>
-                    <Field className="input" type="text" name="firstName" />
-                    <ErrorMessage
-                      className="help is-danger"
-                      name="firstName"
-                      component="p"
-                    />
-                  </div>
-                  <div className="field">
-                    <label className="label">Last Name</label>
-                    <Field className="input" type="text" name="lastName" />
-                  </div>
-                </div>
+          {props => (
 
-                <div className="field">
-                  <label className="label">Company Name</label>
-                  <Field className="input" type="text" name="companyName" />
-                </div>
-                <div className="field">
-                  <label className="label">Email</label>
-                  <Field className="input" type="text" name="email" />
-                </div>
-
-                <div className="field-body mb-3">
-                  <div className="field">
-                    <label className="label">Phone Mobile</label>
-                    <Field className="input" type="tel" name="phoneMobile" />
-                  </div>
-                  <div className="field">
-                    <label className="label">Phone Home</label>
-                    <Field className="input" type="tel" name="phoneHome" />
-                  </div>
-                </div>
-
-                <div className="field">
-                  <label className="label">Address 1</label>
-                  <Field className="input" type="text" name="address1" />
-                </div>
-                <div className="field">
-                  <label className="label">Address 2</label>
-                  <Field className="input" type="text" name="address2" />
-                </div>
-
-                <div className="columns mb-3">
-                  <div className="field column is-narrow">
-                    <label className="label">City</label>
-                    <Field className="input" type="text" name="city" />
-                  </div>
-                  <div className="field column is-narrow">
-                    <label className="label">State/Region</label>
-                    <div className="select">
-                      <Field as="select" className="input" name="state">
-                        <option value="">Select state</option>
-                        {us_states.map(([state, abbr]) => (
-                          <option key={`us-state-${abbr}`} value={abbr}>
-                            {state}
-                          </option>
-                        ))}
-                      </Field>
-                    </div>
-                  </div>
-
-                  <div className="field column is-narrow">
-                    <label className="label">Zip Code</label>
-                    <Field className="input" type="text" name="zipCode" />
-                  </div>
-                  <div className="field column is-narrow">
-                    <label className="label">Country</label>
-                    <Field
-                      className="input"
-                      type="text"
-                      name="cpuntry"
-                      value="USA"
-                      disabled
-                    />
-                  </div>
-                </div>
-
-                <SubmitButton status={status}>Save Changes</SubmitButton>
-              </>
-            </Form>
+          <Form>  
+          {console.log(props)}
+            <ValidationErrors errors={validationErrors} />
+            <div className="field-body mb-3">
+              <TextField name='firstName' type='text' label='First Name' />
+              <TextField name='lastName' type='text' label='Last Name' />
+            </div>
+            <TextField name='companyName' type='text' label='Company Name' />
+            <TextField name='email' type='text' label='Email' />
+            <div className="field-body mb-3">
+              <TextField name='phoneMobile' type='tel' label='Phone Mobile' />
+              <TextField name='phoneHome' type='tel' label='Phone Home' />
+            </div>
+            <TextField name='address1' type='text' label='Address 1' />
+            <TextField name='address2' type='text' label='Address 2' />
+            <div className="columns mb-3">
+              <div className="column is-narrow">
+                <TextField name='city' type='text' label='City' />
+              </div>
+              <div className="column is-narrow">
+                <SelectField name='state' label='State/Region' options={formSelectStateOptions}/>
+              </div>
+              <div className="column is-narrow">
+                <TextField name='zipCode' type='text' label='Zip Code' />
+              </div>
+              <div className="column is-narrow">
+                <TextField name='country' value="USA" disabled type='text' label='Country' />
+              </div>
+            </div>
+            <SubmitButton status={formStatus} isValid={props.isValid} dirty={props.dirty}>Save Changes</SubmitButton>
+          </Form>
           )}
         </Formik>
-      )}
+      </DataFetchWrapper>
     </>
   );
 }

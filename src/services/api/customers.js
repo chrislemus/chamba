@@ -2,9 +2,10 @@ import { InvertColorsOff } from '@material-ui/icons';
 import { axiosApi } from './axiosApi';
 
 const fetchCustomers = async (query, pageLimit, page) => {
-  return await axiosApi.get(
+  const res =  await axiosApi.get(
     `/customers?query=${query}&limit=${pageLimit}&page=${page}`
   );
+  return res.data
 };
 
 const addNewCustomer = (customer) => {
@@ -38,27 +39,30 @@ const addNewCustomer = (customer) => {
   }
 */
 
-const editCustomer = (customerId, customer) => {
-  return (dispatch) => {
-    dispatch({ type: 'CUSTOMER_FETCH' });
-    axiosApi
-      .patch(`/customers/${customerId}`, { customer })
-      .then(({ data }) => {
-        const { customer } = data;
-        dispatch({ type: 'CUSTOMER_EDIT_SUCCESS', payload: customer });
-        // dispatch(alertModalSuccess('Successfully updated Customer'));
-      })
-      .catch(({ validationErrors }) => {
-        dispatch({
-          type: 'CUSTOMER_FETCH_FAILED',
-          payload: validationErrors,
-        });
-      });
-  };
+const editCustomer = async (customerId, customer) => {
+  const res  = await axiosApi.patch(`/customers/${customerId}`, { customer })
+  return res?.data
+  // return (dispatch) => {
+  //   dispatch({ type: 'CUSTOMER_FETCH' });
+  //   axiosApi
+  //     .patch(`/customers/${customerId}`, { customer })
+  //     .then(({ data }) => {
+  //       const { customer } = data;
+  //       dispatch({ type: 'CUSTOMER_EDIT_SUCCESS', payload: customer });
+  //       // dispatch(alertModalSuccess('Successfully updated Customer'));
+  //     })
+  //     .catch(({ validationErrors }) => {
+  //       dispatch({
+  //         type: 'CUSTOMER_FETCH_FAILED',
+  //         payload: validationErrors,
+  //       });
+  //     });
+  // };
 };
 
 const fetchCustomerById = async (customerId) => {
-  return await axiosApi.get(`/customers/${customerId}`);
+  const res =  await axiosApi.get(`/customers/${customerId}`);
+  return res.data
   // .then(({ data }) => {
   //   const customer = data?.customer;
   //   dispatch({ type: 'CUSTOMER_FETCH_BY_ID_SUCCESS', payload: customer });
