@@ -22,12 +22,10 @@ export default function Customers() {
     if (customers) {
       return customers.map(
         (customerInfo) =>
-          customerInfo && (
             <CustomerListCard
               customerInfo={customerInfo}
               key={`customer-${customerInfo.id}`}
             />
-          )
       );
     }
   };

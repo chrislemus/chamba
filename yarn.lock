@@ -4730,10 +4730,10 @@
   "resolved" "https://registry.npmjs.org/date-arithmetic/-/date-arithmetic-4.1.0.tgz"
   "version" "4.1.0"
 
-"date-fns@^2.15.0":
-  "integrity" "sha512-m1WR0xGiC6j6jNFAyW4Nvh4WxAi4JF4w9jRJwSI8nBmNcyZXPcP9VUQG+6gHQXAmqaGEKDKhOqAtENDC941UkA=="
-  "resolved" "https://registry.npmjs.org/date-fns/-/date-fns-2.21.1.tgz"
-  "version" "2.21.1"
+"date-fns@^2.15.0", "date-fns@^2.21.3":
+  "integrity" "sha512-HeYdzCaFflc1i4tGbj7JKMjM4cKGYoyxwcIIkHzNgCkX8xXDNJDZXgDDVchIWpN4eQc3lH37WarduXFZJOtxfw=="
+  "resolved" "https://registry.npmjs.org/date-fns/-/date-fns-2.21.3.tgz"
+  "version" "2.21.3"
 
 "dateformat@^2.0.0":
   "integrity" "sha1-QGXiATz5+5Ft39gu+1Bq1MZ2kGI="

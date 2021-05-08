@@ -1,43 +1,32 @@
 import { Link } from 'react-router-dom';
-import { useQuery } from 'react-query';
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
-import { fetchCustomers } from '../../actions/customerListActions';
+import { useQuery } from 'react-query';
 import DataFetchWrapper from '../../components/DataFetchWrapper';
 import Pagination from '../../components/Pagination';
+import { fetchInvoices } from '../../services/api';
+import { format } from 'date-fns'
+
 
 export default function Invoices() {
   const [query, setQuery] = useState('');
   const [pageLimit, setPageLimit] = useState(10);
   const [page, setPage] = useState(1);
-  const dispatch = useDispatch();
-  const { customers, status, queryData } = useSelector(
-    (state) => state.customerList
+
+  const { status, data, error } = useQuery(
+    ['invoices', { query, pageLimit, page }],
+    () => fetchInvoices(query, pageLimit, page)
   );
 
-  const fetchCustomerList = () => {
-    dispatch(fetchCustomers(query, pageLimit, page));
-  };
-
-  //component mount data fetching
-  useEffect(() => {
-    status === 'idle' && fetchCustomerList();
-  }, [status]);
-
-  //query data fetching
-  useEffect(() => fetchCustomerList(), [pageLimit, page, query]);
-
-  const displayCustomers = () => {
-    if (customers) {
-      return customers.map(
-        (customerInfo) =>
-          customerInfo && (
-            <CustomerListCard
-              customerInfo={customerInfo}
-              key={`customer-${customerInfo.id}`}
+  const invoices = data?.invoices;
+  const queryData = data?.queryData;
+  const displayInvoices = () => {
+    if (invoices) {
+      return invoices.map(
+        (invoice) =>
+            <InvoiceListCard
+              invoice={invoice}
+              key={`invoice-${invoice.id}`}
             />
-          )
       );
     }
   };
@@ -49,8 +38,8 @@ export default function Invoices() {
           <h1>Invoices</h1>
         </div>
         <div className="app-header-right">
-          <Link to="/customers/new" className="button is-primary is-rounded">
-            Add Customer
+          <Link to="/invoices/new" className="button is-primary is-rounded">
+            New Invoice
           </Link>
         </div>
       </div>
@@ -63,7 +52,7 @@ export default function Invoices() {
                 className="input"
                 type="text"
                 onChange={({ target }) => setQuery(target.value)}
-                placeholder="Search customers"
+                placeholder="Search invoices by customer name"
               />
 
               <span className="icon is-small is-left">
@@ -74,21 +63,22 @@ export default function Invoices() {
         </header>
         <DataFetchWrapper
           status={status}
-          dataName={'Customers'}
-          queryData={queryData}
+          dataName={'Invoices'}
+          hasData={invoices?.length > 0}
         >
           <>
-            <table className="table is-hoverable mt-5 is-fullwidth">
+            <table className="table is-hoverable mt-5 is-fullwidth has-text-centered">
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th className="is-hidden-mobile">Email</th>
-                  <th className="is-hidden-mobile">Phone</th>
+                  <th className="is-hidden-mobile">Created</th>
+                  <th className="is-hidden-mobile">Status</th>
+                  <th className="is-hidden-mobile">Amount</th>
                   <th>Actions</th>
                 </tr>
               </thead>
 
-              <tbody>{displayCustomers()}</tbody>
+              <tbody>{displayInvoices()}</tbody>
             </table>
             <Pagination
               page={page}
@@ -104,49 +94,32 @@ export default function Invoices() {
   );
 }
 
-const CustomerListCard = (props) => {
-  const {
-    id,
-    fullName,
-    email,
-    phoneMobile,
-    phoneHome,
-    avatar,
-  } = props.customerInfo;
-  const avatarLink =
-    avatar || 'https://bulma.io/images/placeholders/128x128.png';
-  const phone = phoneMobile || phoneHome;
+const InvoiceListCard = ({invoice}) => {
+  const {customer, id, customerFullName, status, total} = invoice
+
+  const invoiceCreatedDate = format(new Date(invoice.createdAt), 'MM/dd/yyyy')
+  const statusStyle = {
+    pending: 'info',
+    paid: 'success',
+    canceled: 'warning',
+    overdue: 'danger'
+  }
+  // const invoiceCreatedDate = parse(invoice.createdAt, 'MM/dd/yyyy', new Date())
+
   return (
     <tr>
       <td>
-        <div className="columns is-mobile level">
-          <div className="column is-narrow">
-            <p className="image is-32x32">
-              <img className="is-rounded" src={avatarLink} />
-            </p>
-          </div>
-          <div className="column">
-            <Link to={`/customers/${id}`}>{fullName}</Link>
-          </div>
-        </div>
+        <Link to={`/invoices/${id}`}>{customerFullName}</Link>
       </td>
+      <td className="is-hidden-mobile ">{invoiceCreatedDate}</td>
       <td className="is-hidden-mobile">
-        {!!email?.length ? (
-          <a href={`mailto:${email}`} target="_blank">
-            {email}
-          </a>
-        ) : (
-          '--'
-        )}
+        <span className={`tag is-${statusStyle[status]} is-light`}>{status}</span>
+
       </td>
-      <td className="is-hidden-mobile">{phone ? phone : '--'}</td>
+      <td className="is-hidden-mobile">${total}</td>
+      
       <td>
-        <Link to={`/customers/${id}/edit`} className="button is-ghost  ">
-          <span className="icon ">
-            <i className="fas fa-edit"></i>
-          </span>
-        </Link>
-        <Link to={`/customers/${id}`} className="button is-ghost ">
+        <Link to={`/invoices/${id}`} className="button is-ghost ">
           <span className="icon">
             <i className="fas fa-arrow-right"></i>
           </span>
@@ -155,3 +128,5 @@ const CustomerListCard = (props) => {
     </tr>
   );
 };
+
+

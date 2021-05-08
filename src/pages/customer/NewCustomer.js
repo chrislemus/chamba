@@ -1,39 +1,58 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import SubmitButton from '../../iu/SubmitButton';
 import { useDispatch } from 'react-redux';
-import { addNewCustomer } from '../../actions/customerActions';
+import { addNewCustomer } from '../../services/api';
 import { Link } from 'react-router-dom';
 import { us_states } from '../../helpers/sharableConst';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import ValidationErrors from '../../iu/ValidationErrors';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useHistory } from "react-router-dom";
+import { alertModalDanger} from '../../actions/alertModalActions';
+
+import {TextField, SelectField} from '../../components/formik-ui'
+const formSelectStateOptions = us_states.map(([stateName, stateAbbr]) => ({name: stateName, value:stateAbbr}))
+
+const formFieldNames = [
+  'firstName',
+  'lastName',
+  'companyName',
+  'email',
+  'phoneMobile',
+  'phoneHome',
+  'address1',
+  'address2',
+  'city',
+  'state',
+  'zipCode',
+  'country',
+];
+const InitialFormValues = Object.assign(
+  ...formFieldNames.map((key) => ({ [key]: '' }))
+);
+
 export default function NewCustomer() {
+  const history = useHistory()
   const customer = useSelector((state) => state.customer);
   const formikRef = useRef();
   const dispatch = useDispatch();
+  const [validationErrors, setValidationErrors] = useState([])
 
-  const formFieldNames = [
-    'firstName',
-    'lastName',
-    'companyName',
-    'email',
-    'phoneMobile',
-    'phoneHome',
-    'address1',
-    'address2',
-    'city',
-    'state',
-    'zipCode',
-    'country',
-  ];
-  const InitialFormValues = Object.assign(
-    ...formFieldNames.map((key) => ({ [key]: '' }))
-  );
-
-  const handleSubmit = (values, actions) => {
-    const customer = values;
-    dispatch(addNewCustomer(customer));
-  };
+  const {mutate:handleSubmit, status:formStatus} = useMutation(
+    addNewCustomer,
+    {
+      onError: (error ) => {
+        setValidationErrors(error.validationErrors)
+        dispatch(alertModalDanger('unable to create customer'))         
+      },
+      onSuccess: (data) => {
+        setValidationErrors([])
+        const customerId = data?.customer?.id
+        history.push(`/customers/${customerId}`);
+      }
+    }
+  )
 
   return (
     <>
@@ -54,100 +73,44 @@ export default function NewCustomer() {
         innerRef={formikRef}
         initialValues={InitialFormValues}
         onSubmit={handleSubmit}
-        validate={(values) => {
-          const errors = {};
-          if (!values.firstName) {
-            errors.firstName = 'Required';
-          }
-          return errors;
-        }}
+        // validate={(values) => {
+        //   const errors = {};
+        //   if (!values.firstName) {
+        //     errors.firstName = 'Required';
+        //   }
+        //   return errors;
+        // }}
       >
-        {({ isSubmitting, values }) => (
-          <Form className="box p-5">
-            <ValidationErrors errors={customer.validationErrors} />
-            <>
-              <div className="field-body mb-3">
-                <div className="field">
-                  <label className="label">First Name</label>
-                  <Field className="input" type="text" name="firstName" />
-                  <ErrorMessage
-                    className="help is-danger"
-                    name="firstName"
-                    component="p"
-                  />
-                </div>
-                <div className="field">
-                  <label className="label">Last Name</label>
-                  <Field className="input" type="text" name="lastName" />
-                </div>
+        {(props) => (
+          <Form className='box py-5'>  
+            <ValidationErrors errors={validationErrors} />
+            <div className="field-body mb-3">
+              <TextField name='firstName' type='text' label='First Name' />
+              <TextField name='lastName' type='text' label='Last Name' />
+            </div>
+            <TextField name='companyName' type='text' label='Company Name' />
+            <TextField name='email' type='text' label='Email' />
+            <div className="field-body mb-3">
+              <TextField name='phoneMobile' type='tel' label='Phone Mobile' />
+              <TextField name='phoneHome' type='tel' label='Phone Home' />
+            </div>
+            <TextField name='address1' type='text' label='Address 1' />
+            <TextField name='address2' type='text' label='Address 2' />
+            <div className="columns mb-3">
+              <div className="column is-narrow">
+                <TextField name='city' type='text' label='City' />
               </div>
-              <div className="field">
-                <label className="label">Company Name</label>
-                <Field className="input" type="text" name="companyName" />
+              <div className="column is-narrow">
+                <SelectField name='state' label='State/Region' options={formSelectStateOptions}/>
               </div>
-
-              <div className="field">
-                <label className="label">Email</label>
-                <Field className="input" type="text" name="email" />
+              <div className="column is-narrow">
+                <TextField name='zipCode' type='text' label='Zip Code' />
               </div>
-
-              <div className="field-body mb-3">
-                <div className="field">
-                  <label className="label">Phone Mobile</label>
-                  <Field className="input" type="tel" name="phoneMobile" />
-                </div>
-                <div className="field">
-                  <label className="label">Phone Home</label>
-                  <Field className="input" type="tel" name="phoneHome" />
-                </div>
+              <div className="column is-narrow">
+                <TextField name='country' value="USA" disabled type='text' label='Country' />
               </div>
-
-              <div className="field">
-                <label className="label">Address 1</label>
-                <Field className="input" type="text" name="address1" />
-              </div>
-              <div className="field">
-                <label className="label">Address 2</label>
-                <Field className="input" type="text" name="address2" />
-              </div>
-
-              <div className="columns mb-3">
-                <div className="field column is-narrow">
-                  <label className="label">City</label>
-                  <Field className="input" type="text" name="city" />
-                </div>
-                <div className="field column is-narrow">
-                  <label className="label">State/Region</label>
-                  <div className="select">
-                    <Field as="select" className="input" name="state">
-                      <option value="">Select state</option>
-                      {us_states.map(([state, abbr]) => (
-                        <option key={`us-state-${abbr}`} value={abbr}>
-                          {state}
-                        </option>
-                      ))}
-                    </Field>
-                  </div>
-                </div>
-
-                <div className="field column is-narrow">
-                  <label className="label">Zip Code</label>
-                  <Field className="input" type="text" name="zipCode" />
-                </div>
-                <div className="field column is-narrow">
-                  <label className="label">Country</label>
-                  <Field
-                    className="input"
-                    type="text"
-                    name="cpuntry"
-                    value="USA"
-                    disabled
-                  />
-                </div>
-              </div>
-
-              <SubmitButton status={customer.status}>Save Changes</SubmitButton>
-            </>
+            </div>
+            <SubmitButton status={formStatus} isValid={props.isValid} dirty={props.dirty}>Save Changes</SubmitButton>
           </Form>
         )}
       </Formik>

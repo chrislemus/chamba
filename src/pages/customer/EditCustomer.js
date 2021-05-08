@@ -64,31 +64,30 @@ export default function EditCustomer() {
 
 
   const {mutate:handleSubmit, status:formStatus} = useMutation(
-  newCustomerDetails => editCustomer(customerId, newCustomerDetails),
-  {
-    onMutate: async newCustomerDetails => {
-      await queryClient.cancelQueries(['customerDetails', {customerId}])
-      const previousData= queryClient.getQueryData(['customerDetails', {customerId}])
+    newCustomerDetails => editCustomer(customerId, newCustomerDetails),
+    {
+      onMutate: async newCustomerDetails => {
+        await queryClient.cancelQueries(['customerDetails', {customerId}])
+        const previousData= queryClient.getQueryData(['customerDetails', {customerId}])
+        queryClient.setQueryData(['customerDetails', {customerId}], oldData => ({
+          ...oldData, 
+          customer: newCustomerDetails
+        }))
 
-      queryClient.setQueryData(['customerDetails', {customerId}], oldData => ({
-        ...oldData, 
-        customer: newCustomerDetails
-      }))
-
-      return previousData
-    },
-    onError: (error, newCustomerDetails, previousData) => {
-      setValidationErrors(error.validationErrors)
-      // dispatch(alertModalDanger('unable to save changes'))
-      return queryClient.setQueryData(['customerDetails', {customerId}], previousData)
-    },
-    onSuccess: () => {
-      setValidationErrors([])
-      // dispatch(alertModalSuccess('customer updated'))
-    },
-    onSettled: () => queryClient.invalidateQueries(['customerDetails', {customerId}]),
-  }
-)
+        return previousData
+      },
+      onError: (error, newCustomerDetails, previousData) => {
+        setValidationErrors(error.validationErrors)
+        dispatch(alertModalDanger('unable to save changes'))
+        return queryClient.setQueryData(['customerDetails', {customerId}], previousData)
+      },
+      onSuccess: () => {
+        dispatch(alertModalSuccess('customer updated'))
+        setValidationErrors([])
+      },
+      onSettled: () => queryClient.invalidateQueries(['customerDetails', {customerId}]),
+    }
+  )
 
   
 
@@ -123,8 +122,7 @@ export default function EditCustomer() {
         >
           {props => (
 
-          <Form>  
-          {console.log(props)}
+          <Form className='box py-5'>  
             <ValidationErrors errors={validationErrors} />
             <div className="field-body mb-3">
               <TextField name='firstName' type='text' label='First Name' />

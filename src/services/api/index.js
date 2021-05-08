@@ -7,10 +7,17 @@ import {
   editCustomer,
 } from './customers';
 
+import {fetchInvoices, fetchInvoiceById} from './invoices'
+
+
+
+
 export {
   fetchCustomers,
   fetchCustomerById,
   addNewCustomer,
   editCustomer,
   axiosApi,
+  fetchInvoices,
+  fetchInvoiceById
 };

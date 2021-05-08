@@ -34,7 +34,7 @@ axiosApi.interceptors.response.use(
   },
   function (error) {
     // const dispatch = useDispatch();
-    error.validationErrors = error?.response?.data?.validationErrors || [];
+    error.validationErrors = error?.response?.data?.validationErrors;
     store.dispatch({
       type: 'ALERT_MODAL_DANGER',
       payload: error?.response?.status,

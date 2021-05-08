@@ -4,7 +4,7 @@ import DataPanelBlocks from '../../iu/DataPanelBlocks';
 
 import { useQuery } from 'react-query';
 import DataFetchWrapper from '../../components/DataFetchWrapper';
-import { fetchCustomerById } from '../../services/api/customers';
+import { fetchCustomerById } from '../../services/api';
 
 export default function CustomerDetails() {
   const customerId = useParams()?.id;

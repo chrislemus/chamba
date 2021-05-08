@@ -1,4 +1,3 @@
-import { InvertColorsOff } from '@material-ui/icons';
 import { axiosApi } from './axiosApi';
 
 const fetchCustomers = async (query, pageLimit, page) => {
@@ -8,20 +7,9 @@ const fetchCustomers = async (query, pageLimit, page) => {
   return res.data
 };
 
-const addNewCustomer = (customer) => {
-  return (dispatch) => {
-    dispatch({ type: 'CUSTOMER_FETCH' });
-    axiosApi
-      .post('/customers', { customer })
-      .then(({ data }) => {
-        const customerId = data?.customer?.id;
-        dispatch({ type: 'CUSTOMER_ADD_NEW_SUCCESS' });
-        // history.push(`/customers/${customerId}`);
-      })
-      .catch(({ validationErrors }) => {
-        dispatch({ type: 'CUSTOMER_FETCH_FAILED', payload: validationErrors });
-      });
-  };
+const addNewCustomer = async(customer) => {
+  const res  = await axiosApi.post('/customers', { customer })
+  return res?.data
 };
 /*
   error {

@@ -1,4 +1,5 @@
-export default function ValidationErrors({ errors }) {
+export default function ValidationErrors(props) {
+  const errors = props?.errors
   if (errors && errors?.length > 0) {
     return (
       <div className="content">
