@@ -64,20 +64,15 @@ export default function InvoiceDetails() {
           <table className="table mt-5 is-fullwidth ">
             <thead>
               <tr>
-                <th>Product/Service</th>
+                <th>Description</th>
                 <th className=" has-text-right is-narrow">Unit Price</th>
               </tr>
             </thead>
             <tbody>
               {invoiceLineItems &&
-                invoiceLineItems.map(({ id, name, description, price }) => (
+                invoiceLineItems.map(({ id, description, price }) => (
                   <tr key={`InvoiceLineItem-${id}`}>
-                    <td>
-                      <p>
-                        <strong>{name}</strong>
-                      </p>
-                      {description}
-                    </td>
+                    <td>{description}</td>
                     <td className=" has-text-right">${price}</td>
                   </tr>
                 ))}

@@ -16,7 +16,9 @@ import NewCustomer from './pages/customer/NewCustomer';
 import CustomerDetails from './pages/customer/CustomerDetails';
 import EditCustomer from './pages/customer/EditCustomer.js';
 import Invoices from './pages/invoices/Invoices';
-import InvoiceDetails from './pages/invoices/InvoiceDetails'
+import InvoiceDetails from './pages/invoices/InvoiceDetails';
+import EditInvoice from './pages/invoices/EditInvoice';
+import NewInvoice from './pages/invoices/NewInvoice';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 
@@ -31,7 +33,7 @@ export default function App({ history }) {
           <Switch>
             <Route exact path="/" component={HomePage} />
             <PrivateRoute exact path="/overview" component={Overview} />
-            <PrivateRoute exact path="/customers" component={Customers} />
+            <PrivateRoute exact exact path="/customers" component={Customers} />
             <PrivateRoute exact path="/customers/new" component={NewCustomer} />
             <PrivateRoute
               exact
@@ -44,10 +46,16 @@ export default function App({ history }) {
               component={EditCustomer}
             />
             <PrivateRoute exact path="/invoices" component={Invoices} />
+            <PrivateRoute exact path="/invoices/new" component={NewInvoice} />
             <PrivateRoute
               exact
               path="/invoices/:id"
               component={InvoiceDetails}
+            />
+            <PrivateRoute
+              exact
+              path="/invoices/:id/edit"
+              component={EditInvoice}
             />
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={SignUp} />

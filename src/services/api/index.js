@@ -7,10 +7,7 @@ import {
   editCustomer,
 } from './customers';
 
-import {fetchInvoices, fetchInvoiceById} from './invoices'
-
-
-
+import { fetchInvoices, fetchInvoiceById, createInvoice } from './invoices';
 
 export {
   fetchCustomers,
@@ -19,5 +16,6 @@ export {
   editCustomer,
   axiosApi,
   fetchInvoices,
-  fetchInvoiceById
+  fetchInvoiceById,
+  createInvoice,
 };
