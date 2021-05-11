@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import SubmitButton from '../../iu/SubmitButton';
 import { addNewCustomer } from '../../services/api';
 import { Link, useHistory } from 'react-router-dom';
@@ -35,7 +35,6 @@ const InitialFormValues = Object.assign(
 
 export default function NewCustomer() {
   const history = useHistory();
-  const customer = useSelector((state) => state.customer);
   const formikRef = useRef();
   const dispatch = useDispatch();
   const [validationErrors, setValidationErrors] = useState([]);

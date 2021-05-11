@@ -1,4 +1,3 @@
-import { axiosApi } from '../services/api';
 import Cookies from 'js-cookie';
 
 const addUser = (user) => {

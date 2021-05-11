@@ -11,7 +11,7 @@ export default function Invoices() {
   const [pageLimit, setPageLimit] = useState(10);
   const [page, setPage] = useState(1);
 
-  const { status, data, error } = useQuery(
+  const { status, data } = useQuery(
     ['invoices', { query, pageLimit, page }],
     () => fetchInvoices(query, pageLimit, page)
   );
@@ -25,7 +25,6 @@ export default function Invoices() {
       ));
     }
   };
-  console.log(queryData);
   return (
     <>
       <div className="app-header">
@@ -90,7 +89,7 @@ export default function Invoices() {
 }
 
 const InvoiceListCard = ({ invoice }) => {
-  const { customer, id, customerFullName, status, total } = invoice;
+  const { id, customerFullName, status, total } = invoice;
 
   const invoiceCreatedDate = format(new Date(invoice.createdAt), 'MM/dd/yyyy');
   const statusStyle = {

@@ -51,9 +51,8 @@ export default function EditCustomer() {
   const customerId = useParams()?.id;
 
   const queryClient = useQueryClient();
-  const { status, data, error } = useQuery(
-    ['customerDetails', { customerId }],
-    () => fetchCustomerById(customerId)
+  const { status, data } = useQuery(['customerDetails', { customerId }], () =>
+    fetchCustomerById(customerId)
   );
   const [validationErrors, setValidationErrors] = useState([]);
   const customer = data?.customer;
@@ -67,7 +66,7 @@ export default function EditCustomer() {
     }
   }, [customer]);
 
-  const { mutate: handleDelete, status: deleteStatus } = useMutation(
+  const { mutate: handleDelete } = useMutation(
     () => deleteCustomer(customerId),
     {
       onError: () => {

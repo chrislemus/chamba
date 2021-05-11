@@ -1,5 +1,5 @@
-import { useParams, useHistory, Link } from 'react-router-dom';
-import { Formik, Form, FieldArray, ErrorMessage, Field } from 'formik';
+import { useParams, useHistory } from 'react-router-dom';
+import { Formik, Form, FieldArray } from 'formik';
 import { format } from 'date-fns';
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -10,7 +10,7 @@ import {
   fetchInvoiceById,
   deleteInvoice,
 } from '../../services/api';
-import { TextField, TextArea, Checkbox } from '../../components/formik-ui';
+import { TextField, TextArea } from '../../components/formik-ui';
 import SubmitButton from '../../iu/SubmitButton';
 import ValidationErrors from '../../iu/ValidationErrors';
 import {
@@ -105,21 +105,22 @@ export default function NewInvoice() {
         queryClient.invalidateQueries(['invoiceDetails', { invoiceId }]),
     }
   );
-  const { mutate: handleDelete, status: deleteStatus } = useMutation(
-    () => deleteInvoice(invoiceId),
-    {
-      onError: (error, updatedInvoice, previousData) => {
-        dispatch(alertModalDanger('unable to delete invoice'));
-      },
-      onSuccess: () => {
-        dispatch(alertModalSuccess('invoice deleted'));
-        history.push('/invoices');
-      },
-    }
-  );
+  const { mutate: handleDelete } = useMutation(() => deleteInvoice(invoiceId), {
+    onError: (error, updatedInvoice, previousData) => {
+      dispatch(alertModalDanger('unable to delete invoice'));
+    },
+    onSuccess: () => {
+      dispatch(alertModalSuccess('invoice deleted'));
+      history.push('/invoices');
+    },
+  });
 
   return (
-    <DataFetchWrapper dataName="Invoice Details" hasData={invoiceData}>
+    <DataFetchWrapper
+      dataName="Invoice Details"
+      status={status}
+      hasData={invoiceData}
+    >
       <div className="app-header">
         <div className="app-header-left">
           <h1>Invoice #{invoiceData?.id}</h1>

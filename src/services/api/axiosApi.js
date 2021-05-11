@@ -1,13 +1,6 @@
 import Cookies from 'js-cookie';
-import store from '../../store';
 import axios from 'axios';
 export const apiUrl = 'http://localhost:3005/api';
-
-const requireLogin = () => {
-  Cookies.remove('authToken');
-  store.dispatch({ type: 'USER_LOGOUT' });
-  store.state.history.push('/login');
-};
 
 //=================
 //custom axios api instance

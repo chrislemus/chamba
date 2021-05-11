@@ -1,7 +1,7 @@
 import { useField } from 'formik';
 
 export default function TextField({ label, ...props }) {
-  const [field, meta, helpers] = useField(props);
+  const [field, meta] = useField(props);
   const fieldName = props?.name;
   const options = props?.options;
   const selectOptions =

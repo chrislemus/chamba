@@ -9,4 +9,9 @@ const getUserData = async () => {
   return res.data;
 };
 
-export { authUser, getUserData };
+const userSignUp = async (user) => {
+  const res = await axiosApi.post('/users', { user });
+  return res.data;
+};
+
+export { authUser, getUserData, userSignUp };

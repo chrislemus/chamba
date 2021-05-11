@@ -29,8 +29,6 @@ export default function Login(props) {
         const cookieOptions = { expires: 7, secure: true };
         Cookies.set('authToken', JSON.stringify(token), cookieOptions);
         dispatch(addUser(user));
-        // dispatch(alertModalSuccess('invoice deleted'));
-        // history.push('/overview');
       },
     }
   );

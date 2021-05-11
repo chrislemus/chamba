@@ -10,7 +10,7 @@ export default function Customers() {
   const [pageLimit, setPageLimit] = useState(10);
   const [page, setPage] = useState(1);
 
-  const { status, data, error } = useQuery(
+  const { status, data } = useQuery(
     ['customers', { query, pageLimit, page }],
     () => fetchCustomers(query, pageLimit, page)
   );
@@ -20,13 +20,12 @@ export default function Customers() {
 
   const displayCustomers = () => {
     if (customers) {
-      return customers.map(
-        (customerInfo) =>
-            <CustomerListCard
-              customerInfo={customerInfo}
-              key={`customer-${customerInfo.id}`}
-            />
-      );
+      return customers.map((customerInfo) => (
+        <CustomerListCard
+          customerInfo={customerInfo}
+          key={`customer-${customerInfo.id}`}
+        />
+      ));
     }
   };
 
@@ -93,14 +92,8 @@ export default function Customers() {
 }
 
 const CustomerListCard = (props) => {
-  const {
-    id,
-    fullName,
-    email,
-    phoneMobile,
-    phoneHome,
-    avatar,
-  } = props.customerInfo;
+  const { id, fullName, email, phoneMobile, phoneHome, avatar } =
+    props.customerInfo;
   const avatarLink =
     avatar || 'https://bulma.io/images/placeholders/128x128.png';
   const phone = phoneMobile || phoneHome;

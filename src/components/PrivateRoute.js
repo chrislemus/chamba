@@ -1,4 +1,4 @@
-import { Route, Redirect, useHistory } from 'react-router';
+import { Route, Redirect } from 'react-router';
 import Cookies from 'js-cookie';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

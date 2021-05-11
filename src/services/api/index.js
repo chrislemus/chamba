@@ -17,7 +17,7 @@ import {
   deleteInvoice,
 } from './invoices';
 
-import { authUser, getUserData } from './user';
+import { authUser, getUserData, userSignUp } from './user';
 
 export {
   fetchCustomers,
@@ -34,4 +34,5 @@ export {
   deleteInvoice,
   authUser,
   getUserData,
+  userSignUp,
 };
