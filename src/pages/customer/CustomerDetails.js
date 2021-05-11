@@ -9,10 +9,10 @@ import { fetchCustomerById } from '../../services/api';
 export default function CustomerDetails() {
   const customerId = useParams()?.id;
 
-  const { status, data } = useQuery(['customerDetails', {customerId}], () =>
+  const { status, data } = useQuery(['customerDetails', { customerId }], () =>
     fetchCustomerById(customerId)
   );
-  const customer = data?.customer
+  const customer = data?.customer;
 
   const getCustomerData = () => {
     if (!customer) return [];
@@ -30,10 +30,10 @@ export default function CustomerDetails() {
       ];
     }
   };
+  const invoicesOverview = customer?.invoicesOverview;
 
   const customerBillingInfo = [
     { title: 'Paid', value: '$500' },
-    { title: 'Draft', value: '$286' },
     { title: 'Unpaid', value: '$41' },
   ];
 
@@ -69,7 +69,20 @@ export default function CustomerDetails() {
             <p className="panel-heading has-background-white">
               Invoices/CheckoutBilling
             </p>
-            <DataPanelBlocks data={customerBillingInfo} />
+            {invoicesOverview && (
+              <DataPanelBlocks
+                data={[
+                  {
+                    title: 'Paid',
+                    value: `$${invoicesOverview.paidInvoicesTotal}`,
+                  },
+                  {
+                    title: 'Unpaid',
+                    value: `$${invoicesOverview.unpaidInvoicesTotal}`,
+                  },
+                ]}
+              />
+            )}
           </article>
         </div>
       </div>
