@@ -5,17 +5,29 @@ import {
   fetchCustomerById,
   addNewCustomer,
   editCustomer,
+  deleteCustomer,
 } from './customers';
 
-import { fetchInvoices, fetchInvoiceById, createInvoice } from './invoices';
+import {
+  fetchInvoices,
+  fetchInvoiceById,
+  createInvoice,
+  editInvoice,
+  paidInvoice,
+  deleteInvoice,
+} from './invoices';
 
 export {
   fetchCustomers,
   fetchCustomerById,
   addNewCustomer,
   editCustomer,
+  deleteCustomer,
   axiosApi,
   fetchInvoices,
   fetchInvoiceById,
   createInvoice,
+  editInvoice,
+  paidInvoice,
+  deleteInvoice,
 };

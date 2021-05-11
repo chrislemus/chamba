@@ -4,8 +4,7 @@ import { useQuery } from 'react-query';
 import DataFetchWrapper from '../../components/DataFetchWrapper';
 import Pagination from '../../components/Pagination';
 import { fetchInvoices } from '../../services/api';
-import { format } from 'date-fns'
-
+import { format } from 'date-fns';
 
 export default function Invoices() {
   const [query, setQuery] = useState('');
@@ -21,16 +20,12 @@ export default function Invoices() {
   const queryData = data?.queryData;
   const displayInvoices = () => {
     if (invoices) {
-      return invoices.map(
-        (invoice) =>
-            <InvoiceListCard
-              invoice={invoice}
-              key={`invoice-${invoice.id}`}
-            />
-      );
+      return invoices.map((invoice) => (
+        <InvoiceListCard invoice={invoice} key={`invoice-${invoice.id}`} />
+      ));
     }
   };
-
+  console.log(queryData);
   return (
     <>
       <div className="app-header">
@@ -94,16 +89,16 @@ export default function Invoices() {
   );
 }
 
-const InvoiceListCard = ({invoice}) => {
-  const {customer, id, customerFullName, status, total} = invoice
+const InvoiceListCard = ({ invoice }) => {
+  const { customer, id, customerFullName, status, total } = invoice;
 
-  const invoiceCreatedDate = format(new Date(invoice.createdAt), 'MM/dd/yyyy')
+  const invoiceCreatedDate = format(new Date(invoice.createdAt), 'MM/dd/yyyy');
   const statusStyle = {
     pending: 'info',
     paid: 'success',
     canceled: 'warning',
-    overdue: 'danger'
-  }
+    overdue: 'danger',
+  };
   // const invoiceCreatedDate = parse(invoice.createdAt, 'MM/dd/yyyy', new Date())
 
   return (
@@ -113,11 +108,12 @@ const InvoiceListCard = ({invoice}) => {
       </td>
       <td className="is-hidden-mobile ">{invoiceCreatedDate}</td>
       <td className="is-hidden-mobile">
-        <span className={`tag is-${statusStyle[status]} is-light`}>{status}</span>
-
+        <span className={`tag is-${statusStyle[status]} is-light`}>
+          {status}
+        </span>
       </td>
       <td className="is-hidden-mobile">${total}</td>
-      
+
       <td>
         <Link to={`/invoices/${id}`} className="button is-ghost ">
           <span className="icon">
@@ -128,5 +124,3 @@ const InvoiceListCard = ({invoice}) => {
     </tr>
   );
 };
-
-

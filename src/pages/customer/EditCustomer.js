@@ -11,7 +11,11 @@ import {
   alertModalDanger,
 } from '../../actions/alertModalActions';
 import ValidationErrors from '../../iu/ValidationErrors';
-import { editCustomer, fetchCustomerById } from '../../services/api';
+import {
+  editCustomer,
+  fetchCustomerById,
+  deleteCustomer,
+} from '../../services/api';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import DataFetchWrapper from '../../components/DataFetchWrapper';
 import { updateObjValues } from '../../helpers/dataManipulation/objects';
@@ -62,6 +66,19 @@ export default function EditCustomer() {
       setFormSyncedOnMount(true);
     }
   }, [customer]);
+
+  const { mutate: handleDelete, status: deleteStatus } = useMutation(
+    () => deleteCustomer(customerId),
+    {
+      onError: () => {
+        dispatch(alertModalDanger('unable to delete customer'));
+      },
+      onSuccess: () => {
+        dispatch(alertModalSuccess('customer deleted'));
+        history.push('/customers');
+      },
+    }
+  );
 
   const { mutate: handleSubmit, status: formStatus } = useMutation(
     (newCustomerDetails) => editCustomer(customerId, newCustomerDetails),
@@ -179,6 +196,14 @@ export default function EditCustomer() {
               >
                 Save Changes
               </SubmitButton>
+              <br />
+              <button
+                onClick={handleDelete}
+                className="mt-5 button is-danger is-outlined is-rounded"
+                type="button"
+              >
+                Delete Customer
+              </button>
             </Form>
           )}
         </Formik>

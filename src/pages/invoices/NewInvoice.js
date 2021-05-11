@@ -1,54 +1,37 @@
 import { Link } from 'react-router-dom';
 import { useParams, useHistory } from 'react-router-dom';
-import { Formik, Form, FieldArray, ErrorMessage } from 'formik';
+import { Formik, Form, FieldArray, ErrorMessage, Field } from 'formik';
 import { useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useQuery } from 'react-query';
 import DataFetchWrapper from '../../components/DataFetchWrapper';
 import { createInvoice, fetchCustomers } from '../../services/api';
-import { TextField, SelectField, TextArea } from '../../components/formik-ui';
+import { TextField, TextArea } from '../../components/formik-ui';
 import SubmitButton from '../../iu/SubmitButton';
-import { useSelector, useDispatch } from 'react-redux';
 import ValidationErrors from '../../iu/ValidationErrors';
 
-import {
-  alertModalSuccess,
-  alertModalDanger,
-} from '../../actions/alertModalActions';
+const blankLineItemFields = {
+  name: '',
+  description: '',
+  price: '0',
+};
 
 export default function NewInvoice() {
-  const dispatch = useDispatch();
   const history = useHistory();
   const formikRef = useRef();
-  const invoiceId = useParams()?.id;
-  const [customerSearchResults, setCustomerSearchResults] = useState(false);
+  const [isCustomersDropdownHidden, setIsCustomersDropdownHidden] = useState(
+    true
+  );
   const [customer, setCustomer] = useState(null);
   const [customerNameQuery, setCustomerNameQuery] = useState('');
-  const [lineItemsIds, setLineItemsIds] = useState([1]);
-  const [lineItemIdTracker, setLineItemIdTracker] = useState(1);
   const [validationErrors, setValidationErrors] = useState([]);
 
-  const {
-    status: customerStatus,
-    data: customerData,
-    error: customerError,
-  } = useQuery(['customers', { query: customerNameQuery }], () =>
-    fetchCustomers(customerNameQuery)
+  const { data: customerData } = useQuery(
+    ['customers', { query: customerNameQuery }],
+    () => fetchCustomers(customerNameQuery)
   );
 
-  const customers = customerData?.customers;
-  // console.log(customers);
 
-  // const { status, data } = useQuery(['invoiceDetails', { invoiceId }], () =>
-  //   fetchInvoiceById(invoiceId)
-  // );
-  const data = false;
-  const invoice = data?.invoice;
-  const blankLineItemFields = {
-    name: '',
-    description: '',
-    price: '',
-  };
 
   const { mutate: handleSubmit, status: formStatus } = useMutation(
     (invoice) => createInvoice({ ...invoice, customerId: customer?.id }),
@@ -64,79 +47,89 @@ export default function NewInvoice() {
   );
 
   return (
-    <DataFetchWrapper
-      // status={status}
-      dataName="Invoice Details"
-      hasData={invoice}
-    >
+    <DataFetchWrapper dataName="Invoice Details" >
       <div className="app-header">
         <div className="app-header-left">
-          <h1>Invoice #{invoice?.id}</h1>
+          <h1>New Invoice</h1>
         </div>
         <div className="app-header-right">
-          <Link
-            to={`/invoices/${invoiceId}/edit`}
+          <button
+            onClick={() => history.goBack()}
             className="button is-primary is-rounded"
           >
-            Edit
-          </Link>
+            Cancel
+          </button>
         </div>
       </div>
 
       <Formik
         innerRef={formikRef}
         initialValues={{
+          customer: '',
           invoiceLineItemsAttributes: [blankLineItemFields],
         }}
         onSubmit={handleSubmit}
         validate={(values) => {
           const errors = {};
-          // if (!values.firstName) {
-          //   errors.firstName = 'Required';
-          // }
+          if (values.customer.length === 0)
+            errors.customer = 'Customer required';
+          //line items validation
+          let validLineItems = true;
+          const invoiceLineItemsAttributes = values.invoiceLineItemsAttributes.map(
+            (lineItem) => {
+              let lineItemErrors = {};
+              if (lineItem.name.length === 0) {
+                validLineItems = false;
+                lineItemErrors.name = 'Item name is required';
+              }
+              return lineItemErrors;
+            }
+          );
+
+          if (!validLineItems)
+            errors.invoiceLineItemsAttributes = invoiceLineItemsAttributes;
+
           return errors;
         }}
       >
-        {(props) => (
-          <Form className="columns is-multiline box">
+        {({ setFieldValue, values, dirty }) => (
+          <Form className="columns is-multiline box box mx-1">
             <ValidationErrors errors={validationErrors} />
-            <div className="column is-12">
-              <h1 className="title">{invoice?.businessName}</h1>
-            </div>
-            {invoice?.dueDate && (
-              <div className="column is-12">
-                <p>
-                  <strong>Due date</strong>: {invoice?.dueDate}
-                </p>
-              </div>
-            )}
+
+
             <div className="column is-5">
               <div
-                className={`dropdown ${customerSearchResults && 'is-active'}`}
+                className={`dropdown ${
+                  !isCustomersDropdownHidden && 'is-active'
+                }`}
               >
                 <div className="dropdown-trigger mb-0 pb-0">
                   <input
                     className="input "
                     placeholder="Customer"
+                    disabled={!!customer}
                     onChange={({ target }) =>
                       setCustomerNameQuery(target.value)
                     }
                     type="text"
-                    onFocus={() => setCustomerSearchResults(true)}
-                    onBlur={() => {
-                      setTimeout(() => setCustomerSearchResults(false), 100);
-                    }}
+                    onFocus={() => setIsCustomersDropdownHidden(false)}
+                    onBlur={() =>
+                      setTimeout(() => setIsCustomersDropdownHidden(true), 200)
+                    }
                   />
                 </div>
                 <div className="dropdown-menu" id="dropdown-menu3" role="menu">
                   <div className="dropdown-content">
-                    {customers?.length > 0 &&
-                      customers.map((customer) => (
+                    {customerData?.customers?.length > 0 &&
+                      customerData.customers.map((customer) => (
                         <button
                           key={`customerResult${customer.id}`}
                           type="button"
                           className="dropdown-item button is-ghost"
-                          onClick={() => setCustomer(customer)}
+                          onClick={() => {
+                            setCustomer(customer);
+                            setFieldValue('customer', customer.id);
+                          }}
                         >
                           {customer.fullName}
                         </button>
@@ -144,7 +137,13 @@ export default function NewInvoice() {
                   </div>
                 </div>
               </div>
-              <ErrorMessage name="customer" />
+              <Field name="customer" type="hidden" />
+
+              <ErrorMessage
+                className="help is-danger"
+                name="customer"
+                component="span"
+              />
             </div>
 
             <div className="column is-12">
@@ -160,6 +159,7 @@ export default function NewInvoice() {
                 </>
               )}
             </div>
+
             <div className="column is-12">
               <table className="table mt-5 is-fullwidth ">
                 <thead>
@@ -173,58 +173,13 @@ export default function NewInvoice() {
                   <FieldArray
                     name="invoiceLineItemsAttributes"
                     render={(arrayHelpers) => (
-                      <>
-                        {props.values.invoiceLineItemsAttributes.map(
-                          (lineItem, idx) => (
-                            <tr key={'lineItem' + idx}>
-                              <td>
-                                <TextField
-                                  placeholder="Name"
-                                  name={`invoiceLineItemsAttributes.${idx}.name`}
-                                  type="text"
-                                />
-                                <TextArea
-                                  rows="3"
-                                  name={`invoiceLineItemsAttributes.${idx}description`}
-                                  type="text"
-                                  placeholder="Description"
-                                />
-                              </td>
-                              <td>
-                                <TextField
-                                  name={`invoiceLineItemsAttributes.${idx}price`}
-                                  type="text"
-                                />
-                              </td>
-                              <td>
-                                {props.values.invoiceLineItemsAttributes
-                                  .length > 1 && (
-                                  <button
-                                    type="button"
-                                    onClick={() => arrayHelpers.remove(idx)}
-                                    className="button is-ghost has-text-danger"
-                                  >
-                                    <span className="icon">
-                                      <i className="far fa-trash-alt" />
-                                    </span>
-                                  </button>
-                                )}
-                              </td>
-                            </tr>
-                          )
-                        )}
-                        <tr>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              arrayHelpers.push(blankLineItemFields)
-                            }
-                            className="button is-info is-inverted ml-3"
-                          >
-                            <strong>Add item</strong>
-                          </button>
-                        </tr>
-                      </>
+                      <LineItems
+                        invoiceLineItemsAttributes={
+                          values.invoiceLineItemsAttributes
+                        }
+                        setFieldValue={setFieldValue}
+                        arrayHelpers={arrayHelpers}
+                      />
                     )}
                   />
 
@@ -232,21 +187,93 @@ export default function NewInvoice() {
                     <td className=" has-text-right has-text-weight-bold">
                       Total
                     </td>
-                    <td className=" has-text-right">${invoice?.total}</td>
+                    <td className=" has-text-right">
+                      $
+                      {values.invoiceLineItemsAttributes
+                        .reduce(
+                          (accu, curr) =>
+                            parseFloat(accu) + parseFloat(curr.price),
+                          0
+                        )
+                        .toFixed(2)}
+                    </td>
                   </tr>
                 </tbody>
               </table>
-              <SubmitButton
-                status={formStatus}
-                isValid={props.isValid}
-                dirty={props.dirty}
-              >
-                Save Client
+              <SubmitButton status={formStatus} dirty={dirty}>
+                Create Invoice
               </SubmitButton>
             </div>
           </Form>
         )}
       </Formik>
     </DataFetchWrapper>
+  );
+}
+
+///Line Items input
+function LineItems({
+  invoiceLineItemsAttributes,
+  arrayHelpers,
+  setFieldValue,
+}) {
+  if (!invoiceLineItemsAttributes) return null;
+
+  return (
+    <>
+      {invoiceLineItemsAttributes.map((lineItem, idx) => (
+        <tr key={'lineItem' + idx}>
+          <td>
+            <TextField
+              placeholder="Name"
+              name={`invoiceLineItemsAttributes.${idx}.name`}
+              type="text"
+            />
+            <TextArea
+              rows="3"
+              name={`invoiceLineItemsAttributes.${idx}.description`}
+              type="text"
+              placeholder="Description"
+            />
+          </td>
+          <td>
+            <TextField
+              name={`invoiceLineItemsAttributes.${idx}.price`}
+              onBlur={({ target }) => {
+                const fieldName = `invoiceLineItemsAttributes.${idx}.price`;
+                let price = target.value;
+                price = price.match(/^\d+(\.\d+)?$/)
+                  ? parseFloat(price).toFixed(2)
+                  : 0;
+                setFieldValue(fieldName, price);
+              }}
+              type="text"
+            />
+          </td>
+          <td>
+            {invoiceLineItemsAttributes.length > 1 && (
+              <button
+                type="button"
+                onClick={() => arrayHelpers.remove(idx)}
+                className="button is-ghost has-text-danger"
+              >
+                <span className="icon">
+                  <i className="far fa-trash-alt" />
+                </span>
+              </button>
+            )}
+          </td>
+        </tr>
+      ))}
+      <tr>
+        <button
+          type="button"
+          onClick={() => arrayHelpers.push(blankLineItemFields)}
+          className="button is-info is-inverted ml-3"
+        >
+          <strong>Add item</strong>
+        </button>
+      </tr>
+    </>
   );
 }

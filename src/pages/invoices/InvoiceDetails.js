@@ -1,19 +1,57 @@
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-
-import { useQuery } from 'react-query';
+import { format } from 'date-fns';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { useState, useEffect } from 'react';
 import DataFetchWrapper from '../../components/DataFetchWrapper';
-import { fetchInvoiceById } from '../../services/api';
+import { fetchInvoiceById, paidInvoice } from '../../services/api';
+import { useDispatch } from 'react-redux';
+import { alertModalDanger } from '../../actions/alertModalActions';
 
 export default function InvoiceDetails() {
   const invoiceId = useParams()?.id;
-
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   const { status, data } = useQuery(['invoiceDetails', { invoiceId }], () =>
     fetchInvoiceById(invoiceId)
   );
   const invoice = data?.invoice;
   const customer = invoice?.customer;
   const invoiceLineItems = invoice?.invoiceLineItems;
+
+  const { mutate: markInvoicePaid } = useMutation(
+    () => paidInvoice(invoiceId),
+    {
+      onMutate: async (updatedInvoice) => {
+        await queryClient.cancelQueries(['invoiceDetails', { invoiceId }]);
+        const previousData = queryClient.getQueryData([
+          'invoiceDetails',
+          { invoiceId },
+        ]);
+        queryClient.setQueryData(
+          ['invoiceDetails', { invoiceId }],
+          (oldData) => ({
+            ...oldData,
+            invoice: updatedInvoice,
+          })
+        );
+
+        return previousData;
+      },
+      onError: (error, updatedInvoice, previousData) => {
+        dispatch(alertModalDanger('unable to mark invoice as paid'));
+        return queryClient.setQueryData(
+          ['invoiceDetails', { invoiceId }],
+          previousData
+        );
+      },
+      // onSuccess: () => {
+      //   dispatch(alertModalSuccess('invoice marked as paid'));
+      // },
+      onSettled: () =>
+        queryClient.invalidateQueries(['invoiceDetails', { invoiceId }]),
+    }
+  );
 
   return (
     <DataFetchWrapper
@@ -34,11 +72,26 @@ export default function InvoiceDetails() {
           </Link>
         </div>
       </div>
-
-      <div className="columns is-multiline box">
-        <div className="column is-12">
+      {/* 2021-05-10T13:55:39.655Z _ new Date().toISOString() */}
+      <div className="columns is-multiline box mx-1">
+        <div className="column is-6">
           <h1 className="title">{invoice?.businessName}</h1>
         </div>
+        <div className="column is-6 ">
+          {invoice?.paidDate ? (
+            <span className="tag is-success is-large is-light is-pulled-right">
+              PAID
+            </span>
+          ) : (
+            <button
+              className="button is-success is-lioght is-rounded is-pulled-right"
+              onClick={markInvoicePaid}
+            >
+              Mark as paid
+            </button>
+          )}
+        </div>
+
         {invoice?.dueDate && (
           <div className="column is-12">
             <p>
