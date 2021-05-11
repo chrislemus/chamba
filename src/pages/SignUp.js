@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react';
-import { connect } from 'react-redux';
+import { useHistory } from 'react-redux';
 // import { signUp } from '../actions/userActions';
 import Cookies from 'js-cookie';
 import ValidationErrors from '../iu/ValidationErrors';
-function SignUpPage({ authUser, history }) {
+export default function SignUpPage() {
+  const history = useHistory();
   const signUp = () => console.log('fake signup function place holder');
   const authUserToken = Cookies.get('authToken');
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -146,16 +147,3 @@ function SignUpPage({ authUser, history }) {
     </div>
   );
 }
-const mapStateToProps = (state) => {
-  return {
-    authUser: state.authUser,
-  };
-};
-const mapDispatchToProps = (dispatch) => {
-  return {
-    // signUp: (user, authUserRedirect) =>
-    //   dispatch(signUp(user, authUserRedirect)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(SignUpPage);
