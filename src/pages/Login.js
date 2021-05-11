@@ -1,79 +1,73 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { login } from '../actions/userActions';
+import { useState, useEffect } from 'react';
+import { Formik, Form } from 'formik';
+import { useDispatch } from 'react-redux';
 import Cookies from 'js-cookie';
+import { TextField } from '../components/formik-ui';
 import ValidationErrors from '../iu/ValidationErrors';
-function Login(props) {
-  const { authUser, logIn, history } = props;
-  console.log(props);
+import { useMutation } from 'react-query';
+import { authUser } from '../services/api';
+import SubmitButton from '../iu/SubmitButton';
+import { useHistory } from 'react-router-dom';
+import { addUser } from '../actions/userActions';
+export default function Login(props) {
+  const dispatch = useDispatch();
+  const history = useHistory();
   const authUserToken = Cookies.get('authToken');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  function authUserRedirect() {
-    history.push('/overview');
-  }
+  const [validationErrors, setValidationErrors] = useState([]);
 
-  if (!!authUserToken) authUserRedirect();
+  useEffect(() => {
+    if (authUserToken) history.push('/overview');
+  }, [authUserToken]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const user = { email, password };
-    logIn(user, authUserRedirect);
-  };
+  // if (authUserToken) history.push('/overview');
+
+  const { mutate: handleLogin, status } = useMutation(
+    (user) => authUser(user),
+    {
+      onError: (error) => setValidationErrors(error.validationErrors),
+      onSuccess: ({ user, token }) => {
+        const cookieOptions = { expires: 7, secure: true };
+        Cookies.set('authToken', JSON.stringify(token), cookieOptions);
+        dispatch(addUser(user));
+        // dispatch(alertModalSuccess('invoice deleted'));
+        // history.push('/overview');
+      },
+    }
+  );
 
   return (
     <div className="columns mt-6 mx-1">
-      <form className="column box is-6 is-offset-3 p-5" onSubmit={handleSubmit}>
-        <h1 className="title">Log In</h1>
-        <ValidationErrors errors={authUser.errors} />
+      <Formik
+        initialValues={{ email: '', password: '' }}
+        onSubmit={handleLogin}
+      >
+        {({ dirty }) => (
+          <Form className="column box is-6 is-offset-3 p-5">
+            <h1 className="title">Log In</h1>
+            <ValidationErrors errors={validationErrors} />
 
-        <div className="field">
-          <label className="label">Email</label>
-          <div className="control">
-            <input
-              className="input"
+            <TextField
               type="email"
-              onChange={({ target }) => setEmail(target.value)}
+              name="email"
+              label="Email"
               placeholder="e.g. alexsmith@gmail.com"
             />
-          </div>
-        </div>
-        <div className="field">
-          <label className="label">Password</label>
-          <div className="control">
-            <input
-              className="input"
-              onChange={({ target }) => setPassword(target.value)}
+            <TextField
               type="password"
+              name="password"
+              label="Password"
+              placeholder="e.g. alexsmith@gmail.com"
             />
-          </div>
-        </div>
-        <button
-          className={`button is-primary my-5 ${
-            authUser.fetching && 'is-loading'
-          }`}
-          disabled={authUser.fetching}
-          type="submit"
-        >
-          Log In
-        </button>
-        <a className="mt-3 is-block" href="/signup">
-          Don't have an account? Sign Up
-        </a>
-      </form>
+
+            <SubmitButton status={status} dirty={dirty}>
+              Log In
+            </SubmitButton>
+            <a className="mt-3 is-block" href="/signup">
+              Don't have an account? Sign Up
+            </a>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 }
-const mapStateToProps = (state) => {
-  return {
-    user: state.user,
-    authUser: state.authUser,
-  };
-};
-const mapDispatchToProps = (dispatch) => {
-  return {
-    logIn: (user, authUserRedirect) => dispatch(login(user, authUserRedirect)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -1,40 +1,36 @@
-import { getUserData } from '../actions/userActions';
-import { Route, Redirect } from 'react-router';
+import { Route, Redirect, useHistory } from 'react-router';
 import Cookies from 'js-cookie';
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { history } from '../store';
+import { useMutation } from 'react-query';
+import { getUserData } from '../services/api';
+import DataFetchWrapper from './DataFetchWrapper';
+import { addUser } from '../actions/userActions';
 
 export default function PrivateRoute({ component: Component, ...rest }) {
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
-
   const authUserToken = Cookies.get('authToken');
-  const noUserData = Object.keys(user).length === 0;
-  if (noUserData) {
-    dispatch(getUserData());
-  }
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
-  useLayoutEffect(() => {
-    const unlistenHistory = history.listen((location, action) => {
-      const { pathname } = location;
-      // console.log(action);
-      if (pathname.startsWith('/customers')) {
-        dispatch({ type: 'CUSTOMER_RESET_STORE' });
-        dispatch({ type: 'CUSTOMER_LIST_RESET_STORE' });
-      }
-    });
-    return () => {
-      unlistenHistory();
-    };
-  }, []);
+  const { mutate: fetchUserData, status } = useMutation(getUserData, {
+    onError: (error) => {
+      if (error?.response?.status === 401) Cookies.remove('authToken');
+    },
+    onSuccess: (data) => dispatch(addUser(data.user)),
+  });
+
+  useEffect(() => {
+    if (!user?.id && authUserToken) fetchUserData();
+  }, [authUserToken, user]);
 
   return (
     <Route
       {...rest}
       render={(props) =>
         authUserToken ? (
-          <Component {...rest} {...props} />
+          <DataFetchWrapper status={status} dataName="User" hasData={user?.id}>
+            <Component {...rest} {...props} />
+          </DataFetchWrapper>
         ) : (
           <Redirect
             to={{

@@ -20,13 +20,6 @@ const editCustomer = async (customerId, customer) => {
 const fetchCustomerById = async (customerId) => {
   const res = await axiosApi.get(`/customers/${customerId}`);
   return res.data;
-  // .then(({ data }) => {
-  //   const customer = data?.customer;
-  //   dispatch({ type: 'CUSTOMER_FETCH_BY_ID_SUCCESS', payload: customer });
-  // })
-  // .catch(({ validationErrors }) => {
-  //   dispatch({ type: 'CUSTOMER_FETCH_FAILED', payload: validationErrors });
-  // });
 };
 
 const deleteCustomer = async (customerId) => {

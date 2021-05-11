@@ -19,9 +19,8 @@ const blankLineItemFields = {
 export default function NewInvoice() {
   const history = useHistory();
   const formikRef = useRef();
-  const [isCustomersDropdownHidden, setIsCustomersDropdownHidden] = useState(
-    true
-  );
+  const [isCustomersDropdownHidden, setIsCustomersDropdownHidden] =
+    useState(true);
   const [customer, setCustomer] = useState(null);
   const [customerNameQuery, setCustomerNameQuery] = useState('');
   const [validationErrors, setValidationErrors] = useState([]);
@@ -30,8 +29,6 @@ export default function NewInvoice() {
     ['customers', { query: customerNameQuery }],
     () => fetchCustomers(customerNameQuery)
   );
-
-
 
   const { mutate: handleSubmit, status: formStatus } = useMutation(
     (invoice) => createInvoice({ ...invoice, customerId: customer?.id }),
@@ -47,7 +44,7 @@ export default function NewInvoice() {
   );
 
   return (
-    <DataFetchWrapper dataName="Invoice Details" >
+    <DataFetchWrapper dataName="Invoice Details">
       <div className="app-header">
         <div className="app-header-left">
           <h1>New Invoice</h1>
@@ -75,16 +72,15 @@ export default function NewInvoice() {
             errors.customer = 'Customer required';
           //line items validation
           let validLineItems = true;
-          const invoiceLineItemsAttributes = values.invoiceLineItemsAttributes.map(
-            (lineItem) => {
+          const invoiceLineItemsAttributes =
+            values.invoiceLineItemsAttributes.map((lineItem) => {
               let lineItemErrors = {};
               if (lineItem.name.length === 0) {
                 validLineItems = false;
                 lineItemErrors.name = 'Item name is required';
               }
               return lineItemErrors;
-            }
-          );
+            });
 
           if (!validLineItems)
             errors.invoiceLineItemsAttributes = invoiceLineItemsAttributes;
@@ -95,7 +91,6 @@ export default function NewInvoice() {
         {({ setFieldValue, values, dirty }) => (
           <Form className="columns is-multiline box box mx-1">
             <ValidationErrors errors={validationErrors} />
-
 
             <div className="column is-5">
               <div

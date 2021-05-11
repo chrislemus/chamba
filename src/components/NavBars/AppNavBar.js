@@ -12,7 +12,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import AppDrawer from './AppDrawer';
-import { logout } from '../../actions/userActions';
+import { userLogout } from '../../actions/userActions';
 import { useHistory } from 'react-router-dom';
 
 import { connect } from 'react-redux';
@@ -51,7 +51,7 @@ function AppNavBar(props) {
   const history = useHistory();
 
   const handleLogout = () => {
-    props.logout();
+    props.userLogout();
     history.go('/login');
   };
 
@@ -189,6 +189,6 @@ const mapStateToProps = (state) => {
   return { ...state };
 };
 const mapDispatchToProps = (dispatch) => {
-  return { logout: () => dispatch(logout()) };
+  return { userLogout: () => dispatch(userLogout()) };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(AppNavBar);

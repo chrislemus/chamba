@@ -1,11 +1,11 @@
 import DefaultNavbar from '../components/NavBars/DefaultNavbar';
 import AppNavBar from '../components/NavBars/AppNavBar';
 import AlertModal from '../components/AlertModal';
-import Cookies from 'js-cookie';
+import { useSelector } from 'react-redux';
 
 export default function MainLayout({ children }) {
-  const authUserToken = Cookies.get('authToken');
-  const navigationBar = !!authUserToken ? <AppNavBar /> : <DefaultNavbar />;
+  const user = useSelector((state) => state.user);
+  const navigationBar = user?.id ? <AppNavBar /> : <DefaultNavbar />;
   return (
     <div style={{ background: 'rgb(248, 248, 248)', minHeight: '100vh' }}>
       <AlertModal />

@@ -17,6 +17,8 @@ import {
   deleteInvoice,
 } from './invoices';
 
+import { authUser, getUserData } from './user';
+
 export {
   fetchCustomers,
   fetchCustomerById,
@@ -30,4 +32,6 @@ export {
   editInvoice,
   paidInvoice,
   deleteInvoice,
+  authUser,
+  getUserData,
 };

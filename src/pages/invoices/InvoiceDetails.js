@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import { format } from 'date-fns';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { useState, useEffect } from 'react';
 import DataFetchWrapper from '../../components/DataFetchWrapper';
 import { fetchInvoiceById, paidInvoice } from '../../services/api';
 import { useDispatch } from 'react-redux';

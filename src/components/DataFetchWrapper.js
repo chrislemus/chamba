@@ -6,7 +6,7 @@ export default function DataFetchWrapper({
   status,
   dataName = '',
   hasData,
-  children
+  children,
 }) {
   const zeroResults = status === 'success' && !hasData;
   if (status === 'error' || zeroResults) {
