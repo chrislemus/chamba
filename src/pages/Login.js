@@ -50,12 +50,7 @@ export default function Login(props) {
               label="Email"
               placeholder="e.g. alexsmith@gmail.com"
             />
-            <TextField
-              type="password"
-              name="password"
-              label="Password"
-              placeholder="e.g. alexsmith@gmail.com"
-            />
+            <TextField type="password" name="password" label="Password" />
 
             <SubmitButton status={status} dirty={dirty}>
               Log In
