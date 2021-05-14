@@ -65,10 +65,10 @@ export default function Customers() {
           hasData={customers?.length > 0}
         >
           <>
-            <table className="table is-hoverable mt-5 is-fullwidth">
+            <table className="table is-hoverable mt-5 is-fullwidth ">
               <thead>
                 <tr>
-                  <th>Name</th>
+                  <th className="pl-5">Name</th>
                   <th className="is-hidden-mobile">Email</th>
                   <th className="is-hidden-mobile">Phone</th>
                   <th>Actions</th>
@@ -99,16 +99,22 @@ const CustomerListCard = (props) => {
   const phone = phoneMobile || phoneHome;
   return (
     <tr>
-      <td>
+      <td className="pl-5">
         <div className="columns is-mobile level">
           <div className="column is-narrow">
-            <p className="image is-32x32">
-              <img className="is-rounded" src={avatarLink} />
-            </p>
+            <div className="has-background-info is-rounded-40 is-flex is-justify-content-center is-align-items-center">
+              <p className="has-text-white has-text-centered has-text-weight-bold">
+                {fullName
+                  .split(' ')
+                  .map((name) => name[0])
+                  .join('')}
+              </p>
+            </div>
           </div>
-          <div className="column">
+          <div className="column is-narrow">
             <Link to={`/customers/${id}`}>{fullName}</Link>
           </div>
+          <div className="column " />
         </div>
       </td>
       <td className="is-hidden-mobile">

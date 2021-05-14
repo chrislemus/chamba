@@ -1,5 +1,5 @@
 // import { axiosApi } from '../helpers/api';
-// import { history } from '../store';
+
 // import { alertModalSuccess } from './alertModalActions';
 
 // const addNewCustomer = (customer) => {
