@@ -52,9 +52,7 @@ export default function Login(props) {
             />
             <TextField type="password" name="password" label="Password" />
 
-            <SubmitButton status={status} dirty={dirty}>
-              Log In
-            </SubmitButton>
+            <SubmitButton status={status}>Log In</SubmitButton>
             <a className="mt-3 is-block" href="/signup">
               Don't have an account? Sign Up
             </a>

@@ -31,7 +31,7 @@ const signUp = (user) => {
       .catch(({ validationErrors }) => {
         dispatch({
           type: 'ALERT_MODAL_DANGER',
-          payload: validationErrors.join(', '),
+          payload: validationErrors && validationErrors.join(', '),
         });
       });
   };

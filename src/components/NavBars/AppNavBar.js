@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import AppDrawer from './AppDrawer';
+import { useRef } from 'react';
+
 import MouseClickWrapper from '../MouseClickWrapper';
 import { userLogout } from '../../actions/userActions';
 import { useHistory } from 'react-router-dom';
@@ -10,13 +10,14 @@ export default function AppNavBar({ isDrawerOpen, setIsDrawerOpen }) {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const avatarMenu = useRef();
+  console.log(user, 'main');
 
   const history = useHistory();
   const handleLogout = () => {
     dispatch(userLogout());
     history.go('/login');
   };
-  useEffect(() => {}, [isDrawerOpen]);
+
   const displayAvatarMenu = () => {
     if (!avatarMenu?.current?.classList?.contains('is-active')) {
       avatarMenu.current.classList.add('is-active');
@@ -28,11 +29,6 @@ export default function AppNavBar({ isDrawerOpen, setIsDrawerOpen }) {
 
   return (
     <div position="static" className="app-navbar">
-      {/* <AppDrawer
-        isDrawerOpen={isDrawerOpen}
-        setIsDrawerOpen={setIsDrawerOpen}
-      /> */}
-
       <div className="app-navbar-left is-hidden-desktop">
         <span
           role="button"
@@ -65,10 +61,12 @@ export default function AppNavBar({ isDrawerOpen, setIsDrawerOpen }) {
                 aria-controls="dropdown-menu"
               >
                 <p className="has-text-white has-text-centered has-text-weight-bold">
-                  {user.fullName
-                    .split(' ')
-                    .map((name) => name[0])
-                    .join('')}
+                  {user?.fullName &&
+                    user.fullName
+                      .split(' ')
+                      .map((name) => name[0])
+                      .join('')
+                      .toUpperCase()}
                 </p>
               </button>
             </div>

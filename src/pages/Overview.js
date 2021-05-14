@@ -5,10 +5,11 @@ const Overview = () => {
       <h1 className="title">Overview</h1>
       <div className="info-box">
         <div className="info-box-header">
-          <span>Title</span>
+          <span>Scheduler</span>
         </div>
         <div className="info-box-section">
-          <CalendarScheduler />
+          Coming soon...🙌
+          {/* <CalendarScheduler /> */}
           {/* <Recurring /> */}
         </div>
       </div>

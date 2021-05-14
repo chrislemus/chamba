@@ -107,7 +107,8 @@ const CustomerListCard = (props) => {
                 {fullName
                   .split(' ')
                   .map((name) => name[0])
-                  .join('')}
+                  .join('')
+                  .toUpperCase()}
               </p>
             </div>
           </div>

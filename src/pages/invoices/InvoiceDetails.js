@@ -5,6 +5,7 @@ import DataFetchWrapper from '../../components/DataFetchWrapper';
 import { fetchInvoiceById, paidInvoice } from '../../services/api';
 import { useDispatch } from 'react-redux';
 import { alertModalDanger } from '../../actions/alertModalActions';
+import { format } from 'date-fns';
 
 export default function InvoiceDetails() {
   const invoiceId = useParams()?.id;
@@ -70,7 +71,6 @@ export default function InvoiceDetails() {
           </Link>
         </div>
       </div>
-      {/* 2021-05-10T13:55:39.655Z _ new Date().toISOString() */}
       <div className="columns is-multiline box mx-1">
         <div className="column is-6">
           <h1 className="title">{invoice?.businessName}</h1>
@@ -93,7 +93,8 @@ export default function InvoiceDetails() {
         {invoice?.dueDate && (
           <div className="column is-12">
             <p>
-              <strong>Due date</strong>: {invoice?.dueDate}
+              <strong>Due date</strong>:{' '}
+              {format(new Date(invoice.dueDate), 'MM/dd/yyyy')}
             </p>
           </div>
         )}
@@ -101,7 +102,9 @@ export default function InvoiceDetails() {
           <h6 className="has-text-weight-bold">Billed to</h6>
           {customer && (
             <>
-              <p>{customer.fullName}</p>
+              <Link to={`/customers/${customer.id}`}>
+                <p>{customer.fullName}</p>
+              </Link>
               <p>{customer.address1}</p>
               <p>{customer.address2}</p>
               <p>
