@@ -1,4 +1,10 @@
 import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faUserFriends,
+  faFileAlt,
+  faChartLine,
+} from '@fortawesome/free-solid-svg-icons';
 
 export default function AppDrawer({ isDrawerOpen, setIsDrawerOpen }) {
   const closeDrawer = () => setIsDrawerOpen(false);
@@ -22,9 +28,9 @@ export default function AppDrawer({ isDrawerOpen, setIsDrawerOpen }) {
               >
                 <span className="icon-text has-text-grey	">
                   <span className="icon">
-                    <i className="fas fa-chart-line"></i>
+                    <FontAwesomeIcon icon={faChartLine} />
                   </span>
-                  <span>Overview</span>
+                  <span>Dashboard</span>
                 </span>
               </Link>
             </li>
@@ -35,7 +41,7 @@ export default function AppDrawer({ isDrawerOpen, setIsDrawerOpen }) {
               <Link href="/dashboard/customers" onClick={closeDrawer}>
                 <span className="icon-text has-text-grey	">
                   <span className="icon">
-                    <i className="fas fa-user-friends"></i>
+                    <FontAwesomeIcon icon={faUserFriends} />
                   </span>
                   <span>Customers</span>
                 </span>
@@ -45,7 +51,7 @@ export default function AppDrawer({ isDrawerOpen, setIsDrawerOpen }) {
               <Link href="/dashboard/invoices" onClick={closeDrawer}>
                 <span className="icon-text has-text-grey	">
                   <span className="icon">
-                    <i className="fas fa-file-alt"></i>
+                    <FontAwesomeIcon icon={faFileAlt} />
                   </span>
                   <span>Invoices</span>
                 </span>

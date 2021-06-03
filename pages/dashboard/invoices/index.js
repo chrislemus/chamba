@@ -5,6 +5,8 @@ import DataFetchWrapper from '../../../components/DataFetchWrapper';
 import Pagination from '../../../components/Pagination';
 import { fetchInvoices } from '../../../services/api';
 import { format } from 'date-fns';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 export default function Invoices() {
   const [query, setQuery] = useState('');
@@ -116,10 +118,10 @@ const InvoiceListCard = ({ invoice }) => {
       <td className="is-hidden-mobile">${total}</td>
 
       <td>
-        <Link href={`/dashboard/invoices/${id}`} className="button is-ghost ">
-          <span className="icon">
-            <i className="fas fa-arrow-right"></i>
-          </span>
+        <Link href={`/dashboard/invoices/${id}`}>
+          <button className="button is-ghost ">
+            <FontAwesomeIcon icon={faArrowRight} />
+          </button>
         </Link>
       </td>
     </tr>

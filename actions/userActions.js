@@ -1,6 +1,4 @@
 import Cookies from 'js-cookie';
-import { axiosApi } from '../services/api';
-import { history } from '../store';
 
 const addUser = (user) => {
   return { type: 'USER_ADD_USER', payload: user };

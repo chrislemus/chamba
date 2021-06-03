@@ -26,9 +26,7 @@ export default function MainLayout({ children }) {
   useEffect(() => {
     if (!user?.id && authUserToken) fetchUserData();
   }, [authUserToken, user]);
-  const state = useSelector((state) => state);
   const authUser = user?.id;
-  console.log(state);
   const navigationBar = authUser ? (
     <AppNavBar setIsDrawerOpen={setIsDrawerOpen} user={user} />
   ) : (

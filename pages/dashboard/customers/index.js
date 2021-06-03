@@ -4,7 +4,12 @@ import { useQuery } from 'react-query';
 import DataFetchWrapper from '../../../components/DataFetchWrapper';
 import Pagination from '../../../components/Pagination';
 import { fetchCustomers } from '../../../services/api';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faArrowRight,
+  faEdit,
+  faSearch,
+} from '@fortawesome/free-solid-svg-icons';
 export default function Customers() {
   const [query, setQuery] = useState('');
   const [pageLimit, setPageLimit] = useState(10);
@@ -57,7 +62,7 @@ export default function Customers() {
               />
 
               <span className="icon is-small is-left">
-                <i className="fas fa-search"></i>
+                <FontAwesomeIcon icon={faSearch} />
               </span>
             </p>
           </div>
@@ -132,18 +137,15 @@ const CustomerListCard = (props) => {
       </td>
       <td className="is-hidden-mobile">{phone ? phone : '--'}</td>
       <td>
-        <Link
-          href={`/dashboard/customers/${id}/edit`}
-          className="button is-ghost  "
-        >
-          <span className="icon ">
-            <i className="fas fa-edit"></i>
-          </span>
+        <Link href={`/dashboard/customers/${id}/edit`}>
+          <button className="button is-ghost ">
+            <FontAwesomeIcon icon={faEdit} />
+          </button>
         </Link>
-        <Link href={`/dashboard/customers/${id}`} className="button is-ghost ">
-          <span className="icon">
-            <i className="fas fa-arrow-right"></i>
-          </span>
+        <Link href={`/dashboard/customers/${id}`}>
+          <button className="button is-ghost ">
+            <FontAwesomeIcon icon={faArrowRight} />
+          </button>
         </Link>
       </td>
     </tr>

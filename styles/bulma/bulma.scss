@@ -80,6 +80,11 @@ input {
   }
   & .menu-list li {
     cursor: pointer;
+    margin: 20px 0;
+    &:hover {
+      transform: scale(1.05);
+      color: $primary;
+    }
   }
 }
 
