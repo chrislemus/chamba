@@ -64,11 +64,8 @@ export default function InvoiceDetails() {
           <h1>Invoice #{invoice?.id}</h1>
         </div>
         <div className="app-header-right">
-          <Link
-            href={`/dashboard/invoices/${invoiceId}/edit`}
-            className="button is-primary is-rounded"
-          >
-            Edit
+          <Link href={`/dashboard/invoices/${invoiceId}/edit`}>
+            <button className="button is-primary is-rounded">Edit</button>
           </Link>
         </div>
       </div>

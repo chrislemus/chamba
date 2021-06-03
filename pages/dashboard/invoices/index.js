@@ -34,11 +34,10 @@ export default function Invoices() {
           <h1>Invoices</h1>
         </div>
         <div className="app-header-right">
-          <Link
-            href="/dashboard/invoices/new"
-            className="button is-primary is-rounded"
-          >
-            New Invoice
+          <Link href="/dashboard/invoices/new">
+            <button className="button is-primary is-rounded">
+              New Invoice
+            </button>
           </Link>
         </div>
       </div>

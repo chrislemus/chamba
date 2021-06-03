@@ -48,11 +48,8 @@ export default function CustomerDetails() {
           <h1>{customer?.fullName}</h1>
         </div>
         <div className="app-header-right">
-          <Link
-            href={`/dashboard/customers/${customerId}/edit`}
-            className="button is-primary is-rounded"
-          >
-            Edit
+          <Link href={`/dashboard/customers/${customerId}/edit`}>
+            <button className="button is-primary is-rounded">Edit</button>
           </Link>
         </div>
       </div>

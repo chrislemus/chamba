@@ -41,11 +41,10 @@ export default function Customers() {
           <h1>Customers</h1>
         </div>
         <div className="app-header-right">
-          <Link
-            href="/dashboard/customers/new"
-            className="button is-primary is-rounded"
-          >
-            Add Customer
+          <Link href="/dashboard/customers/new">
+            <button className="button is-primary is-rounded">
+              Add Customer
+            </button>
           </Link>
         </div>
       </div>
