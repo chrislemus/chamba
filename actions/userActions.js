@@ -13,4 +13,4 @@ const userLogout = () => {
   };
 };
 
-export { addUser, userLogout, signUp };
+export { addUser, userLogout };
