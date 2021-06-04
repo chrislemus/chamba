@@ -1,9 +1,6 @@
 import Cookies from 'js-cookie';
 import store from '../store';
 import axios from 'axios';
-import { useRouter } from 'next/router';
-
-import { useDispatch } from 'react-redux';
 export const apiUrl = 'http://localhost:3005/api';
 
 //
