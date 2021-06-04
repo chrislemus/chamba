@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from 'react-query';
 import { getUserData } from '../services/api';
 import DataFetchWrapper from './DataFetchWrapper';
-import { addUser } from '../actions/userActions';
+import { addUser, userLogout } from '../actions/userActions';
 
 export default function PrivateRoute({ children }) {
   const router = useRouter();
@@ -15,7 +15,8 @@ export default function PrivateRoute({ children }) {
 
   const { mutate: fetchUserData, status } = useMutation(getUserData, {
     onError: (error) => {
-      if (error?.response?.status === 401) Cookies.remove('authToken');
+      dispatch(userLogout());
+      router.push('/login');
     },
     onSuccess: (data) => dispatch(addUser(data.user)),
   });

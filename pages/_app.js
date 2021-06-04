@@ -2,10 +2,6 @@ import '../styles/bulma/bulma.min.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import PrivateRoute from '../components/PrivateRoute';
 import Head from 'next/head';
-
-import { useState } from 'react';
-import Navbar from '../components/NavBars';
-import AlertModal from '../components/AlertModal';
 import MainLayout from '../layouts/Main';
 import { Provider } from 'react-redux';
 import store from '../store';

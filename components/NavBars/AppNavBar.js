@@ -31,7 +31,7 @@ export default function AppNavBar({ isDrawerOpen, setIsDrawerOpen }) {
       <div className="app-navbar-left is-hidden-desktop">
         <span
           role="button"
-          class="navbar-burger ml-0"
+          className="navbar-burger ml-0"
           aria-label="menu"
           aria-expanded="false"
           data-target="navbarBasicExample"
@@ -52,10 +52,10 @@ export default function AppNavBar({ isDrawerOpen, setIsDrawerOpen }) {
           onClicked={displayAvatarMenu}
           onClickedOut={hideAvatarMenu}
         >
-          <div ref={avatarMenu} class="dropdown is-right">
-            <div class="dropdown-trigger ">
+          <div ref={avatarMenu} className="dropdown is-right">
+            <div className="dropdown-trigger ">
               <button
-                class="app-navbar-avatar-menu-button"
+                className="app-navbar-avatar-menu-button"
                 aria-haspopup="true"
                 aria-controls="dropdown-menu"
               >
@@ -69,14 +69,17 @@ export default function AppNavBar({ isDrawerOpen, setIsDrawerOpen }) {
                 </p>
               </button>
             </div>
-            <div class="dropdown-menu" id="dropdown-menu" role="menu">
-              <div class="dropdown-content">
-                <span class="dropdown-item has-text-weight-semibold">
+            <div className="dropdown-menu" id="dropdown-menu" role="menu">
+              <div className="dropdown-content">
+                <span className="dropdown-item has-text-weight-semibold">
                   {user.fullName}
                 </span>
 
-                <hr class="dropdown-divider" />
-                <span class="dropdown-item is-clickable" onClick={handleLogout}>
+                <hr className="dropdown-divider" />
+                <span
+                  className="dropdown-item is-clickable"
+                  onClick={handleLogout}
+                >
                   Logout
                 </span>
               </div>

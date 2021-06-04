@@ -15,7 +15,7 @@ export default function SignUpPage() {
   const [validationErrors, setValidationErrors] = useState([]);
   const authUserToken = Cookies.get('authToken');
 
-  if (!!authUserToken) router.push('/overview');
+  if (!!authUserToken) router.push('/dashboard');
 
   const { mutate: handleSubmit, status } = useMutation(
     (user) => userSignUp(user),

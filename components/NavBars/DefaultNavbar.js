@@ -26,8 +26,8 @@ export default function ButtonAppBar() {
       </div>
 
       <div className={`navbar-menu ${menuIsOpen && 'is-active'}`}>
-        <div class="navbar-start ">
-          <Link href="/" class="navbar-item ">
+        <div className="navbar-start ">
+          <Link href="/" className="navbar-item ">
             Home
           </Link>
         </div>
