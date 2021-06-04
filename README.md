@@ -1,4 +1,4 @@
-# Service Field CRM
+# Chamba - Business CRM
 
 In the project directory, you can run `yarn start`:
 
