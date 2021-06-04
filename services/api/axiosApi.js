@@ -6,7 +6,7 @@ export const apiUrl = 'http://localhost:3005/api';
 //custom axios api instance
 //=================
 export const axiosApi = axios.create({
-  baseURL: apiUrl,
+  baseURL: process.env.NEXT_PUBLIC_API_URL || apiUrl,
 });
 
 //auth Header

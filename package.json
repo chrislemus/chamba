@@ -34,6 +34,7 @@
     "react-widgets-moment-localizer": "^1.0.2",
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0",
+    "sass": "^1.34.1",
     "web-vitals": "^1.0.1"
   },
   "eslintConfig": {
