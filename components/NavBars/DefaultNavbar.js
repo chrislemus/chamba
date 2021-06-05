@@ -27,18 +27,20 @@ export default function ButtonAppBar() {
 
       <div className={`navbar-menu ${menuIsOpen && 'is-active'}`}>
         <div className="navbar-start ">
-          <Link href="/" className="navbar-item ">
+          {/* <Link href="/" className="navbar-item ">
             Home
-          </Link>
+          </Link> */}
         </div>
         <div className="navbar-end">
           <div className="navbar-item">
             <div className="buttons">
-              <Link href="/signup" className="button is-primary">
-                <strong>Sign up</strong>
+              <Link href="/signup">
+                <button className="button is-primary">
+                  <strong>Sign up</strong>
+                </button>
               </Link>
-              <Link href="/login" className="button is-light">
-                Log In
+              <Link href="/login">
+                <button className="button is-light">Log In</button>
               </Link>
             </div>
           </div>
