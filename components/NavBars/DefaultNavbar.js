@@ -8,7 +8,7 @@ export default function ButtonAppBar() {
     <nav className="navbar" role="navigation" aria-label="main navigation">
       <div className="navbar-brand">
         <Link className="navbar-item" href="/">
-          <p className="navbar-logo">Service Field CRM</p>
+          <p className="navbar-logo">CHAMBA</p>
         </Link>
 
         <a

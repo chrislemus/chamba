@@ -7,12 +7,12 @@ import { useDispatch } from 'react-redux';
 import { alertModalDanger } from '../../../../actions/alertModalActions';
 import { format } from 'date-fns';
 
-export default function InvoiceDetails() {
+export default function invoiceData() {
   const router = useRouter();
   const invoiceId = router.query.id;
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
-  const { status, data } = useQuery(['invoiceDetails', { invoiceId }], () =>
+  const { status, data } = useQuery(['invoiceData', { invoiceId }], () =>
     fetchInvoiceById(invoiceId)
   );
   const invoice = data?.invoice;
@@ -23,25 +23,22 @@ export default function InvoiceDetails() {
     () => paidInvoice(invoiceId),
     {
       onMutate: async (updatedInvoice) => {
-        await queryClient.cancelQueries(['invoiceDetails', { invoiceId }]);
+        await queryClient.cancelQueries(['invoiceData', { invoiceId }]);
         const previousData = queryClient.getQueryData([
-          'invoiceDetails',
+          'invoiceData',
           { invoiceId },
         ]);
-        queryClient.setQueryData(
-          ['invoiceDetails', { invoiceId }],
-          (oldData) => ({
-            ...oldData,
-            invoice: updatedInvoice,
-          })
-        );
+        queryClient.setQueryData(['invoiceData', { invoiceId }], (oldData) => ({
+          ...oldData,
+          invoice: updatedInvoice,
+        }));
 
         return previousData;
       },
       onError: (error, updatedInvoice, previousData) => {
         dispatch(alertModalDanger('unable to mark invoice as paid'));
         return queryClient.setQueryData(
-          ['invoiceDetails', { invoiceId }],
+          ['invoiceData', { invoiceId }],
           previousData
         );
       },
@@ -49,7 +46,7 @@ export default function InvoiceDetails() {
       //   dispatch(alertModalSuccess('invoice marked as paid'));
       // },
       onSettled: () =>
-        queryClient.invalidateQueries(['invoiceDetails', { invoiceId }]),
+        queryClient.invalidateQueries(['invoiceData', { invoiceId }]),
     }
   );
 

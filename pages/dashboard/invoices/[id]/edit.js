@@ -1,7 +1,5 @@
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-// import { useParams, useHistory } from 'react-router-dom';
-import { Formik, Form, FieldArray } from 'formik';
+import { useForm, FormProvider } from 'react-hook-form';
 import { format } from 'date-fns';
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -12,7 +10,10 @@ import {
   fetchInvoiceById,
   deleteInvoice,
 } from '../../../../services/api';
-import { TextField, TextArea } from '../../../../components/formik-ui';
+import {
+  PricedLineItems,
+  TextInput,
+} from '../../../../components/react-hook-form-ui';
 import SubmitButton from '../../../../ui/SubmitButton';
 import ValidationErrors from '../../../../ui/ValidationErrors';
 import {
@@ -20,74 +21,54 @@ import {
   alertModalDanger,
 } from '../../../../actions/alertModalActions';
 
-const blankLineItemFields = {
-  name: '',
-  description: '',
-  price: '0',
-};
+export default function EditInvoice() {
+  const [invoiceId, setInvoiceId] = useState(undefined);
+  const cancelInvoiceCheckboxRef = useRef();
+  const reactHookFormMethods = useForm();
+  const { handleSubmit, setValue: setFormValue } = reactHookFormMethods;
 
-export default function NewInvoice() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const invoiceId = router.query.id;
-  const [lineItemsToDelete, setLineItemsToDelete] = useState([]);
+  useEffect(() => {
+    const id = router.query?.id;
+    if (id) setInvoiceId(id);
+  }, [router.query.id]);
   const queryClient = useQueryClient();
   const [validationErrors, setValidationErrors] = useState([]);
-  const formikRef = useRef();
-  const { status, data } = useQuery(['invoiceDetails', { invoiceId }], () =>
-    fetchInvoiceById(invoiceId)
-  );
+  const { status, data } = useQuery(['invoiceData', { invoiceId }], () => {
+    if (invoiceId) return fetchInvoiceById(invoiceId);
+  });
   const invoiceData = data?.invoice;
   const customer = invoiceData?.customer;
-  const invoiceLineItems = invoiceData?.invoiceLineItems;
 
   useEffect(() => {
-    const resetForm = formikRef.current?.resetForm;
-    if (invoiceData && invoiceLineItems?.length && resetForm) {
-      const filteredLineItems = invoiceLineItems.map(
+    if (invoiceData) {
+      let { dueDate, canceledDate, invoiceLineItems } = invoiceData;
+      if (dueDate) {
+        setFormValue('dueDate', format(new Date(dueDate), 'yyyy-MM-dd'));
+        cancelInvoiceCheckboxRef.current.checked = true;
+      }
+      if (canceledDate) setFormValue('canceledDate', canceledDate);
+      invoiceLineItems = invoiceLineItems.map(
         ({ id, name, description, price }) => ({ id, name, description, price })
       );
-
-      let dueDate = invoiceData?.dueDate;
-      dueDate = dueDate ? format(new Date(dueDate), 'yyyy-MM-dd') : '';
-
-      resetForm({
-        values: {
-          canceledDate: invoiceData.canceledDate,
-          dueDate,
-          invoiceLineItemsAttributes: filteredLineItems,
-        },
-      });
+      setFormValue('invoiceLineItemsAttributes', invoiceLineItems);
     }
   }, [invoiceData]);
 
-  const { mutate: handleSubmit, status: formStatus } = useMutation(
-    (updatedInvoice) => {
-      updatedInvoice.invoiceLineItemsAttributes =
-        updatedInvoice.invoiceLineItemsAttributes.map((lineItem) => ({
-          ...lineItem,
-          _destroy: lineItemsToDelete.includes(lineItem.id),
-        }));
-      const { dueDate } = updatedInvoice;
-      updatedInvoice.dueDate =
-        dueDate.length > 0 ? new Date(dueDate).toISOString() : '';
-      console.log(updatedInvoice);
-      return editInvoice(invoiceId, updatedInvoice);
-    },
+  const { mutate: onSubmit, status: formStatus } = useMutation(
+    (updatedInvoice) => editInvoice(invoiceId, updatedInvoice),
     {
       onMutate: async (updatedInvoice) => {
-        await queryClient.cancelQueries(['invoiceDetails', { invoiceId }]);
+        await queryClient.cancelQueries(['invoiceData', { invoiceId }]);
         const previousData = queryClient.getQueryData([
-          'invoiceDetails',
+          'invoiceData',
           { invoiceId },
         ]);
-        queryClient.setQueryData(
-          ['invoiceDetails', { invoiceId }],
-          (oldData) => ({
-            ...oldData,
-            invoice: updatedInvoice,
-          })
-        );
+        queryClient.setQueryData(['invoiceData', { invoiceId }], (oldData) => ({
+          ...oldData,
+          invoice: updatedInvoice,
+        }));
 
         return previousData;
       },
@@ -95,7 +76,7 @@ export default function NewInvoice() {
         setValidationErrors(error.validationErrors);
         dispatch(alertModalDanger('unable to save changes'));
         return queryClient.setQueryData(
-          ['invoiceDetails', { invoiceId }],
+          ['invoiceData', { invoiceId }],
           previousData
         );
       },
@@ -104,18 +85,19 @@ export default function NewInvoice() {
         setValidationErrors([]);
       },
       onSettled: () =>
-        queryClient.invalidateQueries(['invoiceDetails', { invoiceId }]),
+        queryClient.invalidateQueries(['invoiceData', { invoiceId }]),
     }
   );
   const { mutate: handleDelete } = useMutation(() => deleteInvoice(invoiceId), {
-    onError: (error, updatedInvoice, previousData) => {
-      dispatch(alertModalDanger('unable to delete invoice'));
-    },
+    onError: () => dispatch(alertModalDanger('unable to delete invoice')),
     onSuccess: () => {
       dispatch(alertModalSuccess('invoice deleted'));
       router.push('/dashboard/invoices');
     },
   });
+
+  const setInvoiceCancelDate = ({ target }) =>
+    setFormValue('canceledDate', target.checked && new Date().toISOString());
 
   return (
     <DataFetchWrapper
@@ -137,206 +119,61 @@ export default function NewInvoice() {
         </div>
       </div>
 
-      <Formik
-        innerRef={formikRef}
-        initialValues={{
-          canceledDate: '',
-          dueDate: '',
-          invoiceLineItemsAttributes: [blankLineItemFields],
-        }}
-        onSubmit={handleSubmit}
-        validate={(values) => {
-          const errors = {};
+      <FormProvider {...reactHookFormMethods}>
+        <form
+          className="columns is-multiline box box mx-1"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <ValidationErrors errors={validationErrors} />
+          <div className="column is-12">
+            <h1 className="title">{invoiceData?.businessName}</h1>
+          </div>
 
-          //line items validation
-          let validLineItems = true;
-          const invoiceLineItemsAttributes =
-            values.invoiceLineItemsAttributes.map((lineItem) => {
-              let lineItemErrors = {};
-              if (lineItem.name.length === 0) {
-                validLineItems = false;
-                lineItemErrors.name = 'Item name is required';
-              }
-              return lineItemErrors;
-            });
-
-          if (!validLineItems)
-            errors.invoiceLineItemsAttributes = invoiceLineItemsAttributes;
-
-          return errors;
-        }}
-      >
-        {({ setFieldValue, values, dirty }) => (
-          <Form className="columns is-multiline box box mx-1">
-            <ValidationErrors errors={validationErrors} />
-            <div className="column is-12">
-              <h1 className="title">{invoiceData?.businessName}</h1>
-            </div>
-
-            <div className="column">
-              <h6 className="has-text-weight-bold">Billed to</h6>
-              {customer && (
-                <>
-                  <p>{customer.fullName}</p>
-                  <p>{customer.address1}</p>
-                  <p>{customer.address2}</p>
-                  <p>
-                    {customer.city} {customer.state} {customer.zipCode}
-                  </p>
-                </>
-              )}
-            </div>
-            <div className="column is-narrow ">
-              <TextField name="dueDate" type="date" label="Due Date" />
-              <TextField name="canceledDate" type="hidden" />
+          <div className="column">
+            <h6 className="has-text-weight-bold">Billed to</h6>
+            {customer && (
+              <>
+                <p>{customer.fullName}</p>
+                <p>{customer.address1}</p>
+                <p>{customer.address2}</p>
+                <p>
+                  {customer.city} {customer.state} {customer.zipCode}
+                </p>
+              </>
+            )}
+          </div>
+          <div className="column is-narrow ">
+            <TextInput name="dueDate" type="date" label="Due Date" />
+            <div className="mt-4">
               <label className="checkbox">
                 <input
-                  checked={values.canceledDate?.length > 0}
-                  onChange={({ target }) => {
-                    if (target.checked) {
-                      setFieldValue('canceledDate', new Date().toISOString());
-                    } else {
-                      setFieldValue('canceledDate', '');
-                    }
-                  }}
+                  ref={cancelInvoiceCheckboxRef}
+                  onChange={setInvoiceCancelDate}
                   type="checkbox"
                 />{' '}
                 Mark invoice as canceled
               </label>
             </div>
+          </div>
 
-            <div className="column is-12">
-              <table className="table mt-5 is-fullwidth ">
-                <thead>
-                  <tr>
-                    <th>Product/Service</th>
-                    <th className=" has-text-right is-narrow">Unit Price</th>
-                    <th className=" is-narrow"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <FieldArray
-                    name="invoiceLineItemsAttributes"
-                    render={(arrayHelpers) => (
-                      <LineItems
-                        invoiceLineItemsAttributes={
-                          values.invoiceLineItemsAttributes
-                        }
-                        setFieldValue={setFieldValue}
-                        arrayHelpers={arrayHelpers}
-                        lineItemsToDelete={lineItemsToDelete}
-                        setLineItemsToDelete={setLineItemsToDelete}
-                      />
-                    )}
-                  />
+          <div className="column is-12">
+            <PricedLineItems
+              reactHookFormMethods={reactHookFormMethods}
+              fieldArrayName={'invoiceLineItemsAttributes'}
+            />
 
-                  <tr>
-                    <td className=" has-text-right has-text-weight-bold">
-                      Total
-                    </td>
-                    <td className=" has-text-right">
-                      $
-                      {values.invoiceLineItemsAttributes
-                        .reduce(
-                          (accu, curr) =>
-                            parseFloat(accu) + parseFloat(curr.price),
-                          0
-                        )
-                        .toFixed(2)}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <SubmitButton status={formStatus}>Save Changes</SubmitButton>
-              <br />
-              <button
-                onClick={handleDelete}
-                className="mt-5 button is-danger is-outlined is-rounded"
-                type="button"
-              >
-                Delete Invoice
-              </button>
-            </div>
-          </Form>
-        )}
-      </Formik>
+            <SubmitButton status={formStatus}>Save Changes</SubmitButton>
+            <br />
+            <button
+              onClick={handleDelete}
+              className="mt-5 button is-danger is-outlined is-rounded"
+              type="button"
+            >
+              Delete Invoice
+            </button>
+          </div>
+        </form>
+      </FormProvider>
     </DataFetchWrapper>
-  );
-}
-
-///Line Items input
-function LineItems({
-  invoiceLineItemsAttributes,
-  arrayHelpers,
-  setFieldValue,
-  lineItemsToDelete,
-  setLineItemsToDelete,
-}) {
-  if (!invoiceLineItemsAttributes) return null;
-  return (
-    <>
-      {invoiceLineItemsAttributes.map((lineItem, idx) =>
-        lineItemsToDelete.includes(lineItem.id) ? null : (
-          <tr key={'lineItem' + idx}>
-            <td>
-              <TextField
-                placeholder="Name"
-                name={`invoiceLineItemsAttributes.${idx}.name`}
-                type="text"
-              />
-              <TextArea
-                rows="3"
-                name={`invoiceLineItemsAttributes.${idx}.description`}
-                type="text"
-                placeholder="Description"
-              />
-            </td>
-            <td>
-              <TextField
-                name={`invoiceLineItemsAttributes.${idx}.price`}
-                onBlur={({ target }) => {
-                  const fieldName = `invoiceLineItemsAttributes.${idx}.price`;
-                  let price = target.value;
-                  price = price.match(/^\d+(\.\d+)?$/)
-                    ? parseFloat(price).toFixed(2)
-                    : 0;
-                  setFieldValue(fieldName, price);
-                }}
-                type="text"
-              />
-            </td>
-            <td>
-              {invoiceLineItemsAttributes.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (lineItem.id) {
-                      setLineItemsToDelete([...lineItemsToDelete, lineItem.id]);
-                    } else {
-                      arrayHelpers.remove(idx);
-                    }
-                  }}
-                  className="button is-ghost has-text-danger"
-                >
-                  <span className="icon">
-                    <i className="far fa-trash-alt" />
-                  </span>
-                </button>
-              )}
-            </td>
-          </tr>
-        )
-      )}
-      <tr>
-        <button
-          type="button"
-          onClick={() => arrayHelpers.push(blankLineItemFields)}
-          className="button is-info is-inverted ml-3"
-        >
-          <strong>Add item</strong>
-        </button>
-      </tr>
-    </>
   );
 }

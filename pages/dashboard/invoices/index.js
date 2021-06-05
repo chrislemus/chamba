@@ -6,7 +6,7 @@ import Pagination from '../../../components/Pagination';
 import { fetchInvoices } from '../../../services/api';
 import { format } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 export default function Invoices() {
   const [query, setQuery] = useState('');
@@ -54,7 +54,7 @@ export default function Invoices() {
               />
 
               <span className="icon is-small is-left">
-                <i className="fas fa-search"></i>
+                <FontAwesomeIcon icon={faSearch} />
               </span>
             </p>
           </div>

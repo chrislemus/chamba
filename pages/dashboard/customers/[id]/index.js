@@ -5,11 +5,11 @@ import { useQuery } from 'react-query';
 import DataFetchWrapper from '../../../../components/DataFetchWrapper';
 import { fetchCustomerById } from '../../../../services/api';
 
-export default function CustomerDetails() {
+export default function Customer() {
   const router = useRouter();
   const customerId = router.query.id;
 
-  const { status, data } = useQuery(['customerDetails', { customerId }], () =>
+  const { status, data } = useQuery(['customerData', { customerId }], () =>
     fetchCustomerById(customerId)
   );
   const customer = data?.customer;

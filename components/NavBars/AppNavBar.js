@@ -44,7 +44,7 @@ export default function AppNavBar({ isDrawerOpen, setIsDrawerOpen }) {
       </div>
       <div className="app-navbar-brand">
         <p className="navbar-item has-text-centered has-text-weight-bold">
-          Service Field CRM
+          CHAMBA
         </p>
       </div>
       <div className="app-navbar-right">

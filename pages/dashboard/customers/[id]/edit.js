@@ -52,7 +52,7 @@ export default function EditCustomer() {
   const customerId = router.query.id;
 
   const queryClient = useQueryClient();
-  const { status, data } = useQuery(['customerDetails', { customerId }], () =>
+  const { status, data } = useQuery(['customerData', { customerId }], () =>
     fetchCustomerById(customerId)
   );
   const [validationErrors, setValidationErrors] = useState([]);
@@ -84,13 +84,13 @@ export default function EditCustomer() {
     (newCustomerDetails) => editCustomer(customerId, newCustomerDetails),
     {
       onMutate: async (newCustomerDetails) => {
-        await queryClient.cancelQueries(['customerDetails', { customerId }]);
+        await queryClient.cancelQueries(['customerData', { customerId }]);
         const previousData = queryClient.getQueryData([
-          'customerDetails',
+          'customerData',
           { customerId },
         ]);
         queryClient.setQueryData(
-          ['customerDetails', { customerId }],
+          ['customerData', { customerId }],
           (oldData) => ({
             ...oldData,
             customer: newCustomerDetails,
@@ -103,7 +103,7 @@ export default function EditCustomer() {
         setValidationErrors(error.validationErrors);
         dispatch(alertModalDanger('unable to save changes'));
         return queryClient.setQueryData(
-          ['customerDetails', { customerId }],
+          ['customerData', { customerId }],
           previousData
         );
       },
@@ -112,7 +112,7 @@ export default function EditCustomer() {
         setValidationErrors([]);
       },
       onSettled: () =>
-        queryClient.invalidateQueries(['customerDetails', { customerId }]),
+        queryClient.invalidateQueries(['customerData', { customerId }]),
     }
   );
 
