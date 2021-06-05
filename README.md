@@ -1,5 +1,7 @@
 # Chamba - Business CRM
 
+### Live Site - https://chamba.vercel.app/dashboard/customers
+
 In the project directory, you can run `yarn start`:
 
 Runs the app in the development mode.\
