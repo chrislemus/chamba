@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import MouseClickWrapper from '../MouseClickWrapper';
+import MouseSpy from '../MouseSpy';
 import { userLogout } from '../../actions/userActions';
 import { useRouter } from 'next/router';
 
@@ -48,10 +48,7 @@ export default function AppNavBar({ isDrawerOpen, setIsDrawerOpen }) {
         </p>
       </div>
       <div className="app-navbar-right">
-        <MouseClickWrapper
-          onClicked={displayAvatarMenu}
-          onClickedOut={hideAvatarMenu}
-        >
+        <MouseSpy onClicked={displayAvatarMenu} onClickedOut={hideAvatarMenu}>
           <div ref={avatarMenu} className="dropdown is-right">
             <div className="dropdown-trigger ">
               <button
@@ -85,7 +82,7 @@ export default function AppNavBar({ isDrawerOpen, setIsDrawerOpen }) {
               </div>
             </div>
           </div>
-        </MouseClickWrapper>
+        </MouseSpy>
       </div>
     </div>
   );

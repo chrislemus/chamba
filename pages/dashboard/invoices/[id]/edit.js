@@ -157,10 +157,7 @@ export default function EditInvoice() {
           </div>
 
           <div className="column is-12">
-            <PricedLineItems
-              reactHookFormMethods={reactHookFormMethods}
-              fieldArrayName={'invoiceLineItemsAttributes'}
-            />
+            <PricedLineItems fieldArrayName={'invoiceLineItemsAttributes'} />
 
             <SubmitButton status={formStatus}>Save Changes</SubmitButton>
             <br />

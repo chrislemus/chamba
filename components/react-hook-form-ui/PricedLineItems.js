@@ -1,117 +1,180 @@
-import { useFieldArray } from 'react-hook-form';
-import { TextInput, TextArea } from './';
+import { useFieldArray, useFormContext, Controller } from 'react-hook-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
+
+import {
+  TableContainer,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  IconButton,
+  TextField,
+  makeStyles,
+  Button,
+} from '@material-ui/core';
 
 const blankLineItemValues = { name: '', description: '', price: 0 };
-
-export default function PricedLineItems({
-  reactHookFormMethods,
-  fieldArrayName,
-}) {
+const useStyles = makeStyles((theme) => ({
+  priceCell: {
+    verticalAlign: 'top',
+    width: '1%',
+  },
+  deleteButtonCell: {
+    width: '1%',
+  },
+  deleteButton: {
+    color: theme.palette.error.light,
+  },
+  priceInput: {
+    width: 100,
+  },
+  boldText: {
+    fontWeight: theme.typography.fontWeightBold,
+  },
+  removeBottomBorder: {
+    '& td': {
+      border: 'none',
+    },
+  },
+}));
+export default function PricedLineItems({ fieldArrayName }) {
+  const classes = useStyles();
   const { fields, remove, append } = useFieldArray({ name: fieldArrayName });
   const addLineItem = () => append(blankLineItemValues);
   //default: if no line items provided add a blank line item on mount
   const zeroLineItems = fields.length === 0;
-  useLayoutEffect(() => {
+  useEffect(() => {
     zeroLineItems && addLineItem();
   }, []);
   if (zeroLineItems) return null;
   //---------
-  const { setValue, watch } = reactHookFormMethods;
+  const { setValue, watch, control, register } = useFormContext();
   const lineItemsData = watch(fieldArrayName);
   const lineItemsTotal = lineItemsData
     .reduce((a, { price }) => parseFloat(a) + (parseFloat(price) || 0), 0)
     .toFixed(2);
   return (
-    <>
-      <table className="table mt-5 is-fullwidth ">
-        <thead>
-          <tr>
-            <th>Product/Service</th>
-            <th className=" has-text-right is-narrow">Unit Price</th>
-            <th className=" is-narrow"></th>
-          </tr>
-        </thead>
-        <tbody>
+    <TableContainer>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>
+              <strong>Product/Service</strong>
+            </TableCell>
+            <TableCell align="right">
+              <strong>Price</strong>
+            </TableCell>
+            {fields.length > 1 && <TableCell size="small" align="right" />}
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {fields.map((field, index) => {
             const fieldName = `${fieldArrayName}.${index}`;
             const lineItem = lineItemsData[index];
 
             return lineItem._destroy ? null : (
-              <tr key={field.id}>
-                <td>
-                  <TextInput
+              <TableRow key={field.id}>
+                <TableCell>
+                  <Controller
+                    control={control}
                     name={`${fieldName}.name`}
                     defaultValue={field.name}
-                    validation={{ required: 'required' }}
-                    placeholder="Name"
+                    rules={{ required: true }}
+                    render={({
+                      fieldState: { invalid },
+                      field: { onChange, onBlur, value },
+                    }) => (
+                      <TextField
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        error={invalid}
+                        placeholder="Name"
+                        fullWidth
+                        size="small"
+                        variant="outlined"
+                      />
+                    )}
                   />
-                  <TextArea
-                    name={`${fieldName}.description`}
+
+                  <TextField
+                    {...register(`${fieldName}.description`)}
                     defaultValue={field.description}
                     placeholder="Description"
+                    multiline
                     rows="3"
+                    fullWidth
+                    variant="outlined"
                   />
-                </td>
-                <td>
-                  <TextInput
+                </TableCell>
+                <TableCell align="right" className={classes.priceCell}>
+                  <Controller
+                    control={control}
+                    deleteButton
                     name={`${fieldName}.price`}
                     defaultValue={field.price}
-                    onBlur={() => {
-                      let price = parseFloat(lineItem.price) || 0;
-                      setValue(`${fieldName}.price`, price.toFixed(2));
-                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextField
+                        className={classes.priceInput}
+                        size="small"
+                        value={value}
+                        onChange={onChange}
+                        onBlur={({ target }) => {
+                          let price = parseFloat(target.value) || 0;
+                          price = price.toFixed(2);
+                          setValue(`${fieldName}.price`, price);
+                          onBlur(price);
+                        }}
+                        variant="outlined"
+                      />
+                    )}
                   />
-                </td>
-                <td>
-                  {fields.length > 1 && (
-                    <button
-                      type="button"
+                </TableCell>
+                {fields.length > 1 && (
+                  <TableCell
+                    size="small"
+                    align="right"
+                    className={classes.deleteButtonCell}
+                  >
+                    <IconButton
+                      color="error"
+                      deleteButton
+                      className={classes.deleteButton}
+                      aria-label="delete line item"
+                      size="small"
                       onClick={() =>
                         lineItem?.id
                           ? setValue(`${fieldName}._destroy`, true)
                           : remove(index)
                       }
-                      className="button is-ghost has-text-danger"
                     >
                       <FontAwesomeIcon icon={faTrashAlt} />
-                    </button>
-                  )}
-                </td>
-              </tr>
+                    </IconButton>
+                  </TableCell>
+                )}
+              </TableRow>
             );
           })}
-          <tr>
-            <td className=" has-text-left has-text-weight-bold ">
-              {' '}
-              <button
-                type="button"
+          <TableRow className={classes.removeBottomBorder}>
+            <TableCell>
+              <Button
+                color="primary"
+                className={classes.boldText}
                 onClick={addLineItem}
-                className="button is-info is-inverted ml-3"
               >
-                <strong>Add item</strong>
-              </button>
-            </td>
-            <td className=" has-text-right ">
+                Add item
+              </Button>
+            </TableCell>
+            <TableCell align="right">
               <strong>Total</strong> ${lineItemsTotal}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </>
+            </TableCell>
+            <TableCell />
+          </TableRow>
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
-//validations
-// //line items validation
-// let validLineItems = true;
-// const invoiceLineItemsAttributes =
-//   values.invoiceLineItemsAttributes.map((lineItem) => {
-//     let lineItemErrors = {};
-//     if (lineItem.name.length === 0) {
-//       validLineItems = false;
-//       lineItemErrors.name = 'Item name is required';
-//     }
-//     return lineItemErrors;
-//   });

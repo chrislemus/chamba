@@ -1,17 +1,13 @@
 import { useRef, useEffect } from 'react';
 
-export default function MouseClickWrapper({
-  onClicked,
-  onClickedOut,
-  children,
-}) {
+export default function MouseSpy({ onClicked, onClickedOut, children }) {
   const ref = useRef();
   useEffect(() => {
     function handleClickOutside(event) {
       const isClicked = ref?.current?.contains(event.target);
-      if (isClicked) {
+      if (isClicked && onClicked) {
         onClicked();
-      } else {
+      } else if (onClickedOut) {
         onClickedOut();
       }
     }
