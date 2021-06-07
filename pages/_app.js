@@ -9,7 +9,11 @@ import { Provider } from 'react-redux';
 import store from '../store';
 import '@fontsource/roboto';
 
-const theme = createMuiTheme({});
+const theme = createMuiTheme({
+  error: {
+    main: 'red',
+  },
+});
 export default function App({ Component, pageProps }) {
   const queryClient = new QueryClient();
 
