@@ -1,12 +1,10 @@
 import { useRouter } from 'next/router';
-import { Box, TextField } from '@material-ui/core';
+import { Box, TextField, Button, Typography } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-
 import { useForm, FormProvider, useController } from 'react-hook-form';
 import { PricedLineItems } from '../../../components/react-hook-form-ui';
 import { useEffect, useState } from 'react';
-import { useMutation } from 'react-query';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import DataFetchWrapper from '../../../components/DataFetchWrapper';
 import { createInvoice, fetchCustomers } from '../../../services/api';
 import SubmitButton from '../../../ui/SubmitButton';
@@ -23,7 +21,6 @@ export default function NewInvoice() {
   } = reactHookFormMethods;
   const { isDirty } = formState;
   const router = useRouter();
-  useState(true);
   const [customer, setCustomer] = useState(null);
   const [customerNameQuery, setCustomerNameQuery] = useState('');
   const [validationErrors, setValidationErrors] = useState([]);
@@ -32,7 +29,7 @@ export default function NewInvoice() {
   }, [customer]);
 
   const {
-    field: { ref, ...inputProps },
+    field: { ref },
     fieldState: { invalid: invalidCustomerSelect },
   } = useController({
     name: 'customerId',
@@ -47,47 +44,39 @@ export default function NewInvoice() {
   const { mutate: onSubmit, status: formStatus } = useMutation(
     (invoice) => createInvoice({ ...invoice, customerId: customer?.id }),
     {
-      onError: (error) => {
-        setValidationErrors(error.validationErrors);
-      },
-      onSuccess: (data) => {
-        const invoiceId = data?.invoice?.id;
-        router.push(`/dashboard/invoices/${invoiceId}`);
-      },
+      onError: (error) => setValidationErrors(error.validationErrors),
+      onSuccess: (data) =>
+        router.push(`/dashboard/invoices/${data?.invoice?.id}`),
     }
   );
 
   return (
     <DataFetchWrapper dataName="Invoice Details">
-      <div className="app-header">
-        <div className="app-header-left">
-          <h1>New Invoice</h1>
-        </div>
-        <div className="app-header-right">
-          <button
-            onClick={() => router.back()}
-            className="button is-primary is-rounded"
-          >
+      <Box display="flex" mb={5}>
+        <Box flexGrow={1}>
+          <Typography variant="h4">
+            <strong>New Invoice</strong>
+          </Typography>
+        </Box>
+        <Box>
+          <Button onClick={router.back} color="primary" variant="contained">
             Cancel
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Box>
+      </Box>
 
       <FormProvider {...reactHookFormMethods}>
         <Box bgcolor="white" boxShadow={2} borderRadius={3} py={6} px={3}>
-          <form
-            className="columns is-multiline mx-1"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          <form onSubmit={handleSubmit(onSubmit)}>
             <ValidationErrors errors={validationErrors} />
 
-            <div className="column is-3">
-              {/* <h6 className="has-text-weight-bold">Billed to</h6> */}
+            <Box px={3} pb={5} maxWidth={200}>
               <Autocomplete
                 size="small"
                 onChange={(_0, customer) => setCustomer(customer)}
                 open={customersDropdownActive}
                 onOpen={() => setCustomersDropdownActive(true)}
+                forcePopupIcon={false}
                 onClose={() => setCustomersDropdownActive(false)}
                 getOptionSelected={(option, value) => option.id === value.id}
                 disableClearable
@@ -103,10 +92,7 @@ export default function NewInvoice() {
                     error={invalidCustomerSelect}
                     inputRef={ref}
                     label="Customer"
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: <>{params.InputProps.endAdornment}</>,
-                    }}
+                    InputProps={{ ...params.InputProps }}
                   />
                 )}
               />
@@ -115,20 +101,18 @@ export default function NewInvoice() {
                   <p>{customer.address1}</p>
                   <p>{customer.address2}</p>
                   <p>
-                    {customer.city} {customer.state} {customer.zipCode}
+                    {`${customer.city} ${customer.state} ${customer.zipCode}`}
                   </p>
                 </Box>
               )}
-            </div>
+            </Box>
 
-            <div className="column is-12">
-              <PricedLineItems fieldArrayName={'invoiceLineItemsAttributes'} />
-              <Box mt={4}>
-                <SubmitButton status={formStatus} dirty={isDirty}>
-                  Create Invoice
-                </SubmitButton>
-              </Box>
-            </div>
+            <PricedLineItems fieldArrayName={'invoiceLineItemsAttributes'} />
+            <Box mt={4}>
+              <SubmitButton status={formStatus} dirty={isDirty}>
+                Create Invoice
+              </SubmitButton>
+            </Box>
           </form>
         </Box>
       </FormProvider>

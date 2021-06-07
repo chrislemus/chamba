@@ -42,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function PricedLineItems({ fieldArrayName }) {
   const classes = useStyles();
+  const { setValue, watch, control, register } = useFormContext();
   const { fields, remove, append } = useFieldArray({ name: fieldArrayName });
   const addLineItem = () => append(blankLineItemValues);
   //default: if no line items provided add a blank line item on mount
@@ -51,7 +52,6 @@ export default function PricedLineItems({ fieldArrayName }) {
   }, []);
   if (zeroLineItems) return null;
   //---------
-  const { setValue, watch, control, register } = useFormContext();
   const lineItemsData = watch(fieldArrayName);
   const lineItemsTotal = lineItemsData
     .reduce((a, { price }) => parseFloat(a) + (parseFloat(price) || 0), 0)

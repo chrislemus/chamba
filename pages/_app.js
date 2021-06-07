@@ -9,9 +9,7 @@ import { Provider } from 'react-redux';
 import store from '../store';
 import '@fontsource/roboto';
 
-// const theme = createMuiTheme({
-//   palette: {},
-// });
+const theme = createMuiTheme({});
 export default function App({ Component, pageProps }) {
   const queryClient = new QueryClient();
 
@@ -24,7 +22,7 @@ export default function App({ Component, pageProps }) {
           content="Run your business like you mean business"
         />
       </Head>
-      <ThemeProvider>
+      <ThemeProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
           <Provider store={store}>
             <PrivateRoute>
