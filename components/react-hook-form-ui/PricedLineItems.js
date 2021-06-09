@@ -2,6 +2,7 @@ import { useFieldArray, useFormContext, Controller } from 'react-hook-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { useEffect } from 'react';
+import TextField from './TextField';
 
 import {
   TableContainer,
@@ -11,7 +12,6 @@ import {
   TableHead,
   TableRow,
   IconButton,
-  TextField,
   makeStyles,
   Button,
 } from '@material-ui/core';
@@ -40,9 +40,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+
 export default function PricedLineItems({ fieldArrayName }) {
   const classes = useStyles();
-  const { setValue, watch, control, register } = useFormContext();
+  const { setValue, watch, register } = useFormContext();
   const { fields, remove, append } = useFieldArray({ name: fieldArrayName });
   const addLineItem = () => append(blankLineItemValues);
   //default: if no line items provided add a blank line item on mount
@@ -54,8 +55,10 @@ export default function PricedLineItems({ fieldArrayName }) {
   //---------
   const lineItemsData = watch(fieldArrayName);
   const lineItemsTotal = lineItemsData
-    .reduce((a, { price }) => parseFloat(a) + (parseFloat(price) || 0), 0)
-    .toFixed(2);
+    ? lineItemsData
+        .reduce((a, { price }) => parseFloat(a) + (parseFloat(price) || 0), 0)
+        .toFixed(2)
+    : 0;
   return (
     <TableContainer>
       <Table>
@@ -73,35 +76,22 @@ export default function PricedLineItems({ fieldArrayName }) {
         <TableBody>
           {fields.map((field, index) => {
             const fieldName = `${fieldArrayName}.${index}`;
-            const lineItem = lineItemsData[index];
+            const lineItem = lineItemsData?.[index];
 
-            return lineItem._destroy ? null : (
+            return lineItem?._destroy ? null : (
               <TableRow key={field.id}>
                 <TableCell>
-                  <Controller
-                    control={control}
-                    name={`${fieldName}.name`}
-                    defaultValue={field.name}
-                    rules={{ required: true }}
-                    render={({
-                      fieldState: { invalid },
-                      field: { onChange, onBlur, value },
-                    }) => (
-                      <TextField
-                        value={value}
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        error={invalid}
-                        placeholder="Name"
-                        fullWidth
-                        size="small"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-
                   <TextField
-                    {...register(`${fieldName}.description`)}
+                    name={`${fieldName}.name`}
+                    rules={{ required: true }}
+                    variant="outlined"
+                    fullWidth
+                    defaultValue={field.name}
+                    placeholder="Name"
+                    size="small"
+                  />
+                  <TextField
+                    name={`${fieldName}.description`}
                     defaultValue={field.description}
                     placeholder="Description"
                     multiline
@@ -111,26 +101,18 @@ export default function PricedLineItems({ fieldArrayName }) {
                   />
                 </TableCell>
                 <TableCell align="right" className={classes.priceCell}>
-                  <Controller
-                    control={control}
-                    deleteButton
+                  <TextField
                     name={`${fieldName}.price`}
                     defaultValue={field.price}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <TextField
-                        className={classes.priceInput}
-                        size="small"
-                        value={value}
-                        onChange={onChange}
-                        onBlur={({ target }) => {
-                          let price = parseFloat(target.value) || 0;
-                          price = price.toFixed(2);
-                          setValue(`${fieldName}.price`, price);
-                          onBlur(price);
-                        }}
-                        variant="outlined"
-                      />
-                    )}
+                    variant="outlined"
+                    size="small"
+                    className={classes.priceInput}
+                    setValueAs={{
+                      onBlur: (value) => {
+                        let price = parseFloat(value) || 0;
+                        return price.toFixed(2);
+                      },
+                    }}
                   />
                 </TableCell>
                 {fields.length > 1 && (
@@ -140,8 +122,6 @@ export default function PricedLineItems({ fieldArrayName }) {
                     className={classes.deleteButtonCell}
                   >
                     <IconButton
-                      color="error"
-                      deleteButton
                       className={classes.deleteButton}
                       aria-label="delete line item"
                       size="small"

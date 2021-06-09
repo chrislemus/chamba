@@ -1,5 +1,4 @@
-import TextInput from './TextInput';
-import TextArea from './TextArea';
+import TextField from './TextField';
 import PricedLineItems from './PricedLineItems';
 
-export { TextInput, TextArea, PricedLineItems };
+export { TextField, PricedLineItems };

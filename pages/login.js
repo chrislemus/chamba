@@ -9,7 +9,7 @@ import { authUser } from '../services/api';
 import SubmitButton from '../ui/SubmitButton';
 import { useRouter } from 'next/router';
 import { addUser } from '../actions/userActions';
-export default function Login(props) {
+export default function Login() {
   const dispatch = useDispatch();
   const router = useRouter();
   const authUserToken = Cookies.get('authToken');
@@ -18,8 +18,6 @@ export default function Login(props) {
   useEffect(() => {
     if (authUserToken) router.push('/dashboard');
   }, [authUserToken]);
-
-  // if (authUserToken) history.push('/overview');
 
   const { mutate: handleLogin, status } = useMutation(
     (user) => authUser(user),
@@ -34,7 +32,7 @@ export default function Login(props) {
   );
 
   return (
-    <div className="columns mt-6 mx-1">
+    <div className="columns ">
       <Formik
         initialValues={{ email: '', password: '' }}
         onSubmit={handleLogin}

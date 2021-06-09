@@ -1,7 +1,5 @@
 // import CalendarScheduler from '../components/CalendarScheduler/basic/Index';
-import { useState } from 'react';
 const Overview = () => {
-  const [charLimit, setCharLimit] = useState(0);
   return (
     <div style={{ marginBottom: '200px' }}>
       <h1 className="title">Overview</h1>

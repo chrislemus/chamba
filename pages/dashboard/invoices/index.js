@@ -77,67 +77,65 @@ export default function Invoices() {
           dataName={'Invoices'}
           hasData={invoices?.length > 0}
         >
-          <>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Created</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Amount</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Created</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
 
-              <TableBody>
-                {invoices &&
-                  invoices.map(
-                    ({ id, customerFullName, status, total, createdAt }) => (
-                      <TableRow key={`invoice-${id}`}>
-                        <TableCell>
-                          <Link href={`/dashboard/invoices/${id}`}>
-                            {customerFullName}
-                          </Link>
-                        </TableCell>
-                        <TableCell>
-                          {format(new Date(createdAt), 'MM/dd/yyyy')}
-                        </TableCell>
-                        <TableCell width="auto">
-                          <Box
-                            bgcolor={`${statusStyle[status]}.light`}
-                            color={`white`}
-                            px={1}
-                            borderRadius={10}
-                            width="fit-content"
-                          >
-                            {status}
-                          </Box>
-                        </TableCell>
-                        <TableCell>${total}</TableCell>
+            <TableBody>
+              {invoices &&
+                invoices.map(
+                  ({ id, customerFullName, status, total, createdAt }) => (
+                    <TableRow key={`invoice-${id}`}>
+                      <TableCell>
+                        <Link href={`/dashboard/invoices/${id}`}>
+                          {customerFullName}
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        {format(new Date(createdAt), 'MM/dd/yyyy')}
+                      </TableCell>
+                      <TableCell width="auto">
+                        <Box
+                          bgcolor={`${statusStyle[status]}.light`}
+                          color={`white`}
+                          px={1}
+                          borderRadius={10}
+                          width="fit-content"
+                        >
+                          {status}
+                        </Box>
+                      </TableCell>
+                      <TableCell>${total}</TableCell>
 
-                        <TableCell>
-                          <Link href={`/dashboard/invoices/${id}`}>
-                            <IconButton size="small" color="primary">
-                              <FontAwesomeIcon icon={faArrowRight} />
-                            </IconButton>
-                          </Link>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  )}
-              </TableBody>
-            </Table>
+                      <TableCell>
+                        <Link href={`/dashboard/invoices/${id}`}>
+                          <IconButton size="small" color="primary">
+                            <FontAwesomeIcon icon={faArrowRight} />
+                          </IconButton>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  )
+                )}
+            </TableBody>
+          </Table>
 
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              page={page - 1}
-              rowsPerPage={pageLimit}
-              count={queryData?.results}
-              onChangePage={(_, page) => setPage(page + 1)}
-              onChangeRowsPerPage={({ target }) => setPageLimit(target.value)}
-            />
-          </>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            page={page - 1}
+            rowsPerPage={pageLimit}
+            count={queryData?.results}
+            onChangePage={(_, page) => setPage(page + 1)}
+            onChangeRowsPerPage={({ target }) => setPageLimit(target.value)}
+          />
         </DataFetchWrapper>
       </Box>
     </>
