@@ -1,21 +1,23 @@
 import '../styles/bulma/bulma.min.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import PrivateRoute from '../components/PrivateRoute';
 import Head from 'next/head';
-import MainLayout from '../layouts/Main';
+import Layout from '../components/Layout';
 import { Provider } from 'react-redux';
+import { useEffect } from 'react';
 import store from '../store';
+import theme from '../src/theme';
+
 import '@fontsource/roboto';
 
-const theme = createMuiTheme({
-  error: {
-    main: 'red',
-  },
-});
 export default function App({ Component, pageProps }) {
   const queryClient = new QueryClient();
+
+  useEffect(() => {
+    const jssStyles = document.querySelector('#jss-server-side');
+    if (jssStyles) jssStyles.parentElement.removeChild(jssStyles);
+  }, []);
 
   return (
     <div style={{ background: 'rgb(248, 248, 248)', minHeight: '100vh' }}>
@@ -30,9 +32,9 @@ export default function App({ Component, pageProps }) {
         <QueryClientProvider client={queryClient}>
           <Provider store={store}>
             <PrivateRoute>
-              <MainLayout>
+              <Layout>
                 <Component {...pageProps} />
-              </MainLayout>
+              </Layout>
             </PrivateRoute>
           </Provider>
         </QueryClientProvider>

@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from 'react-query';
 import { getUserData } from '../services/api';
-import DataFetchWrapper from './DataFetchWrapper';
 import { addUser, userLogout } from '../actions/userActions';
 
 export default function PrivateRoute({ children }) {
