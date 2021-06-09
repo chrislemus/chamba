@@ -32,7 +32,7 @@ export default function Invoices() {
     pending: 'info',
     paid: 'success',
     canceled: 'warning',
-    overdue: 'danger',
+    overdue: 'error',
   };
 
   const invoices = data?.invoices;

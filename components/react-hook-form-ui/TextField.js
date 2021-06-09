@@ -1,4 +1,4 @@
-import MaterialUiTextField from '@material-ui/core/TextField';
+import MuiTextField from '@material-ui/core/TextField';
 import { useController, useFormContext } from 'react-hook-form';
 
 export default function TextField({
@@ -36,7 +36,7 @@ export default function TextField({
   };
 
   return (
-    <MaterialUiTextField
+    <MuiTextField
       {...inputProps}
       id={defaultId || id}
       inputRef={ref}

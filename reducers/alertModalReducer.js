@@ -15,9 +15,9 @@ export default function alertModalReducer(state = {}, action) {
         type: 'warning',
         message: action.payload,
       };
-    case 'ALERT_MODAL_DANGER':
+    case 'ALERT_MODAL_ERROR':
       return {
-        type: 'danger',
+        type: 'error',
         message: action.payload,
       };
     case 'ALERT_MODAL_CLEAR':

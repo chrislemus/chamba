@@ -1,53 +1,33 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { alertModalClear } from '../actions/alertModalActions';
-import { useState, useEffect } from 'react';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 export default function AlertModal() {
-  const [alertModalTimeOut, setAlertModalTimeOut] = useState(null);
   const dispatch = useDispatch();
   const alertModal = useSelector((state) => state.alertModal);
   const type = alertModal?.type || 'info';
-  const icons = {
-    info: 'fa-info-circle',
-    success: 'fa-check-square',
-    warning: 'fa-exclamation-triangle',
-    danger: 'fa-ban',
-  };
   const message = alertModal?.message;
 
-  useEffect(() => {
-    clearCurrentAlertModalTimeOut();
-
-    if (message?.length) {
-      const alertModalTimeOut = setTimeout(() => {
-        dispatch(alertModalClear());
-      }, 5000);
-      setAlertModalTimeOut(alertModalTimeOut);
-    }
-  }, [message]);
-
-  const clearCurrentAlertModalTimeOut = () => {
-    if (alertModalTimeOut) {
-      clearTimeout(alertModalTimeOut);
-      setAlertModalTimeOut(null);
-    }
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') return;
+    dispatch(alertModalClear());
   };
 
-  if (message) {
-    return (
-      <div className={`alert-modal is-${type} is-light`}>
-        <button
-          className="delete"
-          onClick={() => dispatch(alertModalClear())}
-        ></button>
-        <span className={`icon is-large has-text-${type}`}>
-          <i className={`fas ${icons[type]}`}></i>
-        </span>
-
+  return (
+    <Snackbar
+      open={!!message}
+      autoHideDuration={6000}
+      onClose={handleClose}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+    >
+      <Alert onClose={handleClose} severity={type}>
         {message}
-      </div>
-    );
-  } else {
-    return null;
-  }
+      </Alert>
+    </Snackbar>
+  );
+}
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="standard" {...props} />;
 }

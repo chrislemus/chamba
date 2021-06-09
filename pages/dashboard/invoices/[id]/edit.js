@@ -1,8 +1,9 @@
 import { useRouter } from 'next/router';
-import { useForm, FormProvider } from 'react-hook-form';
-import { format } from 'date-fns';
-import { useRef, useState, useEffect } from 'react';
+import Checkbox from '@material-ui/core/Checkbox';
+import { useForm, FormProvider, Controller } from 'react-hook-form';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import DataFetchWrapper from '../../../../components/DataFetchWrapper';
 import {
@@ -12,7 +13,7 @@ import {
 } from '../../../../services/api';
 import {
   PricedLineItems,
-  TextInput,
+  TextField,
 } from '../../../../components/react-hook-form-ui';
 import SubmitButton from '../../../../ui/SubmitButton';
 import ValidationErrors from '../../../../ui/ValidationErrors';
@@ -23,10 +24,8 @@ import {
 
 export default function EditInvoice() {
   const [invoiceId, setInvoiceId] = useState(undefined);
-  const cancelInvoiceCheckboxRef = useRef();
   const reactHookFormMethods = useForm();
   const { handleSubmit, setValue: setFormValue } = reactHookFormMethods;
-
   const dispatch = useDispatch();
   const router = useRouter();
   useEffect(() => {
@@ -42,13 +41,12 @@ export default function EditInvoice() {
   const customer = invoiceData?.customer;
 
   useEffect(() => {
-    if (invoiceData) {
-      let { dueDate, canceledDate, invoiceLineItems } = invoiceData;
-      if (dueDate) {
-        setFormValue('dueDate', format(new Date(dueDate), 'yyyy-MM-dd'));
-        cancelInvoiceCheckboxRef.current.checked = true;
-      }
-      if (canceledDate) setFormValue('canceledDate', canceledDate);
+    let invoiceLineItems = invoiceData?.invoiceLineItems;
+
+    if (invoiceLineItems) {
+      let { dueDate, canceled } = invoiceData;
+      if (dueDate) setFormValue('dueDate', dueDate.split('T')[0]);
+      if (canceled) setFormValue('canceled', canceled);
       invoiceLineItems = invoiceLineItems.map(
         ({ id, name, description, price }) => ({ id, name, description, price })
       );
@@ -96,9 +94,6 @@ export default function EditInvoice() {
     },
   });
 
-  const setInvoiceCancelDate = ({ target }) =>
-    setFormValue('canceledDate', target.checked && new Date().toISOString());
-
   return (
     <DataFetchWrapper
       dataName="Invoice Details"
@@ -143,16 +138,34 @@ export default function EditInvoice() {
             )}
           </div>
           <div className="column is-narrow ">
-            <TextInput name="dueDate" type="date" label="Due Date" />
+            <TextField
+              name="dueDate"
+              type="date"
+              label="Due Date"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
             <div className="mt-4">
-              <label className="checkbox">
-                <input
-                  ref={cancelInvoiceCheckboxRef}
-                  onChange={setInvoiceCancelDate}
-                  type="checkbox"
-                />{' '}
-                Mark invoice as canceled
-              </label>
+              <Controller
+                name="canceled"
+                defaultValue={false}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        checked={value}
+                        inputRef={ref}
+                        indeterminate
+                      />
+                    }
+                    label="Mark invoice as canceled"
+                  />
+                )}
+              />
             </div>
           </div>
 
