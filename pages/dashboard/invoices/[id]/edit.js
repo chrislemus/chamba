@@ -19,7 +19,7 @@ import SubmitButton from '../../../../ui/SubmitButton';
 import ValidationErrors from '../../../../ui/ValidationErrors';
 import {
   alertModalSuccess,
-  alertModalDanger,
+  alertModalError,
 } from '../../../../actions/alertModalActions';
 
 export default function EditInvoice() {
@@ -72,7 +72,7 @@ export default function EditInvoice() {
       },
       onError: (error, updatedInvoice, previousData) => {
         setValidationErrors(error.validationErrors);
-        dispatch(alertModalDanger('unable to save changes'));
+        dispatch(alertModalError('unable to save changes'));
         return queryClient.setQueryData(
           ['invoiceData', { invoiceId }],
           previousData
@@ -87,7 +87,7 @@ export default function EditInvoice() {
     }
   );
   const { mutate: handleDelete } = useMutation(() => deleteInvoice(invoiceId), {
-    onError: () => dispatch(alertModalDanger('unable to delete invoice')),
+    onError: () => dispatch(alertModalError('unable to delete invoice')),
     onSuccess: () => {
       dispatch(alertModalSuccess('invoice deleted'));
       router.push('/dashboard/invoices');

@@ -4,7 +4,7 @@ import { useQuery, useQueryClient, useMutation } from 'react-query';
 import DataFetchWrapper from '../../../../components/DataFetchWrapper';
 import { fetchInvoiceById, paidInvoice } from '../../../../services/api';
 import { useDispatch } from 'react-redux';
-import { alertModalDanger } from '../../../../actions/alertModalActions';
+import { alertModalError } from '../../../../actions/alertModalActions';
 import { format } from 'date-fns';
 
 export default function invoiceData() {
@@ -36,7 +36,7 @@ export default function invoiceData() {
         return previousData;
       },
       onError: (error, updatedInvoice, previousData) => {
-        dispatch(alertModalDanger('unable to mark invoice as paid'));
+        dispatch(alertModalError('unable to mark invoice as paid'));
         return queryClient.setQueryData(
           ['invoiceData', { invoiceId }],
           previousData

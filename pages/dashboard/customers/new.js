@@ -8,7 +8,7 @@ import { us_states } from '../../../helpers/sharableConst';
 import { Formik, Form } from 'formik';
 import ValidationErrors from '../../../ui/ValidationErrors';
 import { useMutation } from 'react-query';
-import { alertModalDanger } from '../../../actions/alertModalActions';
+import { alertModalError } from '../../../actions/alertModalActions';
 import { TextField, SelectField } from '../../../components/formik-ui';
 
 const formSelectStateOptions = us_states.map(([stateName, stateAbbr]) => ({
@@ -45,7 +45,7 @@ export default function NewCustomer() {
     {
       onError: (error) => {
         setValidationErrors(error.validationErrors);
-        dispatch(alertModalDanger('unable to create customer'));
+        dispatch(alertModalError('unable to create customer'));
       },
       onSuccess: (data) => {
         setValidationErrors([]);

@@ -8,7 +8,7 @@ import { Formik, Form } from 'formik';
 import { TextField, SelectField } from '../../../../components/formik-ui';
 import {
   alertModalSuccess,
-  alertModalDanger,
+  alertModalError,
 } from '../../../../actions/alertModalActions';
 import ValidationErrors from '../../../../ui/ValidationErrors';
 import {
@@ -71,7 +71,7 @@ export default function EditCustomer() {
     () => deleteCustomer(customerId),
     {
       onError: () => {
-        dispatch(alertModalDanger('unable to delete customer'));
+        dispatch(alertModalError('unable to delete customer'));
       },
       onSuccess: () => {
         dispatch(alertModalSuccess('customer deleted'));
@@ -101,7 +101,7 @@ export default function EditCustomer() {
       },
       onError: (error, newCustomerDetails, previousData) => {
         setValidationErrors(error.validationErrors);
-        dispatch(alertModalDanger('unable to save changes'));
+        dispatch(alertModalError('unable to save changes'));
         return queryClient.setQueryData(
           ['customerData', { customerId }],
           previousData
