@@ -8,7 +8,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@chakra-ui/react": "^1.6.3",
     "@devexpress/dx-react-scheduler-material-ui": "^2.7.5",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
@@ -17,6 +16,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -39,7 +39,6 @@
     "react-widgets-moment-localizer": "^1.0.2",
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0",
-    "sass": "^1.34.1",
     "web-vitals": "^1.0.1"
   },
   "eslintConfig": {
