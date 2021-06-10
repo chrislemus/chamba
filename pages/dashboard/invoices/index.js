@@ -3,9 +3,11 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 import DataFetchWrapper from '../../../components/DataFetchWrapper';
 import { fetchInvoices } from '../../../services/api';
-import { format } from 'date-fns';
+import { parseISO, format } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faSearch } from '@fortawesome/free-solid-svg-icons';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import TextField from '@material-ui/core/TextField';
 import {
   Table,
   IconButton,
@@ -56,22 +58,22 @@ export default function Invoices() {
       </Box>
 
       <Box bgcolor="white" boxShadow={2} borderRadius={3} py={6} px={3}>
-        <header className="card-header  is-shadowless	pt-4 px-5">
-          <div className="field">
-            <p className="control has-icons-left">
-              <input
-                className="input"
-                type="text"
-                onChange={({ target }) => setQuery(target.value)}
-                placeholder="Search invoices by customer name"
-              />
+        <Box mb={3}>
+          <TextField
+            onChange={({ target }) => setQuery(target.value)}
+            variant="outlined"
+            placeholder="Search invoices by customer name"
+            size="small"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <FontAwesomeIcon icon={faSearch} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
 
-              <span className="icon is-small is-left">
-                <FontAwesomeIcon icon={faSearch} />
-              </span>
-            </p>
-          </div>
-        </header>
         <DataFetchWrapper
           status={status}
           dataName={'Invoices'}
@@ -99,7 +101,7 @@ export default function Invoices() {
                         </Link>
                       </TableCell>
                       <TableCell>
-                        {format(new Date(createdAt), 'MM/dd/yyyy')}
+                        {format(parseISO(createdAt), 'MM/dd/yyyy')}
                       </TableCell>
                       <TableCell width="auto">
                         <Box

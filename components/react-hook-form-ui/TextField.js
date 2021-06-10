@@ -8,6 +8,7 @@ export default function TextField({
   setValueAs,
   rules, //replaces validation
   rulesErrorMessages,
+  shouldUnregister,
   defaultValue,
   ...props
 }) {
@@ -18,7 +19,7 @@ export default function TextField({
   } = useController({
     name,
     rules: formatValidations(rules),
-    shouldUnregister: true,
+    shouldUnregister: shouldUnregister || true,
     defaultValue,
   });
 

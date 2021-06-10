@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router';
-import Checkbox from '@material-ui/core/Checkbox';
-import { useForm, FormProvider, Controller } from 'react-hook-form';
+import { Checkbox } from '../../../../components/react-hook-form-ui';
+import { useForm, FormProvider } from 'react-hook-form';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import DataFetchWrapper from '../../../../components/DataFetchWrapper';
 import {
@@ -42,7 +41,6 @@ export default function EditInvoice() {
 
   useEffect(() => {
     let invoiceLineItems = invoiceData?.invoiceLineItems;
-
     if (invoiceLineItems) {
       let { dueDate, canceled } = invoiceData;
       if (dueDate) setFormValue('dueDate', dueDate.split('T')[0]);
@@ -67,7 +65,6 @@ export default function EditInvoice() {
           ...oldData,
           invoice: updatedInvoice,
         }));
-
         return previousData;
       },
       onError: (error, updatedInvoice, previousData) => {
@@ -146,31 +143,15 @@ export default function EditInvoice() {
                 shrink: true,
               }}
             />
-
             <div className="mt-4">
-              <Controller
-                name="canceled"
-                defaultValue={false}
-                render={({ field: { onChange, onBlur, value, ref } }) => (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        checked={value}
-                        inputRef={ref}
-                        indeterminate
-                      />
-                    }
-                    label="Mark invoice as canceled"
-                  />
-                )}
-              />
+              <Checkbox name="canceled" label="Mark invoice as canceled" />
             </div>
           </div>
 
           <div className="column is-12">
-            <PricedLineItems fieldArrayName={'invoiceLineItemsAttributes'} />
+            {invoiceData?.invoiceLineItems && (
+              <PricedLineItems fieldArrayName={'invoiceLineItemsAttributes'} />
+            )}
 
             <SubmitButton status={formStatus}>Save Changes</SubmitButton>
             <br />

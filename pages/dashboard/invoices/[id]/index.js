@@ -1,13 +1,28 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { parseISO, format } from 'date-fns';
+import { Box, Button, Typography, Chip } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import PriceLineItemsStatic from '../../../../components/PriceLineItemsStatic';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import DataFetchWrapper from '../../../../components/DataFetchWrapper';
 import { fetchInvoiceById, paidInvoice } from '../../../../services/api';
 import { useDispatch } from 'react-redux';
 import { alertModalError } from '../../../../actions/alertModalActions';
-import { format } from 'date-fns';
+
+const useStyles = makeStyles(({ palette }) => ({
+  paidButton: {
+    backgroundColor: palette.success.main,
+    color: '#fff',
+  },
+  paidChip: {
+    backgroundColor: palette.success.lighter,
+    color: palette.success.main,
+  },
+}));
 
 export default function invoiceData() {
+  const classes = useStyles();
   const router = useRouter();
   const invoiceId = router.query.id;
   const queryClient = useQueryClient();
@@ -42,9 +57,7 @@ export default function invoiceData() {
           previousData
         );
       },
-      // onSuccess: () => {
-      //   dispatch(alertModalSuccess('invoice marked as paid'));
-      // },
+      onSuccess: () => dispatch(alertModalSuccess('invoice marked as paid')),
       onSettled: () =>
         queryClient.invalidateQueries(['invoiceData', { invoiceId }]),
     }
@@ -56,49 +69,56 @@ export default function invoiceData() {
       dataName="Invoice Details"
       hasData={invoice}
     >
-      <div className="app-header">
-        <div className="app-header-left">
-          <h1>Invoice #{invoice?.id}</h1>
-        </div>
-        <div className="app-header-right">
+      <Box display="flex" mb={5}>
+        <Box flexGrow={1}>
+          <Typography variant="h4">
+            <strong>Invoice #{invoice?.id}</strong>
+          </Typography>
+        </Box>
+        <Box>
           <Link href={`/dashboard/invoices/${invoiceId}/edit`}>
-            <button className="button is-primary is-rounded">Edit</button>
+            <Button color="primary" variant="contained">
+              Edit
+            </Button>
           </Link>
-        </div>
-      </div>
-      <div className="columns is-multiline box mx-1">
-        <div className="column is-6">
-          <h1 className="title">{invoice?.businessName}</h1>
-        </div>
-        <div className="column is-6 ">
-          {invoice?.paidDate ? (
-            <span className="tag is-success is-large is-light is-pulled-right">
-              PAID
-            </span>
-          ) : (
-            <button
-              className="button is-success is-lioght is-rounded is-pulled-right"
-              onClick={markInvoicePaid}
-            >
-              Mark as paid
-            </button>
-          )}
-        </div>
+        </Box>
+      </Box>
+      <Box bgcolor="white" boxShadow={2} borderRadius={3} py={6} px={5}>
+        <Box display="flex">
+          <Box flexGrow={1}>
+            <Typography variant="h4">
+              <strong>{invoice?.businessName}</strong>
+            </Typography>
+          </Box>
+          <Box>
+            {invoice?.paidDate ? (
+              <Chip label="PAID" className={classes.paidChip} />
+            ) : (
+              <Button
+                variant="contained"
+                onClick={markInvoicePaid}
+                className={classes.paidButton}
+              >
+                Mark as paid
+              </Button>
+            )}
+          </Box>
+        </Box>
 
         {invoice?.dueDate && (
-          <div className="column is-12">
-            <p>
+          <Box mt={3}>
+            <Typography>
               <strong>Due date</strong>:{' '}
-              {format(new Date(invoice.dueDate), 'MM/dd/yyyy')}
-            </p>
-          </div>
+              {format(parseISO(invoice.dueDate), 'MM/dd/yyyy')}
+            </Typography>
+          </Box>
         )}
-        <div className="column is-12">
-          <h6 className="has-text-weight-bold">Billed to</h6>
+        <Box mt={3}>
+          <Typography variant="h6">Billed to</Typography>
           {customer && (
             <>
               <Link href={`/dashboard/customers/${customer.id}`}>
-                <p>{customer.fullName}</p>
+                <a>{customer.fullName}</a>
               </Link>
               <p>{customer.address1}</p>
               <p>{customer.address2}</p>
@@ -107,37 +127,12 @@ export default function invoiceData() {
               </p>
             </>
           )}
-        </div>
+        </Box>
 
-        <div className="column is-12">
-          <table className="table mt-5 is-fullwidth ">
-            <thead>
-              <tr>
-                <th>Product/Service</th>
-                <th className=" has-text-right is-narrow">Unit Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoiceLineItems &&
-                invoiceLineItems.map(({ id, name, description, price }) => (
-                  <tr key={`InvoiceLineItem-${id}`}>
-                    <td>
-                      <p>
-                        <strong>{name}</strong>
-                      </p>
-                      {description}
-                    </td>
-                    <td className=" has-text-right">${price}</td>
-                  </tr>
-                ))}
-              <tr>
-                <td className=" has-text-right has-text-weight-bold">Total</td>
-                <td className=" has-text-right">${invoice?.total}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+        <Box mt={3}>
+          <PriceLineItemsStatic lineItems={invoiceLineItems} />
+        </Box>
+      </Box>
     </DataFetchWrapper>
   );
 }

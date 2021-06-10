@@ -1,20 +1,17 @@
-import { useFieldArray, useFormContext, Controller } from 'react-hook-form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { useEffect } from 'react';
 import TextField from './TextField';
-
-import {
-  TableContainer,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  IconButton,
-  makeStyles,
-  Button,
-} from '@material-ui/core';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
 
 const blankLineItemValues = { name: '', description: '', price: 0 };
 const useStyles = makeStyles((theme) => ({
@@ -43,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PricedLineItems({ fieldArrayName }) {
   const classes = useStyles();
-  const { setValue, watch, register } = useFormContext();
+  const { setValue, watch } = useFormContext();
   const { fields, remove, append } = useFieldArray({ name: fieldArrayName });
   const addLineItem = () => append(blankLineItemValues);
   //default: if no line items provided add a blank line item on mount
