@@ -1,4 +1,7 @@
-import AppNavigation from '../components/appNavigation';
+// import AppNavigation from '../components/appNavigation';
+import { useState } from 'react';
+import AppDrawer from './appNavigation/AppDrawer';
+import AppNavBar from './appNavigation/AppNavBar';
 import AlertModal from './AlertModal';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -35,14 +38,21 @@ const useStyles = makeStyles((theme) => ({
 export default function MainLayout({ children }) {
   const classes = useStyles();
   const router = useRouter();
-
+  const [drawerIsActive, setDrawerIsActive] = useState(false);
   if (router.pathname.startsWith('/dashboard')) {
     return (
       <>
         <AlertModal />
         <div className={classes.root}>
           <CssBaseline />
-          <AppNavigation />
+          <AppNavBar
+            drawerIsActive={drawerIsActive}
+            setDrawerIsActive={setDrawerIsActive}
+          />
+          <AppDrawer
+            drawerIsActive={drawerIsActive}
+            setDrawerIsActive={setDrawerIsActive}
+          />
           <main className={clsx(classes.content, classes.contentShift)}>
             <Toolbar />
             {children}
