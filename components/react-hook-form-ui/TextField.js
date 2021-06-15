@@ -6,10 +6,22 @@ export default function TextField({
   id,
   helperText,
   setValueAs,
-  rules, //replaces validation
+  rules,
+  //===== example custom validation with message ====
+  // { validate: {
+  //    validationName: {
+  //      validator: func() - return boolean,
+  //      message: 'pattern mismatch',
+  //  }
+  // }}
+  //===== example custom validation without message ====
+  // { validate: {
+  //    validationName: func() - return boolean,
+  // }}
   rulesErrorMessages,
   shouldUnregister,
   defaultValue,
+  variant,
   ...props
 }) {
   const { setValue } = useFormContext();
@@ -46,6 +58,7 @@ export default function TextField({
       error={invalid}
       helperText={invalid ? invalidMsg : helperText}
       defaultValue={defaultValue}
+      variant={variant || 'outlined'}
       {...props}
     />
   );
