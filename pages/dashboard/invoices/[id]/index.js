@@ -86,7 +86,7 @@ export default function invoiceData() {
       <Box bgcolor="white" boxShadow={2} borderRadius={3} py={6} px={5}>
         <Box display="flex">
           <Box flexGrow={1}>
-            <Typography variant="h4">
+            <Typography variant="h5">
               <strong>{invoice?.businessName}</strong>
             </Typography>
           </Box>

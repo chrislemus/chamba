@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router';
-import { Checkbox } from '../../../../components/react-hook-form-ui';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import DataFetchWrapper from '../../../../components/DataFetchWrapper';
+import { Box, Button, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import {
   editInvoice,
   fetchInvoiceById,
@@ -13,6 +14,7 @@ import {
 import {
   PricedLineItems,
   TextField,
+  Checkbox,
 } from '../../../../components/react-hook-form-ui';
 import SubmitButton from '../../../../ui/SubmitButton';
 import ValidationErrors from '../../../../ui/ValidationErrors';
@@ -21,7 +23,27 @@ import {
   alertModalError,
 } from '../../../../actions/alertModalActions';
 
+const useStyles = makeStyles((theme) => ({
+  form: {
+    background: '#fff',
+    boxSizing: 'border-box',
+    display: 'flex',
+    flexDirection: 'column',
+    boxShadow: theme.shadows[2],
+    borderRadius: '5px',
+    flexWrap: 'wrap',
+    padding: '2em',
+  },
+  deleteBtn: {
+    color: theme.palette.error.main,
+    borderColor: theme.palette.error.main,
+    maxWidth: '150px',
+    marginTop: '5rem',
+  },
+}));
+
 export default function EditInvoice() {
+  const classes = useStyles();
   const [invoiceId, setInvoiceId] = useState(undefined);
   const reactHookFormMethods = useForm();
   const { handleSubmit, setValue: setFormValue } = reactHookFormMethods;
@@ -97,72 +119,72 @@ export default function EditInvoice() {
       status={status}
       hasData={invoiceData}
     >
-      <div className="app-header">
-        <div className="app-header-left">
-          <h1>Invoice #{invoiceData?.id}</h1>
-        </div>
-        <div className="app-header-right">
-          <button
-            onClick={() => router.back()}
-            className="button is-primary is-rounded"
-          >
+      <Box display="flex" mb={5}>
+        <Box flexGrow={1}>
+          <Typography variant="h4">
+            <strong>Invoice #{invoiceData?.id}</strong>
+          </Typography>
+        </Box>
+        <Box>
+          <Button color="primary" variant="contained" onClick={router.back}>
             Cancel
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Box>
+      </Box>
 
       <FormProvider {...reactHookFormMethods}>
-        <form
-          className="columns is-multiline box box mx-1"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <ValidationErrors errors={validationErrors} />
-          <div className="column is-12">
-            <h1 className="title">{invoiceData?.businessName}</h1>
-          </div>
+        <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
+          <Typography variant="h5">
+            <strong>{invoiceData?.businessName}</strong>
+          </Typography>
 
-          <div className="column">
-            <h6 className="has-text-weight-bold">Billed to</h6>
-            {customer && (
-              <>
-                <p>{customer.fullName}</p>
-                <p>{customer.address1}</p>
-                <p>{customer.address2}</p>
-                <p>
-                  {customer.city} {customer.state} {customer.zipCode}
-                </p>
-              </>
-            )}
-          </div>
-          <div className="column is-narrow ">
-            <TextField
-              name="dueDate"
-              type="date"
-              label="Due Date"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            <div className="mt-4">
-              <Checkbox name="canceled" label="Mark invoice as canceled" />
+          <Box display="flex" justifyContent="space-between">
+            <div>
+              <h6>
+                <strong>Billed to</strong>
+              </h6>
+              {customer && (
+                <>
+                  <p>{customer.fullName}</p>
+                  <p>{customer.address1}</p>
+                  <p>{customer.address2}</p>
+                  <p>
+                    {customer.city} {customer.state} {customer.zipCode}
+                  </p>
+                </>
+              )}
             </div>
-          </div>
+            <div>
+              <TextField
+                name="dueDate"
+                type="date"
+                label="Due Date"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <Box mt={4}>
+                <Checkbox name="canceled" label="Mark invoice as canceled" />
+              </Box>
+            </div>
+          </Box>
 
-          <div className="column is-12">
-            {invoiceData?.invoiceLineItems && (
+          <ValidationErrors errors={validationErrors} />
+          {invoiceData?.invoiceLineItems && (
+            <Box my={5}>
               <PricedLineItems fieldArrayName={'invoiceLineItemsAttributes'} />
-            )}
+            </Box>
+          )}
 
-            <SubmitButton status={formStatus}>Save Changes</SubmitButton>
-            <br />
-            <button
-              onClick={handleDelete}
-              className="mt-5 button is-danger is-outlined is-rounded"
-              type="button"
-            >
-              Delete Invoice
-            </button>
-          </div>
+          <SubmitButton status={formStatus}>Save Changes</SubmitButton>
+          <Button
+            onClick={handleDelete}
+            variant="outlined"
+            className={classes.deleteBtn}
+            type="button"
+          >
+            Delete Invoice
+          </Button>
         </form>
       </FormProvider>
     </DataFetchWrapper>
