@@ -28,7 +28,6 @@ export default function TextField({
     shouldUnregister,
     defaultValue: defaultValue || '',
   });
-
   const defaultId = `${name}Id`;
   const labelId = `${id || defaultId}-label`;
   const shouldDisplayHelperText = invalid || helperText;

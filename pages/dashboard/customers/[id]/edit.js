@@ -1,11 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
-
+import { useForm, FormProvider } from 'react-hook-form';
+import { makeStyles } from '@material-ui/core/styles';
 import { us_states } from '../../../../helpers/sharableConst';
 import SubmitButton from '../../../../ui/SubmitButton';
-import { Formik, Form } from 'formik';
-import { TextField, SelectField } from '../../../../components/formik-ui';
+import { Box, Typography, Button } from '@material-ui/core';
+import {
+  TextField,
+  Select,
+  FieldGroupWrapper,
+} from '../../../../components/react-hook-form-ui';
 import {
   alertModalSuccess,
   alertModalError,
@@ -18,9 +23,8 @@ import {
 } from '../../../../services/api';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import DataFetchWrapper from '../../../../components/DataFetchWrapper';
-import { updateObjValues } from '../../../../helpers/dataManipulation/objects';
 const formSelectStateOptions = us_states.map(([stateName, stateAbbr]) => ({
-  name: stateName,
+  label: stateName,
   value: stateAbbr,
 }));
 
@@ -39,40 +43,54 @@ const formFieldNames = [
   'country',
 ];
 
-const initialFormValues = Object.assign(
-  ...formFieldNames.map((key) => ({ [key]: '' }))
-);
+const useStyles = makeStyles((theme) => ({
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '2em',
+    boxShadow: theme.shadows[2],
+    '& > *': {
+      margin: theme.spacing(2),
+    },
+  },
+  deleteBtn: {
+    color: theme.palette.error.main,
+    borderColor: theme.palette.error.main,
+    maxWidth: '200px',
+    marginTop: '5rem',
+  },
+}));
 
 export default function EditCustomer() {
+  const classes = useStyles();
+  const reactHookFormMethods = useForm();
+  const { handleSubmit, formState, setValue } = reactHookFormMethods;
   const router = useRouter();
-  const formikRef = useRef();
   const dispatch = useDispatch();
-  const [formSyncedOnMount, setFormSyncedOnMount] = useState(false);
 
   const customerId = router.query.id;
 
   const queryClient = useQueryClient();
-  const { status, data } = useQuery(['customerData', { customerId }], () =>
-    fetchCustomerById(customerId)
+  const { status, data } = useQuery(
+    ['customerData', { customerId }],
+    () => customerId && fetchCustomerById(customerId)
   );
   const [validationErrors, setValidationErrors] = useState([]);
   const customer = data?.customer;
 
   useEffect(() => {
-    const resetForm = formikRef.current?.resetForm;
-    if (customer && resetForm && !formSyncedOnMount) {
-      const updatedIntialData = updateObjValues(initialFormValues, customer);
-      resetForm({ values: updatedIntialData });
-      setFormSyncedOnMount(true);
+    if (customer?.firstName) {
+      formFieldNames.forEach((fieldName) => {
+        const fieldValue = customer?.[fieldName];
+        fieldValue && setValue(fieldName, fieldValue);
+      });
     }
   }, [customer]);
 
   const { mutate: handleDelete } = useMutation(
     () => deleteCustomer(customerId),
     {
-      onError: () => {
-        dispatch(alertModalError('unable to delete customer'));
-      },
+      onError: () => dispatch(alertModalError('unable to delete customer')),
       onSuccess: () => {
         dispatch(alertModalSuccess('customer deleted'));
         router.push('/dashboard/customers');
@@ -80,7 +98,7 @@ export default function EditCustomer() {
     }
   );
 
-  const { mutate: handleSubmit, status: formStatus } = useMutation(
+  const { mutate: updateCustomer, status: formStatus } = useMutation(
     (newCustomerDetails) => editCustomer(customerId, newCustomerDetails),
     {
       onMutate: async (newCustomerDetails) => {
@@ -118,95 +136,84 @@ export default function EditCustomer() {
 
   return (
     <>
-      <div className="app-header">
-        <div className="app-header-left">
-          <h1>Customer Edit</h1>
-        </div>
-        <div className="app-header-right">
-          <button
-            onClick={() => router.back()}
-            className="button is-primary is-outlined is-rounded"
-          >
+      <Box display="flex" mb={5}>
+        <Box flexGrow={1}>
+          <Typography variant="h4">
+            <strong>Customer Edit</strong>
+          </Typography>
+        </Box>
+        <Box>
+          <Button variant="outlined" color="primary" onClick={router.back}>
             Cancel
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Box>
+      </Box>
 
-      <DataFetchWrapper
-        status={status}
-        dataName="Customer"
-        hasData={customer}
-        className="mt-6"
-      >
-        <Formik
-          innerRef={formikRef}
-          initialValues={initialFormValues}
-          onSubmit={handleSubmit}
-          validate={(values) => {
-            const errors = {};
-            if (!values.firstName) {
-              errors.firstName = 'Required';
-            }
-            return errors;
-          }}
-        >
-          {(props) => (
-            <Form className="box py-5">
-              <ValidationErrors errors={validationErrors} />
-              <div className="field-body mb-3">
-                <TextField name="firstName" type="text" label="First Name" />
-                <TextField name="lastName" type="text" label="Last Name" />
-              </div>
-              <TextField name="companyName" type="text" label="Company Name" />
-              <TextField name="email" type="text" label="Email" />
-              <div className="field-body mb-3">
-                <TextField name="phoneMobile" type="tel" label="Phone Mobile" />
-                <TextField name="phoneHome" type="tel" label="Phone Home" />
-              </div>
-              <TextField name="address1" type="text" label="Address 1" />
-              <TextField name="address2" type="text" label="Address 2" />
-              <div className="columns mb-3">
-                <div className="column is-narrow">
-                  <TextField name="city" type="text" label="City" />
-                </div>
-                <div className="column is-narrow">
-                  <SelectField
-                    name="state"
-                    label="State/Region"
-                    options={formSelectStateOptions}
-                  />
-                </div>
-                <div className="column is-narrow">
-                  <TextField name="zipCode" type="text" label="Zip Code" />
-                </div>
-                <div className="column is-narrow">
-                  <TextField
-                    name="country"
-                    value="USA"
-                    disabled
-                    type="text"
-                    label="Country"
-                  />
-                </div>
-              </div>
-              <SubmitButton
-                status={formStatus}
-                isValid={props.isValid}
-                dirty={props.dirty}
-              >
-                Save Changes
-              </SubmitButton>
-              <br />
-              <button
-                onClick={handleDelete}
-                className="mt-5 button is-danger is-outlined is-rounded"
-                type="button"
-              >
-                Delete Customer
-              </button>
-            </Form>
-          )}
-        </Formik>
+      <DataFetchWrapper status={status} dataName="Customer" hasData={customer}>
+        <FormProvider {...reactHookFormMethods}>
+          <form
+            className={classes.form}
+            onSubmit={handleSubmit(updateCustomer)}
+          >
+            <ValidationErrors errors={validationErrors} />
+            <FieldGroupWrapper>
+              <TextField
+                name="firstName"
+                label="First Name"
+                rules={{ required: true }}
+                fullWidth
+              />
+              <TextField name="lastName" label="Last Name" fullWidth />
+            </FieldGroupWrapper>
+            <TextField name="companyName" label="Company Name" fullWidth />
+            <TextField name="email" label="Email" fullWidth />
+            <FieldGroupWrapper>
+              <TextField
+                name="phoneMobile"
+                type="tel"
+                label="Phone Mobile"
+                fullWidth
+              />
+              <TextField
+                name="phoneHome"
+                type="tel"
+                label="Phone Home"
+                fullWidth
+              />
+            </FieldGroupWrapper>
+            <TextField name="address1" label="Address 1" fullWidth />
+            <TextField name="address2" label="Address 2" fullWidth />
+            <FieldGroupWrapper>
+              <TextField name="city" label="City" fullWidth />
+              <Select
+                name="state"
+                label="State/Region"
+                options={formSelectStateOptions}
+              />
+              <TextField name="zipCode" label="Zip Code" fullWidth />
+              <TextField
+                name="country"
+                value="USA"
+                disabled
+                label="Country"
+                fullWidth
+              />
+            </FieldGroupWrapper>
+            <SubmitButton status={formStatus} dirty={formState.isDirty}>
+              Save Changes
+            </SubmitButton>
+            <br />
+
+            <Button
+              onClick={handleDelete}
+              type="button"
+              variant="outlined"
+              className={classes.deleteBtn}
+            >
+              Delete Customer
+            </Button>
+          </form>
+        </FormProvider>
       </DataFetchWrapper>
     </>
   );
