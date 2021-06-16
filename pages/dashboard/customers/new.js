@@ -1,46 +1,48 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import SubmitButton from '../../../ui/SubmitButton';
 import { addNewCustomer } from '../../../services/api';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { us_states } from '../../../helpers/sharableConst';
-import { Formik, Form } from 'formik';
+import { makeStyles } from '@material-ui/core/styles';
 import ValidationErrors from '../../../ui/ValidationErrors';
 import { useMutation } from 'react-query';
 import { alertModalError } from '../../../actions/alertModalActions';
-import { TextField, SelectField } from '../../../components/formik-ui';
+import {
+  TextField,
+  FieldGroupWrapper,
+  Select,
+} from '../../../components/react-hook-form-ui';
+import { useForm, FormProvider } from 'react-hook-form';
+import { Box, Typography, Button } from '@material-ui/core';
 
 const formSelectStateOptions = us_states.map(([stateName, stateAbbr]) => ({
-  name: stateName,
+  label: stateName,
   value: stateAbbr,
 }));
 
-const formFieldNames = [
-  'firstName',
-  'lastName',
-  'companyName',
-  'email',
-  'phoneMobile',
-  'phoneHome',
-  'address1',
-  'address2',
-  'city',
-  'state',
-  'zipCode',
-  'country',
-];
-const InitialFormValues = Object.assign(
-  ...formFieldNames.map((key) => ({ [key]: '' }))
-);
+const useStyles = makeStyles((theme) => ({
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '2em',
+    boxShadow: theme.shadows[2],
+    '& > *': {
+      margin: theme.spacing(2),
+    },
+  },
+}));
 
 export default function NewCustomer() {
+  const classes = useStyles();
+  const reactHookFormMethods = useForm();
+  const { formState, handleSubmit } = reactHookFormMethods;
   const router = useRouter();
-  const formikRef = useRef();
   const dispatch = useDispatch();
   const [validationErrors, setValidationErrors] = useState([]);
 
-  const { mutate: handleSubmit, status: formStatus } = useMutation(
+  const { mutate: createCustomer, status: formStatus } = useMutation(
     addNewCustomer,
     {
       onError: (error) => {
@@ -48,7 +50,6 @@ export default function NewCustomer() {
         dispatch(alertModalError('unable to create customer'));
       },
       onSuccess: (data) => {
-        setValidationErrors([]);
         const customerId = data?.customer?.id;
         router.push(`/dashboard/customers/${customerId}`);
       },
@@ -57,79 +58,72 @@ export default function NewCustomer() {
 
   return (
     <>
-      <div className="app-header">
-        <div className="app-header-left">
-          <h1>New Customer</h1>
-        </div>
-        <div className="app-header-right">
+      <Box display="flex" mb={5}>
+        <Box flexGrow={1}>
+          <Typography variant="h4">
+            <strong>New Customer</strong>
+          </Typography>
+        </Box>
+        <Box>
           <Link href="/dashboard/customers">
-            <button className="button is-primary is-outlined is-rounded">
+            <Button variant="outlined" color="primary">
               Cancel
-            </button>
+            </Button>
           </Link>
-        </div>
-      </div>
-      <Formik
-        innerRef={formikRef}
-        initialValues={InitialFormValues}
-        onSubmit={handleSubmit}
-        validate={(values) => {
-          const errors = {};
-          if (!values.firstName) {
-            errors.firstName = 'Required';
-          }
-          return errors;
-        }}
-      >
-        {(props) => (
-          <Form className="box py-5">
-            <ValidationErrors errors={validationErrors} />
-            <div className="field-body mb-3">
-              <TextField name="firstName" type="text" label="First Name" />
-              <TextField name="lastName" type="text" label="Last Name" />
-            </div>
-            <TextField name="companyName" type="text" label="Company Name" />
-            <TextField name="email" type="text" label="Email" />
-            <div className="field-body mb-3">
-              <TextField name="phoneMobile" type="tel" label="Phone Mobile" />
-              <TextField name="phoneHome" type="tel" label="Phone Home" />
-            </div>
-            <TextField name="address1" type="text" label="Address 1" />
-            <TextField name="address2" type="text" label="Address 2" />
-            <div className="columns mb-3">
-              <div className="column is-narrow">
-                <TextField name="city" type="text" label="City" />
-              </div>
-              <div className="column is-narrow">
-                <SelectField
-                  name="state"
-                  label="State/Region"
-                  options={formSelectStateOptions}
-                />
-              </div>
-              <div className="column is-narrow">
-                <TextField name="zipCode" type="text" label="Zip Code" />
-              </div>
-              <div className="column is-narrow">
-                <TextField
-                  name="country"
-                  value="USA"
-                  disabled
-                  type="text"
-                  label="Country"
-                />
-              </div>
-            </div>
-            <SubmitButton
-              status={formStatus}
-              isValid={props.isValid}
-              dirty={props.dirty}
-            >
-              Save Client
-            </SubmitButton>
-          </Form>
-        )}
-      </Formik>
+        </Box>
+      </Box>
+
+      <FormProvider {...reactHookFormMethods}>
+        <form className={classes.form} onSubmit={handleSubmit(createCustomer)}>
+          <ValidationErrors errors={validationErrors} />
+          <FieldGroupWrapper>
+            <TextField
+              name="firstName"
+              label="First Name"
+              rules={{ required: true }}
+              fullWidth
+            />
+            <TextField name="lastName" label="Last Name" fullWidth />
+          </FieldGroupWrapper>
+          <TextField name="companyName" label="Company Name" fullWidth />
+          <TextField name="email" label="Email" fullWidth />
+          <FieldGroupWrapper>
+            <TextField
+              name="phoneMobile"
+              type="tel"
+              label="Phone Mobile"
+              fullWidth
+            />
+            <TextField
+              name="phoneHome"
+              type="tel"
+              label="Phone Home"
+              fullWidth
+            />
+          </FieldGroupWrapper>
+          <TextField name="address1" label="Address 1" fullWidth />
+          <TextField name="address2" label="Address 2" fullWidth />
+          <FieldGroupWrapper>
+            <TextField name="city" label="City" fullWidth />
+            <Select
+              name="state"
+              label="State/Region"
+              options={formSelectStateOptions}
+            />
+            <TextField name="zipCode" label="Zip Code" fullWidth />
+            <TextField
+              name="country"
+              value="USA"
+              disabled
+              label="Country"
+              fullWidth
+            />
+          </FieldGroupWrapper>
+          <SubmitButton status={formStatus} dirty={formState.isDirty}>
+            Save Client
+          </SubmitButton>
+        </form>
+      </FormProvider>
     </>
   );
 }

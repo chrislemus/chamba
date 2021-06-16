@@ -1,5 +1,6 @@
 import MuiTextField from '@material-ui/core/TextField';
 import { useController, useFormContext } from 'react-hook-form';
+import { formatValidations } from './helpers';
 
 export default function TextField({
   name,
@@ -7,19 +8,7 @@ export default function TextField({
   helperText,
   setValueAs,
   rules,
-  //===== example custom validation with message ====
-  // { validate: {
-  //    validationName: {
-  //      validator: func() - return boolean,
-  //      message: 'pattern mismatch',
-  //  }
-  // }}
-  //===== example custom validation without message ====
-  // { validate: {
-  //    validationName: func() - return boolean,
-  // }}
-  rulesErrorMessages,
-  shouldUnregister,
+  shouldUnregister = true,
   defaultValue,
   variant,
   ...props
@@ -31,12 +20,11 @@ export default function TextField({
   } = useController({
     name,
     rules: formatValidations(rules),
-    shouldUnregister: shouldUnregister || true,
+    shouldUnregister,
     defaultValue,
   });
 
   const defaultId = `${name}Id`;
-  const invalidMsg = error?.message || helperText;
   const onChangeHandler = (e) => {
     let value = e?.target?.value;
     if (setValueAs?.onChange) value = setValueAs.onChange(value);
@@ -48,30 +36,21 @@ export default function TextField({
     setValue(name, value);
   };
 
+  const shouldDisplayHelperText = invalid || helperText;
+  const dynamicHelperText = error?.message || helperText;
+
   return (
     <MuiTextField
       {...inputProps}
-      id={defaultId || id}
+      id={id || defaultId}
       inputRef={ref}
       onChange={onChangeHandler}
       onBlur={onBlurHandler}
       error={invalid}
-      helperText={invalid ? invalidMsg : helperText}
+      helperText={shouldDisplayHelperText && dynamicHelperText}
       defaultValue={defaultValue}
       variant={variant || 'outlined'}
       {...props}
     />
   );
 }
-const formatValidations = (validations) => {
-  if (validations?.validate) {
-    for (const property in validations.validate) {
-      const validation = validations.validate[property];
-      if (validation?.message && validation?.validator) {
-        validations.validate[property] = (inputValue) =>
-          validation.validator(inputValue) || validation.message;
-      }
-    }
-  }
-  return validations;
-};
