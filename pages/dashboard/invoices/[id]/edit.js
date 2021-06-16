@@ -138,7 +138,7 @@ export default function EditInvoice() {
             <strong>{invoiceData?.businessName}</strong>
           </Typography>
 
-          <Box display="flex" justifyContent="space-between">
+          <Box display="flex" justifyContent="space-between" mt={3}>
             <div>
               <h6>
                 <strong>Billed to</strong>

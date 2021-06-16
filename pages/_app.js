@@ -20,7 +20,7 @@ export default function App({ Component, pageProps }) {
   }, []);
 
   return (
-    <div style={{ background: 'rgb(248, 248, 248)', minHeight: '100vh' }}>
+    <>
       <Head>
         <title>Business CRM | Work It CRM</title>
         <meta
@@ -39,6 +39,6 @@ export default function App({ Component, pageProps }) {
           </Provider>
         </QueryClientProvider>
       </ThemeProvider>
-    </div>
+    </>
   );
 }

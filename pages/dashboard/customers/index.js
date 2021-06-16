@@ -12,6 +12,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TableContainer from '@material-ui/core/TableContainer';
 import {
   Box,
   Button,
@@ -75,7 +76,7 @@ export default function Customers() {
           dataName={'Customers'}
           hasData={customers?.length > 0}
         >
-          <>
+          <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
@@ -150,17 +151,16 @@ export default function Customers() {
                   )}
               </TableBody>
             </Table>
-
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              page={page - 1}
-              rowsPerPage={pageLimit}
-              count={queryData?.results}
-              onChangePage={(_, page) => setPage(page + 1)}
-              onChangeRowsPerPage={({ target }) => setPageLimit(target.value)}
-            />
-          </>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            page={page - 1}
+            rowsPerPage={pageLimit}
+            count={queryData?.results}
+            onChangePage={(_, page) => setPage(page + 1)}
+            onChangeRowsPerPage={({ target }) => setPageLimit(target.value)}
+          />
         </DataFetchWrapper>
       </Box>
     </>

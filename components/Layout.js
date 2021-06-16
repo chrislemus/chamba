@@ -13,6 +13,9 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     marginTop: theme.spacing(3),
     padding: theme.spacing(3),
+    width: '100vw',
+    minHeight: '100vh',
+    background: 'rgb(248, 248, 248)',
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
