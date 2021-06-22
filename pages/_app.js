@@ -1,3 +1,4 @@
+import '@fontsource/roboto';
 import '../styles/bulma/bulma.min.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from '@material-ui/styles';
@@ -8,8 +9,6 @@ import { Provider } from 'react-redux';
 import { useEffect } from 'react';
 import store from '../store';
 import theme from '../src/theme';
-
-import '@fontsource/roboto';
 
 export default function App({ Component, pageProps }) {
   const queryClient = new QueryClient();

@@ -110,6 +110,9 @@ export default function Login() {
               <strong>Log In</strong>
             </Typography>
             <ValidationErrors errors={validationErrors} />
+            <Typography variant="body2" >
+              Demo:  <strong>Email</strong> me@me.com | <strong>Password</strong> Aaaaaaaa123
+            </Typography>
             <TextField fullWidth type="email" name="email" label="Email" />
             <TextField
               fullWidth
