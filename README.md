@@ -20,7 +20,7 @@
   - [Installation](#installation)
   - [Operation](#operation)
   - [Live Preview](#live-preview)
-  - [Screenshot](#screenshot)
+  - [Screenshot](#screenshots)
 
 ## Technology Stack
 1. React
@@ -54,7 +54,13 @@ Invoices can be created by navigating to the invoices tab and clicking on the `N
 [You can see this repo live here](https://chamba.vercel.app)
 
 
-## Screenshot
+## Screenshots
+
+### User Authentication
 ![user-log-in](https://github.com/chrislemus/chamba/blob/main/project-screenshots/login-in.gif)
+
+### Update Client
 ![user-log-in](https://github.com/chrislemus/chamba/blob/main/project-screenshots/updating-client-name.gif)
+
+### Assign Invoices
 ![user-log-in](https://github.com/chrislemus/chamba/blob/main/project-screenshots/creating-invoice.gif)
