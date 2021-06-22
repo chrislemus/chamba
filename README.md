@@ -1,6 +1,6 @@
 # Chamba CRM
-> Service Field CRM is a software helps owners manage their business.
->
+>Business CRM with Modern/Simple UI. CRM stores customer information and other documents(eg. invoices). Front-end is built using React with NextJs framework. And the API is hosted separately using Ruby on Rails API.
+
 >available features
 >- manage clients
 >- create and assign invoices to clients
@@ -51,7 +51,7 @@ Invoices can be created by navigating to the invoices tab and clicking on the `N
 
 
 ## Live Preview
-[You can see this repo live here](https://chamba.vercel.app)
+[Check out the live demo here!](https://chamba.vercel.app)
 
 
 ## Screenshots
