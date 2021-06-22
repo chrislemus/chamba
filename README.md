@@ -55,4 +55,4 @@ Invoices can be created by navigating to the invoices tab and clicking on the `N
 
 
 ## Screenshot
-![alt tag](repo/project-screenshots/log-in.gif)
+![alt tag](project-screenshots/log-in.gif)
