@@ -55,4 +55,6 @@ Invoices can be created by navigating to the invoices tab and clicking on the `N
 
 
 ## Screenshot
-![alt tag](project-screenshots/log-in.gif)
+![user-log-in](https://github.com/chrislemus/chamba/blob/main/project-screenshots/login-in.gif)
+![user-log-in](https://github.com/chrislemus/chamba/blob/main/project-screenshots/updating-client-name.gif)
+![user-log-in](https://github.com/chrislemus/chamba/blob/main/project-screenshots/creating-invoice.gif)
