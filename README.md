@@ -51,7 +51,7 @@ Invoices can be created by navigating to the invoices tab and clicking on the `N
 
 
 ## Live Preview
-[Check out the live demo here!](https://chamba.vercel.app)
+[Check out the live demo here!](https://www.chrislemus.io/project-demo/2)
 
 
 ## Screenshots
