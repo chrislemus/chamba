@@ -60,7 +60,7 @@ Invoices can be created by navigating to the invoices tab and clicking on the `N
 ![user-log-in](https://github.com/chrislemus/chamba/blob/main/project-screenshots/login-in.gif)
 
 ### Update Client
-![user-log-in](https://github.com/chrislemus/chamba/blob/main/project-screenshots/updating-client-name.gif)
+![client-update](https://github.com/chrislemus/chamba/blob/main/project-screenshots/updating-client-name.gif)
 
 ### Assign Invoices
-![user-log-in](https://github.com/chrislemus/chamba/blob/main/project-screenshots/creating-invoice.gif)
+![create-invoice](https://github.com/chrislemus/chamba/blob/main/project-screenshots/creating-invoice.gif)
