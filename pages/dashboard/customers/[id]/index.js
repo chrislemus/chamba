@@ -54,7 +54,10 @@ export default function Customer() {
           </Typography>
         </Box>
         <Box>
-          <Link href={`/dashboard/customers/${customerId}/edit`}>
+          <Link
+            href={`/dashboard/customers/${customerId}/edit`}
+            passHref={true}
+          >
             <Button color="primary" variant="contained">
               Edit
             </Button>

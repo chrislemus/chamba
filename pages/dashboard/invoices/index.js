@@ -50,7 +50,7 @@ export default function Invoices() {
           </Typography>
         </Box>
         <Box>
-          <Link href="/dashboard/invoices/new">
+          <Link href="/dashboard/invoices/new" passHref={true}>
             <Button variant="contained" color="primary">
               New Invoice
             </Button>
@@ -98,7 +98,10 @@ export default function Invoices() {
                     ({ id, customerFullName, status, total, createdAt }) => (
                       <TableRow key={`invoice-${id}`}>
                         <TableCell>
-                          <Link href={`/dashboard/invoices/${id}`}>
+                          <Link
+                            href={`/dashboard/invoices/${id}`}
+                            passHref={true}
+                          >
                             {customerFullName}
                           </Link>
                         </TableCell>
@@ -119,7 +122,10 @@ export default function Invoices() {
                         <TableCell>${total}</TableCell>
 
                         <TableCell>
-                          <Link href={`/dashboard/invoices/${id}`}>
+                          <Link
+                            href={`/dashboard/invoices/${id}`}
+                            passHref={true}
+                          >
                             <IconButton size="small" color="primary">
                               <FontAwesomeIcon icon={faArrowRight} />
                             </IconButton>

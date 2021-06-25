@@ -76,7 +76,7 @@ export default function invoiceData() {
           </Typography>
         </Box>
         <Box>
-          <Link href={`/dashboard/invoices/${invoiceId}/edit`}>
+          <Link href={`/dashboard/invoices/${invoiceId}/edit`} passHref={true}>
             <Button color="primary" variant="contained">
               Edit
             </Button>
@@ -117,7 +117,10 @@ export default function invoiceData() {
           <Typography variant="h6">Billed to</Typography>
           {customer && (
             <>
-              <Link href={`/dashboard/customers/${customer.id}`}>
+              <Link
+                href={`/dashboard/customers/${customer.id}`}
+                passHref={true}
+              >
                 <a>{customer.fullName}</a>
               </Link>
               <p>{customer.address1}</p>

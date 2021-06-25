@@ -47,7 +47,7 @@ export default function Customers() {
           </Typography>
         </Box>
         <Box>
-          <Link href="/dashboard/customers/new">
+          <Link href="/dashboard/customers/new" passHref={true}>
             <Button color="primary" variant="contained">
               Add Customer
             </Button>
@@ -109,7 +109,10 @@ export default function Customers() {
                                 .toUpperCase()}
                             </Avatar>
                             <Box pl={2}>
-                              <Link href={`/dashboard/customers/${id}`}>
+                              <Link
+                                href={`/dashboard/customers/${id}`}
+                                passHref={true}
+                              >
                                 {fullName}
                               </Link>
                             </Box>
@@ -133,13 +136,19 @@ export default function Customers() {
                             justifyContent="space-between"
                             width="min-content"
                           >
-                            <Link href={`/dashboard/customers/${id}/edit`}>
+                            <Link
+                              href={`/dashboard/customers/${id}/edit`}
+                              passHref={true}
+                            >
                               <IconButton size="small" color="primary">
                                 <FontAwesomeIcon icon={faEdit} />
                               </IconButton>
                             </Link>
                             <Box width="1.5em" />
-                            <Link href={`/dashboard/customers/${id}`}>
+                            <Link
+                              href={`/dashboard/customers/${id}`}
+                              passHref={true}
+                            >
                               <IconButton size="small" color="primary">
                                 <FontAwesomeIcon icon={faArrowRight} />
                               </IconButton>

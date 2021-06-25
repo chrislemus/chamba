@@ -65,7 +65,7 @@ export default function NewCustomer() {
           </Typography>
         </Box>
         <Box>
-          <Link href="/dashboard/customers">
+          <Link href="/dashboard/customers" passHref={true}>
             <Button variant="outlined" color="primary" onClick={router.back}>
               Cancel
             </Button>

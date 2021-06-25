@@ -68,7 +68,7 @@ export default function AppDrawer({ drawerIsActive, setDrawerIsActive }) {
       <Toolbar />
       <List>
         {drawerMenuItems.map((item) => (
-          <Link href={item.link} key={item.name}>
+          <Link href={item.link} key={item.name} passHref={true}>
             <ListItem button onClick={() => setDrawerIsActive(false)}>
               <ListItemIcon>
                 <FontAwesomeIcon icon={item.icon} />
