@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     padding: '2em',
-    background: '#fff'.
+    background: '#fff',
     boxShadow: theme.shadows[2],
     '& > *': {
       margin: theme.spacing(2),
