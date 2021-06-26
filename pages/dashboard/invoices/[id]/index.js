@@ -8,7 +8,10 @@ import { useQuery, useQueryClient, useMutation } from 'react-query';
 import DataFetchWrapper from '../../../../components/DataFetchWrapper';
 import { fetchInvoiceById, paidInvoice } from '../../../../services/api';
 import { useDispatch } from 'react-redux';
-import { alertModalError } from '../../../../actions/alertModalActions';
+import {
+  alertModalError,
+  alertModalSuccess,
+} from '../../../../actions/alertModalActions';
 
 const useStyles = makeStyles(({ palette }) => ({
   paidButton: {

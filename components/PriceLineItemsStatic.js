@@ -7,6 +7,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
 export default function PriceLineItemsStatic({ lineItems }) {
+  if (!lineItems) return null;
   const total = lineItems
     .reduce(
       (total, { price }) => parseFloat(total) + (parseFloat(price) || 0),
