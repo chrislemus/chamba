@@ -1,0 +1,16 @@
+/* =====================================
+ Base Element Styles
+===================================== */
+
+* {
+  box-sizing: border-box;
+  font-family: 'roboto', 'Open Sans', Arial, Helvetica, sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}

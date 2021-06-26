@@ -113,7 +113,7 @@ export default function Customers() {
                                 href={`/dashboard/customers/${id}`}
                                 passHref={true}
                               >
-                                {fullName}
+                                <Button color="primary">{fullName}</Button>
                               </Link>
                             </Box>
                           </Box>

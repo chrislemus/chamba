@@ -102,7 +102,7 @@ export default function Invoices() {
                             href={`/dashboard/invoices/${id}`}
                             passHref={true}
                           >
-                            {customerFullName}
+                            <Button color="primary">{customerFullName}</Button>
                           </Link>
                         </TableCell>
                         <TableCell>

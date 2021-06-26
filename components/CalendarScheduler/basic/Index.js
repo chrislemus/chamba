@@ -21,8 +21,8 @@ import { connectProps } from '@devexpress/dx-react-core';
 import { Button } from '@material-ui/core';
 import AppointmentFormContainer from './AppointmentFormContainer';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
-import { appointments } from '../../../demo-data/appointments';
-import { clients, priorities } from '../../../demo-data/task';
+// import { appointments } from '../demo-data/appointments';
+import { clients, priorities, appointments } from '../demo-data/task';
 
 const resources = [
   {
@@ -41,9 +41,8 @@ const resources = [
 const CalendarScheduler = (props) => {
   const [data, setData] = useState(appointments);
   const [currentDate] = useState('2018-06-27');
-  const [confirmDeleteModalIsOpen, setConfirmDeleteModalIsOpen] = useState(
-    false
-  );
+  const [confirmDeleteModalIsOpen, setConfirmDeleteModalIsOpen] =
+    useState(false);
   const [editingFormVisible, setEditingFormVisible] = useState(false);
   const [deletedAppointmentId, setDeletedAppointmentId] = useState(undefined);
   const [editingAppointment, setEditingAppointment] = useState(undefined);

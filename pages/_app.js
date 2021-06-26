@@ -1,5 +1,7 @@
 import '@fontsource/roboto';
-import '../styles/bulma/bulma.min.css';
+// import '../styles/bulma/bulma.min.css';
+import '../styles/index.css';
+import '../styles/normalize.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from '@material-ui/styles';
 import PrivateRoute from '../components/PrivateRoute';
