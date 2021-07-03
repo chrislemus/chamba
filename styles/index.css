@@ -14,3 +14,7 @@ a {
 a:hover {
   text-decoration: none;
 }
+
+#appointment-scheduler-form {
+  position: fixed !important;
+}

@@ -8,7 +8,6 @@ import {
   MonthView,
   WeekView,
   ViewSwitcher,
-  Resources,
   Appointments,
   AppointmentTooltip,
   AppointmentForm,
@@ -21,21 +20,7 @@ import { connectProps } from '@devexpress/dx-react-core';
 import { Button } from '@material-ui/core';
 import AppointmentFormContainer from './AppointmentFormContainer';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
-// import { appointments } from '../demo-data/appointments';
-import { clients, priorities, appointments } from '../demo-data/task';
-
-const resources = [
-  {
-    fieldName: 'clientId',
-    title: 'Clients',
-    instances: clients,
-  },
-  {
-    fieldName: 'priority',
-    title: 'Priority',
-    instances: priorities,
-  },
-];
+import { appointments } from '../demo-data/task';
 
 /* eslint-disable-next-line react/no-multi-comp */
 const CalendarScheduler = (props) => {
@@ -173,12 +158,11 @@ const CalendarScheduler = (props) => {
       <DateNavigator />
       <ViewSwitcher />
       <AppointmentForm
-        // overlayComponent={appointmentForm} *can update view later
+        overlayComponent={appointmentForm}
         visible={editingFormVisible}
         onVisibilityChange={toggleEditingFormVisibility}
       />
       <DragDropProvider />
-      <Resources data={resources} palette="indigo" />
       <ConfirmDeleteModal
         confirmDeleteModalIsOpen={confirmDeleteModalIsOpen}
         toggleConfirmDeleteModal={toggleConfirmDeleteModal}

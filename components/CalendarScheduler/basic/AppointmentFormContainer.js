@@ -3,7 +3,7 @@ import {
   KeyboardDateTimePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { AppointmentForm } from '@devexpress/dx-react-scheduler-material-ui';
 import { IconButton, TextField, Button } from '@material-ui/core';
 import MomentUtils from '@date-io/moment';
@@ -13,12 +13,10 @@ import Close from '@material-ui/icons/Close';
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import Create from '@material-ui/icons/Create';
 
-function AppointmentFormContainer(props) {
+export default function AppointmentFormContainer(props) {
+  const classes = useStyles();
   const [appointmentChanges, setAppointmentChanges] = useState({});
-  const getAppointmentData = () => {
-    const { appointmentData } = props;
-    return appointmentData;
-  };
+  const getAppointmentData = () => props.appointmentData;
 
   const changeAppointment = ({ field, changes }) => {
     const nextChanges = {
@@ -45,7 +43,6 @@ function AppointmentFormContainer(props) {
   };
 
   const {
-    classes,
     visible,
     visibleChange,
     appointmentData,
@@ -54,10 +51,7 @@ function AppointmentFormContainer(props) {
     onHide,
   } = props;
 
-  const displayAppointmentData = {
-    ...appointmentData,
-    ...appointmentChanges,
-  };
+  const displayAppointmentData = { ...appointmentData, ...appointmentChanges };
 
   const isNewAppointment = appointmentData.id === undefined;
   const applyChanges = isNewAppointment
@@ -101,6 +95,7 @@ function AppointmentFormContainer(props) {
     <AppointmentForm.Overlay
       visible={visible}
       target={target}
+      id="appointment-scheduler-form"
       fullSize
       onHide={onHide}
     >
@@ -171,7 +166,8 @@ function AppointmentFormContainer(props) {
     </AppointmentForm.Overlay>
   );
 }
-const containerStyles = (theme) => ({
+
+const useStyles = makeStyles((theme) => ({
   container: {
     width: theme.spacing(68),
     padding: 0,
@@ -215,8 +211,4 @@ const containerStyles = (theme) => ({
   textField: {
     width: '100%',
   },
-});
-
-export default withStyles(containerStyles, {
-  name: 'AppointmentFormContainer',
-})(AppointmentFormContainer);
+}));
