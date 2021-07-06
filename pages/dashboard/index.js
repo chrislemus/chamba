@@ -1,4 +1,4 @@
-import CalendarScheduler from '../../components/CalendarScheduler/basic/Index';
+import CalendarScheduler from '../../components/CalendarScheduler';
 import { Box, Typography } from '@material-ui/core';
 
 const Overview = () => {
@@ -19,7 +19,6 @@ const Overview = () => {
         <div className="info-box-section">
           Coming soon...🙌
           {/* <CalendarScheduler /> */}
-          {/* <Recurring /> */}
         </div>
       </Box>
     </div>

@@ -1,47 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   KeyboardDateTimePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import { makeStyles } from '@material-ui/core/styles';
 import { AppointmentForm } from '@devexpress/dx-react-scheduler-material-ui';
-import { IconButton, TextField, Button } from '@material-ui/core';
+import {
+  IconButton,
+  TextField,
+  Button,
+  FormControlLabel,
+  Switch,
+} from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import MomentUtils from '@date-io/moment';
 import LocationOn from '@material-ui/icons/LocationOn';
 import Notes from '@material-ui/icons/Notes';
 import Close from '@material-ui/icons/Close';
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import Create from '@material-ui/icons/Create';
+import PersonIcon from '@material-ui/icons/Person';
+import { useQuery } from 'react-query';
+import { fetchCustomers } from '../../services/api';
 
 export default function AppointmentFormContainer(props) {
   const classes = useStyles();
-  const [appointmentChanges, setAppointmentChanges] = useState({});
-  const getAppointmentData = () => props.appointmentData;
-
-  const changeAppointment = ({ field, changes }) => {
-    const nextChanges = {
-      ...appointmentChanges,
-      [field]: changes,
-    };
-    setAppointmentChanges(nextChanges);
-  };
-
-  const commitAppointment = (type) => {
-    const { commitChanges } = props;
-    const appointment = {
-      ...getAppointmentData(),
-      ...appointmentChanges,
-    };
-    if (type === 'deleted') {
-      commitChanges({ [type]: appointment.id });
-    } else if (type === 'changed') {
-      commitChanges({ [type]: { [appointment.id]: appointment } });
-    } else {
-      commitChanges({ [type]: appointment });
-    }
-    setAppointmentChanges({});
-  };
-
   const {
     visible,
     visibleChange,
@@ -50,10 +33,35 @@ export default function AppointmentFormContainer(props) {
     target,
     onHide,
   } = props;
-
+  const [assignCustomer, setAssignCustomer] = useState(false);
+  const [showCustomerLookupDropdown, setShowCustomerLookupDropdown] =
+    useState(false);
+  const [customerNameQuery, setCustomerNameQuery] = useState('');
+  const [appointmentChanges, setAppointmentChanges] = useState({});
+  const getAppointmentData = () => props.appointmentData;
   const displayAppointmentData = { ...appointmentData, ...appointmentChanges };
-
   const isNewAppointment = appointmentData.id === undefined;
+
+  const changeAppointment = ({ field, changes }) => {
+    const nextChanges = { ...appointmentChanges, [field]: changes };
+    setAppointmentChanges(nextChanges);
+  };
+
+  const commitAppointment = (type) => {
+    const { commitChanges } = props;
+    const appointment = { ...getAppointmentData(), ...appointmentChanges };
+    const commit = {};
+    if (type === 'deleted') {
+      commit[type] = appointment.id;
+    } else if (type === 'changed') {
+      commit[type] = { [appointment.id]: appointment };
+    } else {
+      commit[type] = appointment;
+    }
+    commitChanges(commit);
+    setAppointmentChanges({});
+  };
+
   const applyChanges = isNewAppointment
     ? () => commitAppointment('added')
     : () => commitAppointment('changed');
@@ -62,7 +70,7 @@ export default function AppointmentFormContainer(props) {
     variant: 'outlined',
     onChange: ({ target: change }) =>
       changeAppointment({
-        field: [field],
+        field,
         changes: change.value,
       }),
     value: displayAppointmentData[field] || '',
@@ -81,7 +89,7 @@ export default function AppointmentFormContainer(props) {
         changes: date ? date.toDate() : new Date(displayAppointmentData[field]),
       }),
     inputVariant: 'outlined',
-    format: 'DD/MM/YYYY HH:mm',
+    format: 'MM/DD/YYYY HH:mm',
     onError: () => null,
   });
 
@@ -90,6 +98,25 @@ export default function AppointmentFormContainer(props) {
     visibleChange();
     cancelAppointment();
   };
+
+  const toggleAssignCustomer = (e) => {
+    if (assignCustomer) {
+      //remove Customer if switch is off
+      const changes = appointmentChanges;
+      delete changes?.customer;
+      setAppointmentChanges(changes);
+    }
+    setAssignCustomer(e.target.checked);
+  };
+
+  const { data: customersQueryResults, isLoading } = useQuery(
+    ['customers', { query: customerNameQuery }],
+    () => fetchCustomers(customerNameQuery)
+  );
+  useEffect(() => {
+    const customerId = parseInt(appointmentData?.customer?.id);
+    if (customerId) setAssignCustomer(true);
+  }, [appointmentData]);
 
   return (
     <AppointmentForm.Overlay
@@ -108,10 +135,6 @@ export default function AppointmentFormContainer(props) {
         <div className={classes.content}>
           <div className={classes.wrapper}>
             <Create className={classes.icon} color="action" />
-            <TextField {...textEditorProps('client')} />
-          </div>
-          <div className={classes.wrapper}>
-            <Create className={classes.icon} color="action" />
             <TextField {...textEditorProps('title')} />
           </div>
           <div className={classes.wrapper}>
@@ -127,6 +150,58 @@ export default function AppointmentFormContainer(props) {
               />
             </MuiPickersUtilsProvider>
           </div>
+          <div className={classes.wrapper}>
+            <FormControlLabel
+              className={classes.noIconSpacing}
+              control={
+                <Switch
+                  checked={assignCustomer}
+                  onChange={toggleAssignCustomer}
+                  name="assign-customer-switch"
+                />
+              }
+              label="Assign customer"
+            />
+          </div>
+          {assignCustomer && (
+            <div className={classes.wrapper}>
+              <PersonIcon className={classes.icon} color="action" />
+              <Autocomplete
+                className={classes.textField}
+                onChange={(_0, customer) =>
+                  changeAppointment({
+                    field: 'customer',
+                    changes: customer,
+                  })
+                }
+                open={showCustomerLookupDropdown}
+                onOpen={() => setShowCustomerLookupDropdown(true)}
+                forcePopupIcon={false}
+                onClose={() => setShowCustomerLookupDropdown(false)}
+                getOptionSelected={(option, value) => option.id === value.id}
+                disableClearable
+                options={customersQueryResults?.customers || []}
+                getOptionLabel={(customer) => customer.fullName}
+                loading={isLoading}
+                value={displayAppointmentData?.customer || null}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    onChange={(e) => setCustomerNameQuery(e.target.value)}
+                    // error={invalidCustomerSelect}
+                    // inputRef={CustomerInputRef}
+                    label="Customer"
+                    variant="outlined"
+                    InputProps={{ ...params.InputProps }}
+                  />
+                )}
+              />
+            </div>
+          )}
+          {/* <div className={classes.wrapper}>
+              <PersonIcon className={classes.icon} color="action" />
+              <TextField {...textEditorProps('Customer')} />
+            </div> */}
           <div className={classes.wrapper}>
             <LocationOn className={classes.icon} color="action" />
             <TextField {...textEditorProps('location')} />
@@ -207,6 +282,9 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     margin: theme.spacing(2, 0),
     marginRight: theme.spacing(2),
+  },
+  noIconSpacing: {
+    marginLeft: theme.spacing(4),
   },
   textField: {
     width: '100%',

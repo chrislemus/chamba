@@ -17,6 +17,14 @@ import {
   deleteInvoice,
 } from './invoices';
 
+import {
+  fetchEvents,
+  fetchEventById,
+  createEvent,
+  editEvent,
+  deleteEvent,
+} from './events';
+
 import { authUser, getUserData, userSignUp } from './user';
 
 export {
@@ -35,4 +43,9 @@ export {
   authUser,
   getUserData,
   userSignUp,
+  fetchEvents,
+  fetchEventById,
+  createEvent,
+  editEvent,
+  deleteEvent,
 };
