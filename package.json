@@ -8,6 +8,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@devexpress/dx-react-core": "^2.7.6",
+    "@devexpress/dx-react-scheduler": "^2.7.6",
     "@devexpress/dx-react-scheduler-material-ui": "^2.7.5",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
