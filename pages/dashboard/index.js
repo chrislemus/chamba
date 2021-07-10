@@ -17,8 +17,7 @@ const Overview = () => {
         </Box>
 
         <div className="info-box-section">
-          Coming soon...🙌
-          {/* <CalendarScheduler /> */}
+          <CalendarScheduler />
         </div>
       </Box>
     </div>

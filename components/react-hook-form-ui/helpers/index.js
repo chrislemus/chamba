@@ -13,7 +13,7 @@
 //      return validator(fieldValue) || errorMessage
 //    }
 //  }}
-export const formatValidations = (validations) => {
+const formatValidations = (validations) => {
   if (validations?.validate) {
     for (const property in validations.validate) {
       const validation = validations.validate[property];
@@ -25,3 +25,5 @@ export const formatValidations = (validations) => {
   }
   return validations;
 };
+
+export { formatValidations };

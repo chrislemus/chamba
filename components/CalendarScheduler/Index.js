@@ -1,8 +1,10 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable react/no-unused-state */
-import React, { useState, useEffect } from 'react';
-import { startOfMonth, parseISO } from 'date-fns';
+import React, { useReducer } from 'react';
+import { parseISO, startOfWeek, formatISO } from 'date-fns';
 import { ViewState, EditingState } from '@devexpress/dx-react-scheduler';
+import { fetchEvents } from '../../services/api';
+import { useQuery } from 'react-query';
 import {
   Scheduler,
   Toolbar,
@@ -12,261 +14,120 @@ import {
   Appointments,
   AppointmentTooltip,
   AppointmentForm,
-  DragDropProvider,
   DateNavigator,
   AllDayPanel,
 } from '@devexpress/dx-react-scheduler-material-ui';
 import { connectProps } from '@devexpress/dx-react-core';
 import { FlexibleSpace } from './FlexibleSpace';
-import AppointmentFormContainer from './AppointmentFormContainer';
-import ConfirmDeleteModal from './ConfirmDeleteModal';
-// import { appointments } from './demo-data/task';
+import EventFormContainer from './EventFormContainer';
+
+const startDayHour = 9;
+const endDayHour = 19;
+
+const initialState = {
+  currentDate: parseISO('2021-06-01'),
+  editingFormVisible: false,
+  editingEvent: undefined,
+  previousEvent: undefined,
+  addedEvent: {},
+  isNewEvent: false,
+};
+
+function reducer(state, action) {
+  const [type, payload] = action;
+  switch (type) {
+    case 'updateCurrentDate':
+      return { ...state, currentDate: payload };
+    case 'toggleEditingFormVisibility':
+      return { ...state, editingFormVisible: !state.editingFormVisible };
+    case 'setEditingEvent':
+      return { ...state, editingEvent: payload };
+    case 'setAddedEvent':
+      return { ...state, addedEvent: payload };
+    case 'cancelNewEventCreation':
+      return { ...state, editingEvent: state.previousEven, newEvent: false };
+    case 'newEventHandler':
+      return {
+        ...state,
+        editingFormVisible: true,
+        editingEvent: undefined,
+        addedEvent: {
+          startDate: new Date(state.currentDate).setHours(startDayHour),
+          endDate: new Date(state.currentDate).setHours(startDayHour + 1),
+        },
+      };
+    case 'onAddedEventChange':
+      return {
+        ...state,
+        addedEvent: payload,
+        previousEvent:
+          state.editingEvent !== undefined
+            ? { ...state.editingEvent }
+            : state.previousEvent,
+        editingEvent: {
+          editingEvent: undefined,
+          isNewEvent: true,
+        },
+      };
+    default:
+      throw new Error();
+  }
+}
 
 /* eslint-disable-next-line react/no-multi-comp */
-export default function CalendarScheduler(props) {
-  const [data, setData] = useState(appointments);
-  const [currentDate, setCurrentDate] = useState(parseISO('2021-07-01'));
-  const [confirmDeleteModalIsOpen, setConfirmDeleteModalIsOpen] =
-    useState(false);
-  const [editingFormVisible, setEditingFormVisible] = useState(false);
-  const [deletedAppointmentId, setDeletedAppointmentId] = useState(undefined);
-  const [editingAppointment, setEditingAppointment] = useState(undefined);
-  const [previousAppointment, setPreviousAppointment] = useState(undefined);
-  const [addedAppointment, setAddedAppointment] = useState({});
-  const [startDayHour] = useState(9);
-  const [endDayHour] = useState(19);
-  const [isNewAppointment, setIsNewAppointment] = useState(false);
+export default function CalendarScheduler() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const fetchEventsReqBody = {
+    date: formatISO(startOfWeek(state.currentDate)),
+    days: 45,
+  };
+  const { data } = useQuery(['events', fetchEventsReqBody], () =>
+    fetchEvents(fetchEventsReqBody)
+  );
+  const events = data?.events;
+  const newEventHandler = () => dispatch(['newEventHandler']);
 
-  const onEditingAppointmentChange = (editingAppointment) => {
-    setEditingAppointment({ ...editingAppointment });
+  const onEditingEventChange = (editingEvent) => {
+    dispatch(['setEditingEvent', { ...editingEvent }]);
   };
-
-  const toggleEditingFormVisibility = () => {
-    setEditingFormVisible(!editingFormVisible);
-  };
-  const toggleConfirmDeleteModal = () => {
-    setConfirmDeleteModalIsOpen(!confirmDeleteModalIsOpen);
-  };
-  const onAddedAppointmentChange = (addedAppointment) => {
-    setAddedAppointment({ ...addedAppointment });
-    if (editingAppointment !== undefined) {
-      setPreviousAppointment({ ...editingAppointment });
-    }
-    setEditingAppointment({
-      editingAppointment: undefined,
-      isNewAppointment: true,
-    });
-  };
-
-  const commitDeletedAppointment = () => {
-    const nextData = data.filter(
-      (appointment) => appointment.id !== deletedAppointmentId
-    );
-    setDeletedAppointmentId(null);
-    setData(nextData);
-    toggleConfirmDeleteModal();
-  };
-  const commitChanges = ({ added, changed, deleted }) => {
-    let currentData = data;
-    if (added) {
-      const startingAddedId =
-        currentData.length > 0 ? currentData[currentData.length - 1].id + 1 : 0;
-      currentData = [...currentData, { id: startingAddedId, ...added }];
-    }
-    if (changed) {
-      currentData = currentData.map((appointment) =>
-        changed[appointment.id]
-          ? { ...appointment, ...changed[appointment.id] }
-          : appointment
-      );
-    }
-    if (deleted !== undefined) {
-      setDeletedAppointmentId(deleted);
-      toggleConfirmDeleteModal();
-    }
-    setAddedAppointment({});
-    setData(currentData);
-  };
-  const appointmentForm = connectProps(AppointmentFormContainer, () => {
-    const currentAppointment =
-      data.filter(
-        (appointment) =>
-          editingAppointment && appointment.id === editingAppointment.id
-      )[0] || addedAppointment;
-    const cancelAppointment = () => {
-      if (isNewAppointment) {
-        setEditingAppointment(previousAppointment);
-        setIsNewAppointment(false);
-      }
-    };
-
-    return {
-      visible: editingFormVisible,
-      appointmentData: currentAppointment,
-      commitChanges,
-      visibleChange: toggleEditingFormVisibility,
-      onEditingAppointmentChange,
-      cancelAppointment,
-    };
+  const eventForm = connectProps(EventFormContainer, () => {
+    const { editingEvent, addedEvent } = state;
+    const eventData = editingEvent
+      ? events?.find(({ id }) => id === editingEvent.id)
+      : addedEvent;
+    return { eventData, dispatch, state };
   });
 
-  useEffect(() => {
-    appointmentForm.update();
-  });
-
-  // const { mutate: onSubmit, status: formStatus } = useMutation(
-  //   (invoice) => createInvoice({ ...invoice, customerId: customer?.id }),
-  //   {
-  //     onError: (error) => setValidationErrors(error.validationErrors),
-  //     onSuccess: (data) =>
-  //       router.push(`/dashboard/invoices/${data?.invoice?.id}`),
-  //   }
-  // );
-
-  // const { mutate: onSubmit, status: formStatus } = useMutation(
-  //   (updatedInvoice) => editInvoice(invoiceId, updatedInvoice),
-  //   {
-  //     onMutate: async (updatedInvoice) => {
-  //       await queryClient.cancelQueries(['invoiceData', { invoiceId }]);
-  //       const previousData = queryClient.getQueryData([
-  //         'invoiceData',
-  //         { invoiceId },
-  //       ]);
-  //       queryClient.setQueryData(['invoiceData', { invoiceId }], (oldData) => ({
-  //         ...oldData,
-  //         invoice: updatedInvoice,
-  //       }));
-  //       return previousData;
-  //     },
-  //     onError: (error, updatedInvoice, previousData) => {
-  //       setValidationErrors(error.validationErrors);
-  //       dispatch(alertModalError('unable to save changes'));
-  //       return queryClient.setQueryData(
-  //         ['invoiceData', { invoiceId }],
-  //         previousData
-  //       );
-  //     },
-  //     onSuccess: () => {
-  //       dispatch(alertModalSuccess('invoice updated'));
-  //       setValidationErrors([]);
-  //     },
-  //     onSettled: () =>
-  //       queryClient.invalidateQueries(['invoiceData', { invoiceId }]),
-  //   }
-  // );
-  // const { mutate: handleDelete } = useMutation(() => deleteInvoice(invoiceId), {
-  //   onError: () => dispatch(alertModalError('unable to delete invoice')),
-  //   onSuccess: () => {
-  //     dispatch(alertModalSuccess('invoice deleted'));
-  //     router.push('/dashboard/invoices');
-  //   },
-  // });
-
-  const newEventBtnClick = () => {
-    setEditingFormVisible(true);
-    onEditingAppointmentChange(undefined);
-    onAddedAppointmentChange({
-      startDate: new Date(currentDate).setHours(startDayHour),
-      endDate: new Date(currentDate).setHours(startDayHour + 1),
-    });
-  };
-
-  //const defaultCalendarDate = '2021-07-01';
-  console.log(currentDate);
-  console.log('start of MONTH', startOfMonth(currentDate));
   return (
-    <Scheduler data={data} height={660}>
+    <Scheduler data={events || []} height={660}>
       <ViewState
         defaultCurrentViewName="Month"
-        defaultCurrentDate={currentDate}
-        //currentDate={currentDate}
-        onCurrentDateChange={(date) => setCurrentDate(date)}
+        defaultCurrentDate={state.currentDate}
+        onCurrentDateChange={(date) => dispatch(['updateCurrentDate', date])}
       />
       <EditingState
-        onCommitChanges={commitChanges}
-        onEditingAppointmentChange={onEditingAppointmentChange}
-        onAddedAppointmentChange={onAddedAppointmentChange}
+        onEditingAppointmentChange={onEditingEventChange}
+        onAddedAppointmentChange={(addedEvent) =>
+          dispatch(['onAddedEventChange', addedEvent])
+        }
       />
       <WeekView startDayHour={startDayHour} endDayHour={endDayHour} />
       <MonthView />
       <AllDayPanel />
       <Appointments />
-      <AppointmentTooltip showOpenButton showCloseButton showDeleteButton />
+      <AppointmentTooltip showOpenButton showCloseButton />
       <Toolbar
         flexibleSpaceComponent={({ ...rest }) =>
-          FlexibleSpace({ newEventBtnClick, ...rest })
+          FlexibleSpace({ newEventHandler, ...rest })
         }
       />
       <DateNavigator />
       <ViewSwitcher />
       <AppointmentForm
-        overlayComponent={appointmentForm}
-        visible={editingFormVisible}
-        onVisibilityChange={toggleEditingFormVisibility}
-      />
-      <DragDropProvider />
-      <ConfirmDeleteModal
-        confirmDeleteModalIsOpen={confirmDeleteModalIsOpen}
-        toggleConfirmDeleteModal={toggleConfirmDeleteModal}
-        commitDeletedAppointment={commitDeletedAppointment}
+        overlayComponent={eventForm}
+        visible={state.editingFormVisible}
+        onVisibilityChange={() => dispatch(['toggleEditingFormVisibility'])}
       />
     </Scheduler>
   );
 }
-
-export const appointments = [
-  {
-    id: 0,
-    title: 'Watercolor Landscape',
-    startDate: new Date(2021, 6, 23, 9, 30),
-    endDate: new Date(2021, 6, 23, 11, 30),
-    customerId: 1,
-    location: 'Zoom',
-    notes: 'Extra descriptive notes',
-  },
-  {
-    id: 1,
-    title: 'Monthly Planning',
-    startDate: new Date(2021, 5, 28, 9, 30),
-    endDate: new Date(2021, 5, 28, 11, 30),
-    customerId: 1,
-    location: 'Zoom',
-    notes: 'Extra descriptive notes',
-  },
-  {
-    id: 2,
-    title: 'Recruiting students',
-    startDate: new Date(2021, 6, 9, 12, 0),
-    endDate: new Date(2021, 6, 9, 13, 0),
-    customerId: 2,
-    location: 'Zoom',
-    notes: 'Extra descriptive notes',
-  },
-  {
-    id: 3,
-    title: 'Oil Painting',
-    startDate: new Date(2021, 6, 18, 14, 30),
-    endDate: new Date(2021, 6, 18, 15, 30),
-    customerId: 2,
-    location: 'Zoom',
-    notes: 'Extra descriptive notes',
-  },
-  {
-    id: 4,
-    title: 'Open Day',
-    startDate: new Date(2021, 6, 20, 12, 0),
-    endDate: new Date(2021, 6, 20, 13, 35),
-    customerId: 6,
-    location: 'Zoom',
-    notes: 'Extra descriptive notes',
-  },
-  {
-    id: 8,
-    title: 'Watercolor Workshop',
-    startDate: new Date(2021, 6, 9, 11, 0),
-    endDate: new Date(2021, 6, 9, 12, 0),
-    customerId: 3,
-    location: 'Zoom',
-    notes: 'Extra descriptive notes',
-  },
-];
