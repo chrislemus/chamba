@@ -3,14 +3,22 @@ import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import DataFetchWrapper from '../../../../components/DataFetchWrapper';
 import { fetchCustomerById } from '../../../../services/api';
-import { Box, Button, Typography } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(({ custom }) => ({
+  infoBoxesWrapper: { ...custom.infoBoxesWrapper },
+  infoBox: { ...custom.infoBox },
+  appPageHeader: { ...custom.appPageHeader },
+}));
 
 export default function Customer() {
+  const classes = useStyles();
   const router = useRouter();
   const customerId = router.query.id;
 
@@ -47,13 +55,13 @@ export default function Customer() {
       dataName="Customer Details"
       hasData={customer}
     >
-      <Box display="flex" mb={5}>
-        <Box flexGrow={1}>
-          <Typography variant="h4">
-            <strong>{customer?.fullName}</strong>
-          </Typography>
-        </Box>
-        <Box>
+      <div className={classes.appPageHeader}>
+        <div>
+          <div aria-label="app-page-header-title">
+            <h1>{customer?.fullName}</h1>
+          </div>
+        </div>
+        <div>
           <Link
             href={`/dashboard/customers/${customerId}/edit`}
             passHref={true}
@@ -62,29 +70,23 @@ export default function Customer() {
               Edit
             </Button>
           </Link>
-        </Box>
-      </Box>
+        </div>
+      </div>
 
-      <Box display="flex" justifyContent="space-between">
-        <Box bgcolor="white" boxShadow={2} borderRadius={3} width="48%">
-          <Box fontSize="h6.fontSize" fontWeight="fontWeightBold" p={2}>
-            Client Details
-          </Box>
+      <div className={classes.infoBoxesWrapper}>
+        <div className={classes.infoBox}>
+          <div aria-label="info-box-header">
+            <h6>Client Details</h6>
+          </div>
           {customer && dataTable(customerDetails)}
-        </Box>
-        <Box
-          bgcolor="white"
-          boxShadow={2}
-          borderRadius={3}
-          width="48%"
-          height="min-content"
-        >
-          <Box fontSize="h6.fontSize" fontWeight="fontWeightBold" p={2}>
-            Invoices/CheckoutBilling
-          </Box>
+        </div>
+        <div className={classes.infoBox}>
+          <div aria-label="info-box-header">
+            <h6>Invoices/CheckoutBilling</h6>
+          </div>
           {customer?.invoicesOverview && dataTable(invoicesOverview)}
-        </Box>
-      </Box>
+        </div>
+      </div>
     </DataFetchWrapper>
   );
 }
