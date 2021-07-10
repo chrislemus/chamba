@@ -27,10 +27,18 @@ const deleteCustomer = async (customerId) => {
   return res?.data;
 };
 
+const customerEvents = async ({ date, days, customerId }) => {
+  const res = await axiosApi.get(`customers/${customerId}/events`, {
+    params: { date, days },
+  });
+  return res.data;
+};
+
 export {
   fetchCustomers,
   fetchCustomerById,
   addNewCustomer,
   editCustomer,
   deleteCustomer,
+  customerEvents,
 };

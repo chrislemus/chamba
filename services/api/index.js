@@ -6,6 +6,7 @@ import {
   addNewCustomer,
   editCustomer,
   deleteCustomer,
+  customerEvents,
 } from './customers';
 
 import {
@@ -33,6 +34,7 @@ export {
   addNewCustomer,
   editCustomer,
   deleteCustomer,
+  customerEvents,
   axiosApi,
   fetchInvoices,
   fetchInvoiceById,

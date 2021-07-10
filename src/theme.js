@@ -27,7 +27,7 @@ theme.custom = {
   infoBoxesWrapper: {
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    alignContent: 'flex-star',
     flexDirection: 'row',
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
@@ -39,14 +39,15 @@ theme.custom = {
     borderRadius: '1rem',
     display: 'flex',
     flexWrap: 'wrap',
-    width: '48%',
-    marginBottom: '2rem',
+    width: '40%',
+    margin: '0 1rem 2rem',
     [theme.breakpoints.down('sm')]: {
       width: '98%',
     },
     height: 'min-content',
     '& div[aria-label=info-box-header]': {
       padding: '1rem',
+      width: '100%',
       '& h6:first-child': {
         ...theme.typography.h6,
         fontWeight: 700,
