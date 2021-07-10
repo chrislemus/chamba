@@ -76,7 +76,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login() {
   const classes = useStyles();
-  const reactHookFormMethods = useForm();
+  const reactHookFormMethods = useForm({
+    defaultValues: { email: 'me@me.com', password: 'Aaaaaaaa123' },
+    shouldUnregister: true,
+  });
   const [passwordIsVisible, setPasswordIsVisible] = useState(false);
   const { handleSubmit } = reactHookFormMethods;
   const dispatch = useDispatch();
@@ -110,8 +113,9 @@ export default function Login() {
               <strong>Log In</strong>
             </Typography>
             <ValidationErrors errors={validationErrors} />
-            <Typography variant="body2" >
-              Demo:  <strong>Email</strong> me@me.com | <strong>Password</strong> Aaaaaaaa123
+            <Typography variant="body2">
+              Demo: <strong>Email</strong> me@me.com | <strong>Password</strong>{' '}
+              Aaaaaaaa123
             </Typography>
             <TextField fullWidth type="email" name="email" label="Email" />
             <TextField
