@@ -7,6 +7,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Link from 'next/link';
+import clsx from 'clsx';
+import { useRouter } from 'next/router';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUserFriends,
@@ -24,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
+  },
+  greyBg: {
+    background: theme.palette.grey[200],
   },
 }));
 
@@ -48,6 +54,7 @@ const drawerMenuItems = [
 
 export default function AppDrawer({ drawerIsActive, setDrawerIsActive }) {
   const classes = useStyles();
+  const router = useRouter();
   const [isMediumScreen, setIsMediumScreen] = useState(false);
   const updateWindowSize = () => setIsMediumScreen(window.innerWidth < 960);
 
@@ -56,7 +63,6 @@ export default function AppDrawer({ drawerIsActive, setDrawerIsActive }) {
     window.addEventListener('resize', updateWindowSize);
     return () => window.removeEventListener('resize', updateWindowSize);
   }, []);
-
   return (
     <Drawer
       className={classes.drawer}
@@ -68,8 +74,14 @@ export default function AppDrawer({ drawerIsActive, setDrawerIsActive }) {
       <Toolbar />
       <List>
         {drawerMenuItems.map((item) => (
-          <Link href={item.link} key={item.name} passHref={true}>
-            <ListItem button onClick={() => setDrawerIsActive(false)}>
+          <Link href={item.link} key={item.name} passHref>
+            <ListItem
+              button
+              onClick={() => setDrawerIsActive(false)}
+              className={clsx({
+                [classes.greyBg]: item.link === router.pathname,
+              })}
+            >
               <ListItemIcon>
                 <FontAwesomeIcon icon={item.icon} />
               </ListItemIcon>
