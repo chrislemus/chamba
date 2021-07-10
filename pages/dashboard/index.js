@@ -1,7 +1,7 @@
-import CalendarScheduler from '../../components/CalendarScheduler';
+import CalendarScheduler from '../../components/CalendarScheduler/Index';
 import { Box, Typography } from '@material-ui/core';
 
-const Overview = () => {
+const Dashboard = () => {
   return (
     <div style={{ marginBottom: '200px' }}>
       <Box display="flex" mb={5}>
@@ -24,4 +24,4 @@ const Overview = () => {
   );
 };
 
-export default Overview;
+export default Dashboard;
